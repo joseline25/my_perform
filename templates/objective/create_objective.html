@@ -1,21 +1,13 @@
-
-
 {% block content %}
+
+
 
 <h1>Create Objective</h1>
 
-
 <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p}}
+  {% csrf_token %} {{ form.as_p}}
 
-    <button type="submit" class="btn btn-primary">Create</button>
-
+  <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
-   
-
-{% endblock content  %}
-
-
-    
+{% endblock content %}

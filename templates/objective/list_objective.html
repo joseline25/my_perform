@@ -1,0 +1,9 @@
+{% block content %}
+<h1>List of Objective</h1>
+<ol>
+  {% for objective in objectives %}
+  <li>{{ objective.action_phrase}} created by {{ objective.created_by}}</li>
+  {% endfor %}
+</ol>
+
+{% endblock content %}

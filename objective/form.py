@@ -8,11 +8,15 @@ class ObjectiveForm(forms.ModelForm):
       fields = '__all__'
       
       widgets = {
+            'repeat_date': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
+                                                                                                            'date',
+                                                                    'type': 'date'}),
             'start_date': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
                                                                                                             'date',
                                                                     'type': 'date'}) ,
             'end_date': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
                                                                                                             'date',
                                                                     'type': 'date'}),
+            
         }
  
