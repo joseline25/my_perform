@@ -41,6 +41,8 @@ def create_objective(request):
     elif request.method == "POST":
         form = ObjectiveForm(request.POST)
         if form.is_valid():
+            if request.POST.get("save_draft"):
+                print(form)
             form.save()
             # messages.success("Objective created!")
             return redirect('list_objective')
