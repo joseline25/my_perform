@@ -48,3 +48,10 @@ def create_objective(request):
     else:
         messages.error("Please correct the following errors")
         return render(request, 'objective/create_objective.html', context)
+    
+
+
+def view_objective_details(request, id):
+    objective = Objective.objects.get(id=id)
+    print(objective)
+    return render(request, 'objective_details.html', {'objective': objective})
