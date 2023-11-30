@@ -1,9 +1,50 @@
-{% block content %}
-<h1>List of Objective</h1>
-<ol>
-  {% for objective in objectives %}
-  <li>{{ objective.action_phrase}} created by {{ objective.created_by}}</li>
-  {% endfor %}
-</ol>
+<!DOCTYPE html>
+<html lang="en">
 
-{% endblock content %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>Objectives</title>
+</head>
+
+<body>
+  <h1>Objective list</h1>
+  {% block content %}
+  <div class="row row-cols-1 row-cols-md-3 g-4" style="padding: 5%;">
+    {% for obj in objectives %}
+    <div class="col">
+      <div class="card h-100" style="display: flex; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <div class="card-body">
+          <!-- <h5 class="card-title">Objective</h5> -->
+          <p>Assign_to: {{ obj.assign_to }}</p>
+          <hr>
+          <p>Action phrase: {{ obj.action_phrase}}</p>
+          <hr>
+          <p>Created_ by: {{ obj.created_by}}</p>
+          <hr>
+          <p>Start Date: {{obj.start_date}}</p>
+          <hr>
+          <p>End Date: {{ obj.end_date }}</p>
+
+        </div>
+        <button type="button" class="btn btn-light"
+          style="width: 130px; margin-left: 25%; margin-bottom: 5%;">View</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  </div>
+  <!-- <h1>List of Objective</h1>
+  <ol>
+    {% for objective in objectives %}
+    <li>{{ objective.action_phrase}} created by {{ objective.created_by}}</li>
+    {% endfor %}
+  </ol> -->
+
+  {% endblock content %}
+</body>
+
+</html>
