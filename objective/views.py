@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import CreateView
 from django.contrib import messages
 from .form import *
@@ -48,3 +48,9 @@ def create_objective(request):
     else:
         messages.error("Please correct the following errors")
         return render(request, 'objective/create_objective.html', context)
+
+# view single objective
+def view_objective(request, pk):
+    objective = get_object_or_404(Objective, objective_id=pk)
+    context = {'objective': objective}
+    return render(request, 'objective/view_objective.html', context)
