@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
     path('', views.list_objective, name='list_objective'),
     path('create/', views.create_objective, name='create_objective'),
+    path('view/<int:pk>/', views.view_objective, name='view_objective'),
     
 ]

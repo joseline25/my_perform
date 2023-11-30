@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Objective details</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #333;
+      text-decoration: underline;
+      font-size: 18px;
+    }
+
+    .objective-details {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .objective-details p {
+      margin: 10px 0;
+      color: #333;
+    }
+
+    .objective-details h2 {
+      margin-top: 20px;
+      color: #333;
+    }
+
+    .objective-details ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .objective-details ul li {
+      margin: 5px 0;
+      color: #555;
+    }
+
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .centered-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .icon {
+      /* ... existing styles ... */
+      margin-right: 10px;
+    }
+
+    .icon i {
+      font-size: 24px;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+      .big-card {
+        grid-template-columns: 1fr;
+        /* Adjust for single column on smaller screens */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  {% block content %}
+  <div class="container">
+    <h1>Objective Details</h1>
+    <div class="objective-details">
+      <p><strong>Action Phrase:</strong> {{ objective.action_phrase }}</p>
+      <p><strong>Created by:</strong> {{ objective.created_by.username }}</p>
+      <p><strong>Start Date:</strong> {{ objective.start_date }}</p>
+      <p><strong>End Date:</strong> {{ objective.end_date }}</p>
+      <p><strong>Priority:</strong> {{ objective.get_priority_display }}</p>
+      <p><strong>Complexity:</strong> {{ objective.get_complexity_display }}</p>
+      <p><strong>Objective Type:</strong> {{ objective.get_objective_type_display }}</p>
+
+      <h2>Assignees</h2>
+      <ul>
+        {% for assignee in objective.assign_to.all %}
+        <li>{{ assignee.username }}</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Associated Tasks</h2>
+      <ul>
+        {% for task in objective.associated_task.all %}
+        <li>{{ task }}</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Skills</h2>
+      <ul>
+        {% for skill in objective.skills.all %}
+        <li>{{ skill }}</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Tools</h2>
+      <ul>
+        {% for tool in objective.tools.all %}
+        <li>{{ tool }}</li>
+        {% endfor %}
+      </ul>
+
+      <!-- Add more details as needed -->
+      <div class="centered-container">
+        <a href="{% url 'list_objective' %}" class="icon back-icon"><i class='bx bx-arrow-back'></i></a>
+        <a href="#" class="icon edit-icon"><i class='bx bx-edit'></i></a>
+        <a href="#" class="icon delete-icon"><i class='bx bx-trash'></i></a>
+      </div>
+
+    </div>
+  </div>
+  {% endblock content %}
+
+</body>
+
+</html>
