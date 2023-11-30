@@ -10,12 +10,12 @@
 </head>
 
 <body>
-  <h1>Objective list</h1>
+  <h1 style="color: #132A59;">Objective list</h1>
   {% block content %}
   <div class="row row-cols-1 row-cols-md-3 g-4" style="padding: 5%;">
     {% for obj in objectives %}
     <div class="col">
-      <div class="card h-100" style="display: flex; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <div class="card h-100" style="display: flex; border: 1px solid #0E3481; box-shadow: 0 4px 8px #132A59;">
         <div class="card-body">
           <!-- <h5 class="card-title">Objective</h5> -->
           <p>Assign_to: {{ obj.assign_to }}</p>
@@ -30,7 +30,7 @@
 
         </div>
         <button type="button" class="btn btn-light"
-          style="width: 130px; margin-left: 25%; margin-bottom: 5%;">View</button>
+          style="width: 130px; margin-left: 25%; margin-bottom: 5%; color: #000000;  background-color: #0E3481;">View</button>
       </div>
     </div>
     {% endfor %}
