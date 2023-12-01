@@ -104,6 +104,15 @@
       .pageIndicator {
         border-radius: 100%;
       }
+      label {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: start;
+        gap: 15px;
+      }
+      input[type="checkbox"] {
+        width: auto !important;
+      }
     </style>
   </head>
   <body>
@@ -245,8 +254,8 @@
             <section class="_formContainer d-flex gap-3">
               <div class="_leftForms d-flex flex-column gap-4 p-2">
                 <div class="d-flex flex-column gap-1">
-                  <p>{{ form.priority.label_tag }}</p>
-                  {{ form.priority }}
+                  <p>Visible to</p>
+                  <input type="text" class="form-control" />
                 </div>
                 <div class="d-flex flex-column gap-1">
                   <p>{{ form.assign_to.label_tag }}</p>
@@ -259,20 +268,22 @@
               </div>
               <div class="_rightForms d-flex flex-column gap-4 p-2">
                 <div class="_group">
-                  <h4 class="fs-5">Objective Name</h4>
+                  <h4 class="fs-5">Objective Type</h4>
                   <div
-                    class="d-flex align-items-center justify-content-start gap-4"
+                    class="d-flex align-items-center justify-content-start gap-5"
                   >
-                    <div class="_radio d-flex align-items-center gap-4">
-                      <div class="d-flex gap-2">
-                        <span>{{form.repeat}}</span>
-                        <p>Yes</p>
+                    <div class="d-flex flex-column">
+                      <p>Repeat</p>
+                      <div class="_radio d-flex align-items-center gap-4">
+                        <div class="d-flex gap-2">
+                          <span>{{form.repeat}}</span>
+                          <p>Yes</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <span>{{form.repeat}}</span>
+                          <p>No</p>
+                        </div>
                       </div>
-                      <div class="d-flex gap-2">
-                        <span>{{form.repeat}}</span>
-                        <p>No</p>
-                      </div>
-                      
                     </div>
                     <div>
                       <p>Deadline</p>
@@ -307,7 +318,7 @@
       </main>
       <div
         style="width: 80%"
-        class="m-auto d-flex align-items-center justify-content-end gap-3 mt-4"
+        class="m-auto d-flex align-items-center justify-content-end gap-3 my-4"
       >
         <button class="btn border-0">Cancel</button>
         <button class="btn btn-outline-dark">Save as Draft</button>
