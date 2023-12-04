@@ -1,0 +1,31 @@
+
+
+
+
+{% block content %}
+<h1>{{objective.action_phrase}}</h1>
+{% if objective %}
+<ul>
+  <li> Action Phrase : {{ objective.action_phrase}}</li>
+  <li>Start Date : {{ objective.start_date}}</li>
+  <li>End Date : {{ objective.end_date}}</li>
+
+  <li>Assigned to : {% for user in objective.assign_to.all %}  <p>{{ user.username }} </p>   {% endfor %}</li>
+
+  <li>Objective Type : {{ objective.objective_type}}</li>
+  <li>Created by : {{ objective.created_by}}</li>
+  <li>Complexity : {{ objective.complexity}}</li>
+  <li>Skills : {% for skill in objective.skills.all %} <p>{{ skill.skill_name }} </p>{% endfor %}</li>
+  <li>Tools : {% for tool in objective.tools.all  %}  <p>{{ tool.tool_name }} </p>  {% endfor %}</li>
+  <li>Definition of Good : {% for dog in  objective.dog.all %}  <p>{{ dog.dog_criteria }} </p>  {% endfor %}</li>
+
+  
+</ul>
+<p><a href="{% url 'objective:edit_objective' objective.objective_id %}" class="btn btn-outline-secondary btn-sm edit" title="Edit">Edit</a></p>
+{% endif %} 
+
+{% endblock content %}
+
+
+
+

@@ -1,22 +1,84 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 from .models import *
 
+
 class ObjectiveForm(forms.ModelForm):
-   class Meta:
-      model = Objective
-      #exclude = ['created_at', 'updated_at']
-      fields = '__all__'
-      
-      widgets = {
+    objective_type = forms.ChoiceField(
+        choices=Objective.objective_types, widget=forms.RadioSelect)
+    complexity = forms.ChoiceField(choices=Objective.complexities)
+    priority = forms.ChoiceField(choices=Objective.priorities)
+    # Set the queryset to the desired choices
+    evaluator = forms.ModelChoiceField(queryset=User.objects.all())
+
+    class Meta:
+        model = Objective
+        # exclude = ['created_at', 'updated_at']
+        fields = '__all__'
+
+        widgets = {
+            'deadline': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
+                                                                      'date',
+                                                                      'type': 'date'}),
             'repeat_date': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
-                                                                                                            'date',
-                                                                    'type': 'date'}),
+                                                                         'date',
+                                                                         'type': 'date'}),
             'start_date': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
-                                                                                                            'date',
-                                                                    'type': 'date'}) ,
+                                                                        'date',
+                                                                        'type': 'date'}),
             'end_date': forms.DateTimeInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'placeholder': 'Select a '
-                                                                                                            'date',
-                                                                    'type': 'date'}),
-            
+                                                                      'date',
+                                                                      'type': 'date'}),
+            'objective_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'E.g Employ 5 Developers by March'}),
+            'action_phrase': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'E.g Clean, Make'}),
+            'number': forms.NumberInput(attrs={'class': 'form-control'}),
+            'units': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'E.g Email, Notes'}),
+            'priority': forms.Select(attrs={'class': 'form-control'}),
+            'complexity': forms.Select(attrs={'class': 'form-control'}),
+            'dog': forms.CheckboxSelectMultiple(),
+            'assign_to': forms.CheckboxSelectMultiple(),
+            'visible_to': forms.CheckboxSelectMultiple(),
+            'tools': forms.CheckboxSelectMultiple(),
+            'associated_task': forms.CheckboxSelectMultiple(),
+            'evaluator': forms.Select(attrs={'class': 'form-control'}),
+            'skills': forms.CheckboxSelectMultiple(),
+            'objective_type': forms.RadioSelect(attrs={'choices': Objective.objective_types}),
+
+
+
         }
- 
+
+    # validators
+
+    # Start date not earlier than current date
+
+    def clean_start_date(self):
+        start_date = self.cleaned_data['start_date']
+        if start_date < timezone.now():
+            raise ValidationError("Start date cannot be in the past.")
+        return start_date
+
+     # End date not earlier than Start date
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data['end_date']
+        start_date = self.cleaned_data.get('start_date')
+        if start_date and end_date and end_date < start_date:
+            raise ValidationError(
+                "End date cannot be earlier than the start date.")
+        return end_date
+
+   # Definition of Good (dog) cannot be empty
+    def clean_dog(self):
+        dog = self.cleaned_data['dog']
+        if not dog:
+            raise ValidationError(
+                "Please select at least one option for the dog field.")
+        return dog
+
+
+class ObjectiveDraftForm(forms.ModelForm):
+    class Meta:
+        model = ObjectiveDraft
+        fields = ['is_draft']

@@ -76,6 +76,9 @@ class TeamSkill(models.Model):
 
     class Meta:
         ordering = ['-updated_at']
+        
+    def __str__(self):
+        return f"{self.team.name} uses {self.skill_id.skill_name}"
 
 
 class TeamTool(models.Model):
@@ -87,21 +90,36 @@ class TeamTool(models.Model):
 
     class Meta:
         ordering = ['-updated_at']
+        
+    def __str__(self):
+        return f"{self.team.name}"
 
 
 class Objective(models.Model):
+    
+    
+    priorities = [('Low', 'Low'), ('Intermediate',
+                               'Intermediate'), ('High', 'High')]
+    complexities = [('Easy', 'Easy'), ('Hard', 'Hard')]
+    objective_types = [('Financial', 'Financial'),
+                   ('Non-Financial', 'Non-Financial')]
+    
     objective_id = models.AutoField(primary_key=True)
+    objective_name = models.CharField(max_length=300, blank=True, null=True)
     assign_to = models.ManyToManyField(
-        to=User, unique=False, related_name="assign_to")
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="creator")
+        to=User, unique=False, related_name="objectives_assigned_to")
+    visible_to = models.ManyToManyField(
+        User,  related_name="visible_objectives")
+    # created_by = models.ForeignKey(
+    #     User, on_delete=models.CASCADE, related_name="objectives_created")
     associated_task = models.ManyToManyField(
-        Task, related_name="associated_task")
+        Task, related_name="objectives")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     evaluator = models.ForeignKey(
         User, related_name="evaluator", on_delete=models.CASCADE)
     repeat_date = models.DateTimeField(null=True, blank=True)
+    deadline = models.DateTimeField(null=True, blank=True)
     action_phrase = models.CharField(max_length=300, null=False, blank=True)
     number = models.IntegerField(null=False)
     units = models.CharField(max_length=10)
@@ -123,7 +141,7 @@ class Objective(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.action_phrase
+        return f"{self.objective_name}"
 
 
 # Create the Defination of Good Model
@@ -139,7 +157,7 @@ class DefinitionOfGood(models.Model):
         db_table = 'Dog'
 
     def __str__(self):
-        return self.dog_criteria
+        return f"{self.dog_criteria}"
 
 
 class ObjectiveSkill(models.Model):
@@ -154,7 +172,7 @@ class ObjectiveSkill(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        self.skill_name
+        return f"{self.skill_id.skill_name}"
 
 
 class ObjectiveTool(models.Model):
@@ -169,4 +187,10 @@ class ObjectiveTool(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        self.tool_name
+        return f"{self.tool_id.tool_name}"
+    
+# for save as draft
+class ObjectiveDraft(models.Model):
+    objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
+    is_draft = models.BooleanField(default=True)
+    

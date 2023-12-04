@@ -1,13 +1,366 @@
-{% block content %}
+<!DOCTYPE html>
 
+<html>
+  <head>
+    <title>Perform Lite 1.0</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+      rel="stylesheet"
+    />
 
+    <style>
+      * {
+        font-family: 'Inter', sans-serif !important;
+      }
+      p {
+        margin: 0;
+      }
+      ._leftForms, ._rightForms {
+        width: 50%;
+        {% comment %} border: 1px solid red !important; {% endcomment %}
+        box-sizing: border-box;
+      }
+      .custom-width {
+        width: 10px;
+      }
+      ._fields {
+        width: 25% !important;
+      }
+      ._number {
+        width: 13% !important;
+      }
+      ._group {
+        {% comment %} border: 1px solid navy; {% endcomment %}
+        display: flex;
+        flex-direction: column;
+        width: 100% !important;
+      }
+      input, select {
+        width: 100% !important;
+      }
+      input:focus {
+        outline: none !important;
+        border: 1.5px solid #132A59 !important;
+        box-shadow: none !important;
+      }
+      select:focus {
+        outline: none !important;
+        border: 1.5px solid #132A59 !important;
+        box-shadow: none !important;
+      }
+      ._lowerLeft {
+        {% comment %} display: flex;
+        flex-direction: column !important; {% endcomment %}
+        width: 100% !important;
+        gap: 23px !important;
+      }
+      ._lowerLeft div {
+        width: 50%;
+      }
+      section._section {
+        display: flex !important;
+      }
+      ._radio {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 2 !important;
+        height: 66px !important;
+      }
+      ._radioBtn {
+        width: auto !important;
+      }
+      ._dog, main {
+        border: 0.5px solid rgb(190, 189, 189);
+        border-radius: 4px;
+      }
+      {% comment %} ._stepOne {
+        display: none
+        !important;
+      } {% endcomment %}
+      ._stepTwo ._radio {
+        height: auto !important;
+      }
+      ._stepTwo {
+        display: none !important;
+      }
+      .hide {
+        display: none !important;
+      }
+      .show {
+        display: block !important;
+      }
+      .nextBtn, .prevBtn {
+        color: #AF8A54;
+      }
+      .pageIndicator {
+        border-radius: 100%;
+      }
+      label {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: start;
+        gap: 15px;
+      }
+      input[type="checkbox"] {
+        width: auto !important;
+      }
+    </style>
+  </head>
+  <body>
+    <form method="POST" action="{% url 'objective:create_objective' %}">
+      {% csrf_token %} {% if edit_mode %}
+      <h1>Edit {{ objective.objective_name }}</h1>
 
-<h1>Create Objective</h1>
+      {% else %}
+      <div style="width: 80%" class="m-auto mb-3 mt-5">
+        <h2>Objective Creation</h2>
+      </div>
 
-<form method="POST">
-  {% csrf_token %} {{ form.as_p}}
+      {% endif %}
 
-  <button type="submit" class="btn btn-primary">Create</button>
-</form>
+      <main class="mx-auto container" style="width: 80%">
+        <div class="d-flex flex-column gap-4 py-4 px-4 _stepOne">
+          <div
+            class="_formHead d-flex align-items-center justify-content-between"
+          >
+            <div class="d-flex align-items-center gap-5">
+              <p>Kindly provide the information needed below</p>
+              <div class="d-flex align-items-center flex-row gap-2">
+                <p>*</p>
+                <p></p>
+                <p>Compulsory</p>
+              </div>
+            </div>
+            <button
+              class="nextBtn btn border-0 d-flex align-items-center color-warning"
+            >
+              Next<i class="bx bx-chevron-right fs-3"></i>
+            </button>
+          </div>
 
-{% endblock content %}
+          <section class="_formFields d-flex flex-column gap-4">
+            {% comment %}
+            <form method="POST" action="{% url 'objective:create_objective' %}">
+              {% csrf_token %} {{ form.as_p}}
+              <button type="submit" class="btn btn-primary">Create</button>
+            </form>
+            {% endcomment %}
+            <section class="_formContainer d-flex gap-5">
+              <div class="_leftForms d-flex flex-column gap-4 p-2">
+                <div class="_group">
+                  <h4 class="fs-5">Objective Name</h4>
+                  <div class="_fields">
+                    <div class="_inpField">{{ form.objective_name }}</div>
+                  </div>
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="_fields d-flex flex-column gap-1">
+                      <p>Action Phrase</p>
+                      <div class="_inpField">{{ form.action_phrase }}</div>
+                    </div>
+                    <div class="_fields _number d-flex flex-column gap-1">
+                      <p>Number</p>
+                      <div>{{ form.number }}</div>
+                    </div>
+                    <div class="_fields d-flex flex-column gap-1">
+                      <p>Units</p>
+                      <div>{{ form.units }}</div>
+                    </div>
+                    <div class="_fields d-flex flex-column gap-1">
+                      <p>Deadline</p>
+                      <div>{{ form.deadline }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex _lowerLeft">
+                  <div class="d-flex flex-column gap-1">
+                    <p>Priority</p>
+                    {{ form.priority }}
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <p>Complexity</p>
+                    {{ form.complexity }}
+                  </div>
+                </div>
+              </div>
+              <div class="_rightForms d-flex flex-column gap-4 p-2">
+                <div class="_group">
+                  <h4 class="fs-5">Objective Type</h4>
+                  <div
+                    class="_radio d-flex align-items-center justify-content-start gap-4"
+                  >
+                    {% for radio in form.objective_type %} {{ radio }} {% endfor%}
+                  </div>
+                </div>
+                <div class="d-flex _lowerLeft">
+                  <label>Duration</label>
+                  <div class="d-flex flex-column gap-1">
+                    <span>{{ form.start_date }}</span>
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <span>{{ form.end_date }}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <div class="px-2">
+              <p>Definition of Good</p>
+              <div class="_dog p-2">{{form.dog}}</div>
+            </div>
+          </section>
+        </div>
+
+        {% comment %} STEP 2 {% endcomment %}
+        <div class="d-flex flex-column gap-4 py-4 px-4 _stepTwo">
+          <div
+            class="_formHead d-flex align-items-center justify-content-between"
+          >
+            <button
+              class="btn border-0 d-flex align-items-center color-warning prevBtn"
+            >
+              <i class="bx bx-chevron-left fs-3"></i> Previous
+            </button>
+          </div>
+          <section class="_formFields d-flex flex-column gap-4">
+            {% comment %}
+            <form method="POST">
+              {% csrf_token %} {{ form.as_p}}
+              <button type="submit" class="btn btn-primary">Create</button>
+            </form>
+            {% endcomment %}
+            <section class="_formContainer d-flex gap-3">
+              <div class="_leftForms d-flex flex-column gap-4 p-2">
+                <div class="d-flex flex-column gap-1">
+                  <p>Visible To:</p>
+                  {{ form.visible_to }}
+                </div>
+                <div class="d-flex flex-column gap-1">
+                  <p>Assign to:</p>
+                  {{ form.assign_to }}
+                </div>
+                <div class="d-flex flex-column gap-1">
+                  <p>Tools</p>
+                  {{ form.tools }}
+                </div>
+              </div>
+              <div class="_rightForms d-flex flex-column gap-4 p-2">
+                <div class="_group">
+                  <div
+                    class="d-flex align-items-center justify-content-start gap-4"
+                  >
+                    <div class="_radio d-flex align-items-center gap-4">
+                      <p>Repeat</p>
+
+                      {{form.repeat}}
+                    </div>
+                    <div>
+                      <p>Repeat Date</p>
+                      <span>{{ form.repeat_date }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex flex-column gap-4 p-2">
+                  <div class="d-flex flex-column gap-1">
+                    <p>Evaluator</p>
+                    <span>{{ form.evaluator }}</span>
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <p>Skills <span>[Optional]</span></p>
+                    <span>{{ form.skills }}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <div class="px-2">
+              <p>Associated Tasks <span>[Optional]</span></p>
+              <div class="_dog p-2">{{form.associated_task}}</div>
+            </div>
+
+            {% if form.is_bound and form.errors %}
+            <div class="alert alert-danger">
+              <strong>Error(s):</strong>
+              <ul>
+                {% for error in form.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </section>
+        </div>
+        <div
+          class="d-flex gap-2 align-items-center justify-content-center mb-3"
+        >
+          <span class="p-2 border pageIndicator"></span>
+          <span class="p-2 border pageIndicator"></span>
+        </div>
+      </main>
+      <div
+        style="width: 80%"
+        class="m-auto d-flex align-items-center justify-content-end gap-3 mt-4"
+      >
+        <button class="btn border-0">Cancel</button>
+        {% comment %}
+        <button class="btn btn-primary">Continue</button> {% endcomment %}
+      </div>
+      <button
+        type="submit"
+        name="submit_action"
+        value="save"
+        class="btn btn-primary"
+      >
+        Save
+      </button>
+      <button
+        type="submit"
+        name="submit_action"
+        value="save_as_draft"
+        class="btn btn-primary"
+      >
+        Save as Draft
+      </button>
+    </form>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      let nextButton = document.querySelector(".nextBtn");
+      let prevButton = document.querySelector(".prevBtn");
+      let stepOne = document.querySelector("._stepOne");
+      let stepTwo = document.querySelector("._stepTwo");
+
+      nextButton.addEventListener("click", () => {
+        if (!stepTwo.classList.contains("show")) {
+          stepTwo.classList.add("show");
+          stepTwo.classList.remove("hide");
+          stepOne.classList.remove("show");
+          stepOne.classList.add("hide");
+        }
+      });
+      prevButton.addEventListener("click", () => {
+        if (!stepOne.classList.contains("show")) {
+          stepOne.classList.add("show");
+          stepOne.classList.remove("hide");
+          stepTwo.classList.remove("show");
+          stepTwo.classList.add("hide");
+        }
+      });
+    </script>
+
+    <script src="" async defer></script>
+  </body>
+</html>
