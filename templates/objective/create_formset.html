@@ -1,0 +1,28 @@
+<form method="post" action="{% url 'objective:create_objective_formset' %}">
+    {% csrf_token %}
+
+    <h2>Objective</h2>
+
+    {{ objective_formset.management_form }}
+    {% for form in objective_formset %}
+        {{ form }}
+    {% endfor %}
+    <h2>Definition of good </h2>
+    {{ good_object_formset.management_form }}
+    {% for form in good_object_formset %}
+        {{ form }}
+    {% endfor %}
+
+    <h2>Tools</h2>
+    {{ tool_formset.management_form }}
+    {% for form in tool_formset %}
+        {{ form }}
+    {% endfor %}
+    <h2>Skills</h2>
+    {{ skill_formset.management_form }}
+    {% for form in skill_formset %}
+        {{ form }}
+    {% endfor %}
+
+    <button type="submit">Submit</button>
+</form>

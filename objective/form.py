@@ -2,6 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from .models import *
+# for formset
+from django.forms import modelformset_factory
 
 
 class ObjectiveForm(forms.ModelForm):
@@ -82,3 +84,68 @@ class ObjectiveDraftForm(forms.ModelForm):
     class Meta:
         model = ObjectiveDraft
         fields = ['is_draft']
+
+
+# in order to create the formset of Objective
+
+class ToolForm(forms.ModelForm):
+    class Meta:
+        model = Tool
+        fields = ['tool_name', 'description', 'teams']
+
+
+class SkillForm(forms.ModelForm):
+    class Meta:
+        model = Skill
+        fields = ['skill_name', 'skill_description']
+
+
+class DefinitionOfGoodForm(forms.Form):
+    class Meta:
+        model = DefinitionOfGood
+        fields = ['dog_criteria']
+
+
+# import modelformset_factory : from django.forms import modelformset_factory
+# then
+
+ObjectiveFormSet = modelformset_factory(
+    Objective,
+    fields=[
+        'objective_type', 'deadline', 'repeat_date', 'start_date', 'end_date',
+        'objective_name', 'action_phrase', 'number', 'units', 'priority',
+        'complexity', 'assign_to', 'visible_to', 'evaluator'
+    ],
+    extra=1,  # Number of empty forms to display
+)
+
+DefinitionOfGoodFormSet = modelformset_factory(
+    DefinitionOfGood,
+    form=DefinitionOfGoodForm,
+    extra=1,
+)
+
+ToolFormSet = modelformset_factory(
+    Tool,
+    form=ToolForm,
+    extra=1,
+)
+
+SkillFormSet = modelformset_factory(
+    Skill,
+    form=SkillForm,
+    extra=1,
+)
+
+
+""" 
+
+Each related model (DefinitionOfGood, Tool, Skill) has its own form 
+(DefinitionOfGoodForm, ToolForm, SkillForm).
+The ObjectiveFormSet is created using modelformset_factory for the
+Objective model. The DefinitionOfGoodFormSet, ToolFormSet, and SkillFormSet 
+are similarly created for each related model.
+"""
+
+# now let's go to the views.py file
+
