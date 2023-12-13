@@ -22,6 +22,9 @@ class Skill(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE)
     
+    # modele cascade no
+    # hard or soft 
+    
 
     class Meta:
         ordering = ['-created_at']
@@ -68,10 +71,10 @@ class Tool(models.Model):
 
 
 class TeamSkill(models.Model):
-    skill_id = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    skill_id = models.ForeignKey(Skill, on_delete=models.PROTECT)
+    team = models.ForeignKey(Team, on_delete=models.PROTECT)
     updated_by = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        User, on_delete=models.PROTECT)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -82,10 +85,10 @@ class TeamSkill(models.Model):
 
 
 class TeamTool(models.Model):
-    tool_id = models.ForeignKey(Tool, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    tool_id = models.ForeignKey(Tool, on_delete=models.PROTECT)
+    team = models.ForeignKey(Team, on_delete=models.PROTECT)
     updated_by = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        User, on_delete=models.PROTECT)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -111,13 +114,13 @@ class Objective(models.Model):
     visible_to = models.ManyToManyField(
         User,  related_name="visible_objectives")
     # created_by = models.ForeignKey(
-    #     User, on_delete=models.CASCADE, related_name="objectives_created")
+    #     User, on_delete=models.PROTECT, related_name="objectives_created")
     associated_task = models.ManyToManyField(
         Task, related_name="objectives")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     evaluator = models.ForeignKey(
-        User, related_name="evaluator", on_delete=models.CASCADE)
+        User, related_name="evaluator", on_delete=models.PROTECT)
     repeat_date = models.DateTimeField(null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True)
     action_phrase = models.CharField(max_length=300, null=False, blank=True)
@@ -149,7 +152,7 @@ class Objective(models.Model):
 class DefinitionOfGood(models.Model):
     dog_id = models.AutoField(primary_key=True)
     dog_criteria = models.CharField(max_length=100)
-    #objective_id = models.ForeignKey(Objective, on_delete=models.CASCADE)
+    #objective_id = models.ForeignKey(Objective, on_delete=models.PROTECT)
     date_added = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -193,4 +196,6 @@ class ObjectiveTool(models.Model):
 class ObjectiveDraft(models.Model):
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     is_draft = models.BooleanField(default=True)
+
+
     
