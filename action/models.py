@@ -1,14 +1,45 @@
 from django.db import models
 from django.contrib.auth.models import User
-from objective.models import Objective
+from objective.models import Objective, Tool
 
+# Anderson
+class Question(models.Model):
+    question = models.TextField(null=True, blank=True)
+    number = models.IntegerField(null=True,)
+    answer = models.BooleanField(null=True)
+    related_action = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.question
 
+class Collaborator(models.Model):
+    collaborator_id = models.ForeignKey(User, on_delete=models.CASCADE)    
+    created_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class ActionTool(models.Model):
+    tool_id = models.ForeignKey(Tool, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL)
+    
+    def __str__(self):
+        return 
+    
+    
+class ActionSkill(models.Model):
+    skill_id = models.ForeignKey()
+    action_id = models.ForeignKey(Actions, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE) 
+
+# Ericka
 class Actions(models.Model):
     action_id = models.AutoField(primary_key=True)
     objective = models.ForeignKey(Objective, on_delete=models.PROTECT)
-    questions_id = models.ForeignKey(ActionQuestion, on_delete=models.PROTECT)
+    questions_id = models.ForeignKey(Question, on_delete=models.PROTECT)
     completion_time = models.TimeField(null=False)
-    collaborators_id = models.ForeignKey(Collaborators, on_delete=models.PROTECT)
+    collaborators_id = models.ForeignKey(Collaborator, on_delete=models.PROTECT)
     comment = models.TextField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     added_by = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -43,6 +74,6 @@ class ActionAchievement(models.Model):
 
     def __str__(self):
         return self.achievement_id.achievement_name
+       
 
 
-# Create your models here.
