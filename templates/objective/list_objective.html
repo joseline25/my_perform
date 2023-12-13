@@ -18,7 +18,11 @@
       <div class="card h-100" style="display: flex; border: 1px solid #0E3481; box-shadow: 0 4px 8px #132A59;">
         <div class="card-body">
           <!-- <h5 class="card-title">Objective</h5> -->
-          <p>Assign_to: {{ obj.assign_to }}</p>
+          {% if obj.assign_to %}
+            <p>Assign_to: {{ obj.assign_to }}</p>
+          {%else%}
+            <p>Assign_to: Not Assined</p>
+          {% endif %}
           <hr>
           <p>Action phrase: {{ obj.action_phrase}}</p>
           <hr>
@@ -27,7 +31,6 @@
           <p>Start Date: {{obj.start_date}}</p>
           <hr>
           <p>End Date: {{ obj.end_date }}</p>
-
         </div>
         <button type="button" class="btn btn-light"
           style="width: 130px; margin-left: 25%; margin-bottom: 5%; color: #000000;  background-color: #0E3481;">View</button>
