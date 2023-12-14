@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Team, Tool, Skill, TeamSkill, TeamTool, Objective, ObjectiveSkill, ObjectiveTool, DefinitionOfGood
+from .models import Team, Tool, Skill, TeamSkill, TeamTool, Objective, ObjectiveSkill, ObjectiveTool, DefinitionOfGood, KPI
 from .models_additional.task import Task, Achievement
 # Register your models here.
 
@@ -14,5 +14,6 @@ admin.site.register(ObjectiveTool)
 admin.site.register(DefinitionOfGood)
 admin.site.register(Task)
 admin.site.register(Achievement)
+admin.site.register(KPI)
 
 

@@ -1,0 +1,738 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Perform - create objective</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/bootstrap/bootstrap.min.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'css/objective_create.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    {% block content %}
+    <main class="container vh-100 d-flex py-3 justify-items-center flex-column">
+      <form  method="post" action="{% url 'objective:create_objective_two' %}">
+        {% csrf_token %}
+        <div
+          class="col-12 border border-2 rounded d-flex flex-column form-control form-container"
+          style="margin-top: 60px"
+        >
+          <section class="d-flex w-100">
+            <div class="d-flex flex-grow-1 h-100 align-content-center">
+              <span class="d-flex align-self-center kindly-provide">
+                Kindly provide the information needed below
+              </span>
+              <span class="d-flex align-self-center flex-grow-1 compulsory">
+                <span class="text-danger">*</span>
+                <span class="text">Compulsory field</span>
+              </span>
+            </div>
+            <div class="d-flex w-25 justify-content-end next">
+              <button class="btn p-2 d-flex next" type="button">
+                Next
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+            <div class="d-flex w-25 justify-content-end prev">
+              <button class="btn p-2 d-flex prev" type="button">
+                <i class="bi bi-chevron-left"></i>
+                Previous
+              </button>
+            </div>
+          </section>
+
+          <!-- Step 1 -->
+          <section class="d-flex w-100 flex-column" id="step1">
+            <div class="d-flex w-100 flex-row step1-flex-direction h-100">
+              <section class="d-flex w-50 flex-column left-side">
+                <p class="fw-bold fs-6">
+                  Objective Name<span class="text-danger text-bolder p-1"
+                    >*</span
+                  >
+                  
+                </p>
+                <div class="d-flex form-group flex-column">
+                  <label
+                    for="{{ form.action_phrase.id_for_label }}"
+                    class="lbl-action-phrase"
+                  >
+                  </label>
+                  {{form.objective_name}}
+                </div>
+                
+                <div class="d-flex w-100" style="margin-bottom: 10px">
+                  <div class="d-flex form-group action-phrase flex-column">
+                    <label
+                      for="{{ form.action_phrase.id_for_label }}"
+                      class="lbl-action-phrase"
+                    >
+                      Action phrase
+                    </label>
+                    {{form.action_phrase}}
+                  </div>
+                  <div class="d-flex form-group number flex-column">
+                    <label
+                      for="{{ form.number.id_for_label }}"
+                      class="lbl-number"
+                    >
+                      Number
+                    </label>
+                    {{ form.number }}
+                  </div>
+                  <div class="d-flex form-group units flex-column">
+                    <label
+                      for="{{ form.units.id_for_label }}"
+                      class="lbl-units"
+                    >
+                      Units(s)
+                    </label>
+                    {{ form.units }}
+                  </div>
+                  <div class="d-flex form-group deadline ml-3 flex-column">
+                    <label
+                      for="{{ form.end_date.id_for_label }}"
+                      class="lbl-deadline"
+                    >
+                      Deadline
+                    </label>
+                    {{ form.deadline }}
+                  </div>
+                </div>
+                <p class="d-flex fw-bold fs-6 mt-4 priority-text">
+                  Priority<span class="text-danger text-bolder">*</span>
+                </p>
+                <div class="d-flex w-100">
+                  <div class="d-flex form-group priority mt-1/2 flex-column">
+                    {{ form.priority }}
+                  </div>
+
+                  <div class="d-flex form-group complexity mt-1/2 flex-column">
+                    <p class="d-flex fw-bold fs-6 priority-text">
+                      Complexity<span class="text-danger text-bolder">*</span>
+                    </p>
+                    {{ form.complexity }}
+                  </div>
+                </div>
+              </section>
+              <section class="d-flex w-50 flex-column right-side h-75">
+                <p class="fw-bold fs-6">
+                  Objective Type<span class="text-danger text-bolder p-1"
+                    >*</span
+                  >
+                </p>
+                <div class="d-flex w-100 flex-column" style="margin: 12px 0px">
+                  <div class="d-flex objective_type">
+                    {% for radio in form.objective_type %} {{ radio }}   {% endfor%}
+                  </div>
+                  <p class="d-flex fw-bold fs-6 mt-4 duration-text">
+                    Duration<span class="text-danger text-bolder">*</span>
+                  </p>
+                  <div
+                    class="d-flex flex-row w-100 duration-container"
+                    style="margin-top: -5px"
+                  >
+                    <div
+                      class="d-flex form-group start-date ml-3 flex-column"
+                      style="margin-top: 2px"
+                    >
+                      {{ form.start_date }}
+                    </div>
+                    <div
+                      class="d-flex form-group end-date ml-3 flex-column"
+                      style="margin-top: 9px"
+                    >
+                      {{ form.end_date }}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <section class="d-flex w-100 flex-column dog-container">
+              <p class="d-flex fw-bold fs-6 mt-2 duration-text">
+                Definition of Good<span class="text-danger text-bolder"
+                  >&nbsp*</span
+                >
+              </p>
+              <label
+                for="{{ form.dog.id_for_label }}"
+                class="lbl-dog mb-1"
+                hidden
+              >
+                Check or add at least one D.O.G.
+              </label>
+              <div
+                class="d-flex w-100 border border-2 dog-criteria h-100 rounded flex-column"
+              >
+                <div class="d-flex border-bottom w-100">
+                  <div class="d-flex form-group w-100 flex-column">
+                    <!-- {{form.dog}} -->
+                    <div class="dropdown-container">
+                      <div class="dropdown-selected">
+                        Select Criteria(s)
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="dropdown-options">
+                        {% for dog_option in form.dog  %}
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            value="{{ dog_option.dog_criteria }} {{ dog_option.choice_label }}"
+                            checked
+                          />{{ dog_option.dog_criteria }} {{ dog_option.choice_label }}
+                        </div>
+                        {% endfor %}
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end w-100">
+                  <button
+                    type="button"
+                    class="btn add-btn"
+                    data-bs-toggle="modal"
+                    autocomplete="off"
+                    type="button"
+                    data-bs-target="#dog-modal"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </section>
+          </section>
+          <!-- End step 1 -->
+          <!-- Start strep 2 -->
+          <section
+            class="d-flex w-100 flex-column"
+            id="step2"
+            style="margin-bottom: 20px"
+          >
+            <div class="d-flex w-100 flex-row h-100 p-1">
+              <section
+                class="d-flex w-50 flex-column p-4"
+                style="padding-left: 20px; padding-top: 20px"
+              >
+                <p class="d-flex fw-bold fs-6 mt-4 visible-to-text">
+                  Visible to<span class="text-danger text-bolder">&nbsp*</span>
+                </p>
+                <div class="d-flex border w-100 rounded">
+                  <div class="d-flex form-group flex-column w-100">
+                    <!-- {{form.visible_to}} -->
+                    <div class="visibleTo-dropdown-container">
+                      <div class="visibleTo-dropdown-selected">
+                        <span class="text-secondary"
+                          ><i
+                            class="bi bi-person-circle"
+                            style="margin-right: 8px; font-size: 20px"
+                          ></i
+                        ></span>
+                        <span style="margin-top: 5px">Select one or more</span>
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="visibleTo-dropdown-options">
+                        
+                        {% for visible_to_option in form.visible_to  %}
+                        
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            value="{{ visible_to_option.username }} {{ visible_to_option.choice_label }}"
+                            
+                          />{{ visible_to_option.username }} {{ visible_to_option.choice_label }}
+                        </div>
+                        {% endfor %}
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="d-flex fw-bold fs-6 mt-4 visible-to-text">
+                  Assign to<span class="text-danger text-bolder">&nbsp*</span>
+                </p>
+                <div class="d-flex border w-100 rounded">
+                  <div class="d-flex form-group flex-column w-100">
+                    <!-- {{form.assign_to}} -->
+                    <div class="assignTo-dropdown-container">
+                      <div class="assignTo-dropdown-selected">
+                        <span class="text-secondary"
+                          ><i
+                            class="bi bi-person-circle"
+                            style="margin-right: 8px; font-size: 20px"
+                          ></i
+                        ></span>
+                        <span style="margin-top: 5px">Select one or more</span>
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="assignTo-dropdown-options">                        
+                        {% for assign_to_option in form.assign_to  %}
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            name="{{ form.assign_to.id_for_label }}_{{ assign_to_option.id }}"
+                            value="{{ assign_to_option.username }}{{ assign_to_option.choice_label }}"
+                            {% if assign_to_option.pk in form.assign_to.value %}checked{% endif %}
+                          />{{ assign_to_option.username }} {{ assign_to_option.choice_label }}
+                        </div>
+                        {% endfor %} 
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="d-flex fs-6 mt-4 visible-to-text">
+                  <span class="fw-bold">Tools &nbsp</span>
+                  [Optional]
+                </p>
+                <div class="d-flex border w-100 rounded">
+                  <div class="d-flex form-group flex-column w-100">
+                    <!-- {{form.tools}} -->
+                    <div class="tools-dropdown-container" style="padding: 5px">
+                      <div class="tools-dropdown-selected">
+                        Select Tool(s)
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="tools-dropdown-options">
+                        {% for tool_option in form.tools %}
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            value="{{ tool_option.tool_name}} {{ tool_option.choice_label}}"
+                            
+                          />{{ tool_option.tool_name}} {{ tool_option.choice_label}}
+                        </div>
+                        {% endfor %}
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section
+                class="d-flex w-50 flex-column h-75"
+                style="
+                  padding-left: 50px;
+                  padding-top: 20px;
+                  padding-right: 20px;
+                  margin-top: 7px;
+                "
+              >
+                <div class="d-flex w-100">
+                  <div class="d-flex repeat flex-column w-50">
+                    <p class="d-flex fw-bold fs-6 mt-4 visible-to-text">
+                      Repeat
+                    </p>
+                    {{form.repeat}}
+                  </div>
+                  <div class="d-flex repeat-date flex-column w-50">
+                    <p class="d-flex fs-6 mt-4 visible-to-text">
+                      <span class="text text-normal fw-bold"
+                        >Repeat Date &nbsp</span
+                      >[Optional]
+                    </p>
+                    {{form.repeat_date}}
+                  </div>
+                </div>
+                <p class="d-flex fs-6 mt-4 visible-to-text fw-bold">
+                  Evaluator<span class="text-danger text-bolder">&nbsp*</span>
+                </p>
+                <div
+                  class="d-flex border w-100 rounded"
+                  style="margin-top: 2px"
+                >
+                  <div class="d-flex form-group flex-column w-100">
+                    <!-- {{form.evaluator}} -->
+                    <div class="evaluator-dropdown-container">
+                      <div class="evaluator-dropdown-selected">
+                        <span class="text-secondary"
+                          ><i
+                            class="bi bi-person-circle"
+                            style="margin-right: 8px; font-size: 20px"
+                          ></i
+                        ></span>
+                        <span style="margin-top: 5px">Select one Evaluator</span>
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="evaluator-dropdown-options">
+                       
+
+                        {% for evaluator_option in form.evaluator %}
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            value="{{ evaluator_option.username }} {{ evaluator_option.choice_label }}"
+                           
+                          />{{ evaluator_option.username }} {{ evaluator_option.choice_label }}
+                        </div>
+                        {% endfor %}
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="d-flex fs-6 mt-4 visible-to-text fw-bold">Skills</p>
+                <div
+                  class="d-flex border w-100 rounded"
+                  style="margin-top: 2px"
+                >
+                  <div class="d-flex form-group flex-column w-100">
+                    <!-- {{form.skills}} -->
+                    <div class="skills-dropdown-container" style="padding: 5px">
+                      <div class="skills-dropdown-selected">
+                        Select one or more
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="skills-dropdown-options">
+                        
+                       {% for skill_option in form.skills %}
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            value="{{ skill_option.skill_name }}  {{ skill_option.choice_label }}"
+                          />{{ skill_option.skill_name }} {{ skill_option.choice_label }}
+                        </div>
+                        {% endfor %}
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <section class="d-flex w-100 flex-column suggested-task-container">
+              <p class="d-flex fs-6 mt-2 duration-text p-1">
+                <span class="text-bolder fw-bold">Suggested Tasks &nbsp</span
+                >[Optional]
+              </p>
+              <div
+                class="d-flex w-100 border border-2 h-100 rounded flex-column"
+              >
+                <div class="d-flex border-bottom w-100 h-25">
+                  {% comment %} <div class="d-flex w-25">
+                    <div class="d-flex form-group flex-column w-100">
+                      {{form.assign_to}}
+                    </div>
+                  </div>
+                  <div class="d-flex w-75">
+                    <div class="d-flex form-group ml-3 flex-column assign-date">
+                      {{form.start_date}}
+                    </div>
+                  </div> {% endcomment %}
+                </div>
+                <div class="d-flex w-100 h-25">
+                  <div class="d-flex form-group w-100 flex-column">
+                    <!-- {{form.associated_task}} -->
+                    <div class="suggestedTask-dropdown-container">
+                      <div class="suggestedTask-dropdown-selected">
+                        Select one or more suggested tasks
+                        <span
+                          style="
+                            width: 100%;
+                            text-align: right;
+                            float: right;
+                            margin-top: -18px;
+                          "
+                        >
+                          <i class="bi bi-chevron-down" style="width: 100"></i>
+                        </span>
+                      </div>
+                      <div class="suggestedTask-dropdown-options">
+                        {% for task_option in form.associated_task %}
+                        <div class="option">
+                          <input
+                            type="checkbox"
+                            class="checkbox"
+                            value="{{ task_option.summary }} {{ task_option.choice_label }}"
+                          />{{ task_option.summary }} {{ task_option.choice_label }}
+                        </div>
+                        {% endfor %}
+                        <!-- Add more options as needed -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="d-flex justify-content-end w-100"
+                  style="margin-top: 20px">
+                  <button
+                    type="button"
+                    class="btn sm-cancle-btn"
+                    data-bs-toggle="button"
+                    style="margin-right: 10px"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </section>
+          </section>
+          <!-- End step 2 -->
+          <div class="all-steps" id="all-steps">
+            <span class="step step1-dot"></span>
+            <span class="step step2-dot"></span>
+          </div>
+        </div>
+        <!-- Buttons -->
+        <section class="d-flex justify-content-end btn-group1 w-100 mt-5">
+          <a href="{% url 'objective:list_objective'  %}"><button
+            type="button"
+            class="btn btn-light cancel-btn"
+            data-bs-toggle="button"
+            autocomplete="off"
+          >
+            Cancel
+          </button></a>
+          
+          <button
+            type="submit"
+            name="submit_action"
+            value="save_as_draft"
+            class="btn btn-light save-draft-btn" 
+          >
+            Save as Draft
+          </button>
+
+          <button
+            type="submit"
+            value="save"
+            name="submit_action"
+            class="btn continue-btn"
+          >
+            Continue
+            <i
+              class="bi bi-arrow-right"
+              style="margin-bottom: -5px; margin-left: 3px"
+            ></i>
+          </button>
+        </section>
+      </form>
+
+      <!-- Button trigger modal -->
+      <button
+        type="button"
+        class="modal-error"
+        hidden
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+      ></button>
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="staticBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- <div class="modal-header">
+                   <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div> -->
+            <div class="modal-body">
+              <p>Fill in all compulsory fields before you continue</p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-light px-4 fw-bold"
+                data-bs-dismiss="modal"
+                style="color: #05256d"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D.O.G. Modal -->
+      <div
+        class="modal fade"
+        id="dog-modal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="dog-modalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- <div class="modal-header">
+                   <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div> -->
+            <div class="modal-body">
+              <p>Enter your D.O.G. criteria</p>
+              <div class="d-flex w-100 h-25 justify-content-center">
+                <div class="d-flex form-group w-100 flex-column">
+                  <input
+                    type="text"
+                    class="form-control form-control-lg custom-dog-input"
+                    placeholder="Type here..."
+                    aria-placeholder="Type your definition of good here"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer d-flex">
+              <button
+                type="button"
+                class="btn btn-light px-4 fw-bold cancle-dog-btn"
+                data-bs-dismiss="modal"
+                style="color: #05256d"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn text-light px-4 fw-bold add-dog-btn"
+                data-bs-dismiss="modal"
+                style="color: #05256d"
+                disabled
+              >
+                Done
+                <i
+                  class="bi bi-check-circle-fill"
+                  style="margin: -5px 0px 0px 3px"
+                ></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Objective Priority Warning Modal -->
+      <!-- Button trigger modal -->
+      <button
+        type="button"
+        class="objective-warning-priority-modal"
+        hidden
+        data-bs-toggle="modal"
+        data-bs-target="#objective-warning-priority-modal"
+      ></button>
+      <div
+        class="modal fade"
+        id="objective-warning-priority-modal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="objectiveWarningPriorityModal"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <!-- <div class="modal-header">
+                   <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div> -->
+            <div class="modal-body">
+              <p style="font-size: 13px" class="plain-warning-text">
+                You are trying to set the priority of a
+                <span class="fw-bold">Financial Objective</span>
+                to <span class="fw-bold">LOW</span>.
+              </p>
+              <p class="text-warning warning-text" style="font-size: 13px">
+                This is not recommended. Are you sure you want to proceed?
+              </p>
+            </div>
+            <div class="modal-footer d-flex">
+              <button
+                type="button"
+                class="btn text-light px-4 fw-bold"
+                data-bs-dismiss="modal"
+                style="background-color: #05256d"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                class="btn btn-light px-4 fw-bold priority-accept"
+                data-bs-dismiss="modal"
+                style="color: #05256d"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    {% endblock content %}
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/new_objective.js' %}"></script>
+  </body>
+</html>

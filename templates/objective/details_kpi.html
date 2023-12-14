@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Objective details</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        color: #333;
+        text-decoration: underline;
+        font-size: 18px;
+      }
+
+      .objective-details {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      .objective-details p {
+        margin: 10px 0;
+        color: #333;
+      }
+
+      .objective-details h2 {
+        margin-top: 20px;
+        color: #333;
+      }
+
+      .objective-details ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .objective-details ul li {
+        margin: 5px 0;
+        color: #555;
+      }
+
+      .icon-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .centered-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .icon {
+        /* ... existing styles ... */
+        margin-right: 10px;
+      }
+
+      .icon i {
+        font-size: 24px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 600px) {
+        .big-card {
+          grid-template-columns: 1fr;
+          /* Adjust for single column on smaller screens */
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% block content %}
+    <div class="container">
+      <h1>KPI Details</h1>
+      <div class="objective-details">
+        <p><strong>KPI Name:</strong> {{ kpi.name }}</p>
+        <p><strong>Description:</strong> {{ kpi.description }}</p>
+        <p><strong>Number:</strong> {{ kpi.number }}</p>
+        <p><strong>Frequency:</strong> {{ kpi.frequency }}</p>
+        <p><strong>Unit:</strong> {{ kpi.unit }}</p>
+        <p><strong>Objective:</strong> <a
+            href="{% url 'objective:detail_objective' kpi.objective.objective_id   %}"  
+          >{{  kpi.objective.objective_name}}</a></p>
+
+        <!-- Add more details as needed -->
+        
+      </div>
+    </div>
+
+   
+    {% endblock content %}
+  </body>
+</html>

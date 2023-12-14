@@ -1,0 +1,193 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.KPI{
+  /*Shape*/
+  width: 1200px;
+  height: 44px;
+  border-bottom: 1px solid rgba(28, 28, 30, 0.11);
+  margin: 0px 12.5%;
+  margin-bottom: 7px;
+  padding: 2%;
+
+  /*Font*/
+  font-size: larger;
+  font-weight: bold;
+}
+.direction{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* border: 1px solid #0e3480; */
+  height: 44px;
+  width: 1100px;
+  margin: 0px 13.5%;
+  padding: 1%;
+}
+.use{
+  height: 35px;
+  width: auto;
+  border: 1px solid rgba(42, 46, 52, 0.80);
+  border-radius: 4px;
+  padding: 5px;
+  cursor: pointer;
+  background-color: white;
+  color: rgba(42, 46, 52, 1);
+}
+.main_for_main{
+    height: auto;
+    width: 100vw;
+    border: 1px solid #0e3480;
+  }
+.main{
+  display: flex;
+  border: 1px solid rgba(28, 28, 30, 0.11);
+  width:  1050px;
+  height: 350px;
+  margin: 0px 18%;
+  margin-top: 35px;
+  border-radius: 10px;
+  padding: 2%;
+}
+    .one{
+      display: flex;
+      flex-direction: column;
+      /* border: 1px solid #0e3480; */
+      width: 50%;
+      height: 100%;
+      margin-top: 0px;
+    }
+      .one div{
+        height: 50%;
+        width: auto;
+        /* border: 1px solid #0e3480; */
+      }
+      .one input{
+        width: 85%;
+        height: 46px;
+        border: 1px solid rgb(171, 169, 169);
+        border-radius: 4px;
+        outline: none;
+        padding-left: 20px;
+        font-size: 17px;
+      }
+      input::placeholder{
+        font-style: italic;
+        font-size: 17px;
+      }
+      p{
+        font-size: 17px;
+        margin-bottom: 5px;
+        font-weight: bold;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      }
+    .two{
+      /* border: 1px solid #0e3480; */
+      width: 50%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .pkpi{
+      margin-left: 20px;
+    }
+    .two div{
+      margin-left: 10px;
+    }
+    .two div div{
+      display: flex;
+      flex-direction: row;
+      margin-right: 20px;
+    }
+    .two div div div{
+      display: flex;
+      flex-direction: column;
+      width: 25%;
+    }
+    .num{
+      width: 70px;
+      height: 27px;
+      outline: none;
+      border: 1px solid #959595;
+      border-radius: 5px;
+    }
+    .unit{
+      width: 120px;
+      height: 27px;
+      outline: none;
+      border: 1px solid #959595;
+      border-radius: 5px;
+    }
+    .frequency{
+      width: 100px;
+      height: 27px;
+      outline: none;
+      border: 1px solid #959595;
+      border-radius: 5px;
+    }
+    .kpivalue{
+      font-size: normal;
+      color: rgb(134, 134, 134) !important;
+      font-weight: 10px !important;
+    }
+.buttons{
+  display: flex;
+  justify-content: space-between;
+  /* border: 1px solid #0e3480; */
+  width: auto;
+  margin: auto 16.5%;
+  margin-left: 40%;
+  height: 48px;
+  margin-top: 25px;
+  background-color: none;
+}
+.cancel, .savet, .saved, .assign{
+  height: 100%;
+  width: 140px;
+  margin: 0px 0px 0px 0px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #0e3480;
+  background-color: white;
+  color: #0e3480;
+  font-weight: bolder;
+}
+.cancel:hover, .saved:hover, .savet:hover{
+  background-color: #0e3480;
+  color: white;
+}
+.assign{
+  background-color: #0e3480;
+  color: white;
+  border: 1px solid #0e3480;
+}
+.assign:hover{
+  background-color: white !important;
+  color: #0e3480;
+}
+.new{
+  width: 105px;
+  height: 40px;
+  margin: 0;
+  margin-left: 80%;
+  margin-top: 0px;
+  background-color: white;
+  border: 1px solid goldenrod;
+  border-radius: 5px;
+}
+span{
+  color: red;
+}
+
+@media screen {
+  
+}

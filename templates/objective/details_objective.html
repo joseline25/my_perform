@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,9 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Objective details</title>
     <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <style>
       body {
         font-family: "Arial", sans-serif;
@@ -103,12 +115,8 @@
         <p><strong>Start Date:</strong> {{ objective.start_date }}</p>
         <p><strong>End Date:</strong> {{ objective.end_date }}</p>
         <p><strong>Priority:</strong> {{ objective.priority }}</p>
-        <p>
-          <strong>Complexity:</strong> {{ objective.complexity }}
-        </p>
-        <p>
-          <strong>Objective Type:</strong> {{ objective.objective_type }}
-        </p>
+        <p><strong>Complexity:</strong> {{ objective.complexity }}</p>
+        <p><strong>Objective Type:</strong> {{ objective.objective_type }}</p>
 
         <h2>Assignees</h2>
         <ul>
@@ -140,11 +148,77 @@
 
         <!-- Add more details as needed -->
         <div class="centered-container">
-          <p><a href="{% url 'objective:edit_objective' objective.objective_id %}" class="btn btn-outline-secondary btn-sm edit" title="Edit">Edit</a></p>
-          <a href="#" class="icon delete-icon"><i class="bx bx-trash"></i></a>
+          <p>
+            <a
+              href="{% url 'objective:edit_objective' objective.objective_id %}"
+              class="btn btn-outline-secondary btn-sm edit"
+              title="Edit"
+              >Edit</a
+            >
+          </p>
+          {% comment %} <a href="#" class="icon delete-icon"><i class="bx bx-trash"></i></a> {% endcomment %}
         </div>
       </div>
     </div>
+
+    <h3>Assigned KPIS</h3>
+
+    {% for kpi in kpis %}
+    <p>
+      <a
+        href="{% url 'objective:detail_kpi' kpi.id   %}"  
+      >{{ kpi.name }} {{ kpi.number }}</a>
+      {% comment %} <a
+        href="{% url 'objective:edit_kpi' kpi.id objective.objective_id  %}"
+        class="btn btn-outline-secondary btn-sm edit"
+        title="Edit"
+      >
+        <button type="button" class="btn btn-light">Edit</button>
+      </a> {% endcomment %}
+    </p>
+
+    {% empty %}
+    <p>No KPIs assigned yet!.</p>
+    {% endfor %}
+    <h3>Create KPIS</h3>
+    <form method="post" action="">
+      {% csrf_token %} {% comment %} {{ form.as_p }} {% endcomment %}
+
+      <div class="main">
+        <div class="one">
+          <div>
+            <p style="margin-top: 60px">KPI Name <span class="star">*</span></p>
+            {{ form.name}}
+          </div>
+
+          <div>
+            <p style="margin-top: 20px">Description</p>
+            {{ form.description }}
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <p class="pkpi">KPI Value <span>*</span></p>
+            <div>
+              <div>
+                <p style="margin-top: 60px">Number</p>
+                {{ form.number }}
+              </div>
+              <div>
+                <p style="margin-top: 60px">Unit</p>
+                {{ form.unit }}
+              </div>
+              <div>
+                <p style="margin-top: 60px">Frequency</p>
+                {{ form.frequency }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">Save</button>
+    </form>
     {% endblock content %}
   </body>
 </html>
