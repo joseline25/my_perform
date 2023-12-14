@@ -1,19 +1,7 @@
 from django.db import models
-<<<<<<< HEAD
-from django.contrib.auth.models import User
-from objective.models import Objective, Tool, Skill
-
-# Anderson
-class Question(models.Model):
-    question = models.TextField(null=True, blank=True)
-    number = models.IntegerField(null=True,)
-    answer = models.BooleanField(null=True)
-    # related_action = models.ForeignKey(Actions, on_delete=models.CASCADE)
-    related_action = models.CharField(max_length=100)
-=======
 from django.contrib.auth.models import User 
 from objective.models import Objective, Tool,Skill
-from models_additionals.question import Question
+from action.models_additionals.question import Question
 
 
 class Actions(models.Model):
@@ -23,7 +11,6 @@ class Actions(models.Model):
     completion_time = models.TimeField(null=False)
     collaborators = models.ManyToManyField(User,related_name="actions", through="User" ,on_delete=models.PROTECT)
     comment = models.TextField(max_length=200, null=True, blank=True)
->>>>>>> master
     created_at = models.DateTimeField(auto_now_add=True)
     added_by = models.ForeignKey(User, on_delete=models.PROTECT)
     
@@ -48,14 +35,12 @@ class ActionTool(models.Model):
     
     
 class ActionSkill(models.Model):
-<<<<<<< HEAD
-    skill_id = models.ForeignKey(Skill, on_delete=models.PROTECT)
-    # action_id = models.ForeignKey(Actions, on_delete=models.SET_NULL)
-    action_id = models.CharField(max_length=100)
-=======
+# <<<<<<< HEAD
+#     skill_id = models.ForeignKey(Skill, on_delete=models.PROTECT)
+#     # action_id = models.ForeignKey(Actions, on_delete=models.SET_NULL)
+#     action_id = models.CharField(max_length=100)
     skill_id = models.ForeignKey(Skill,on_delete=models.PROTECT)
     action_id = models.ForeignKey(Actions,on_delete=models.PROTECT)
->>>>>>> master
     created_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT) 
 
