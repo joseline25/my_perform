@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
-from objective.models import Objective, Tool
+from objective.models import Objective, Tool, Skill
 
 # Anderson
 class Question(models.Model):
     question = models.TextField(null=True, blank=True)
     number = models.IntegerField(null=True,)
     answer = models.BooleanField(null=True)
-    related_action = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    # related_action = models.ForeignKey(Actions, on_delete=models.CASCADE)
+    related_action = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -21,15 +22,16 @@ class Collaborator(models.Model):
 class ActionTool(models.Model):
     tool_id = models.ForeignKey(Tool, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
     
     def __str__(self):
         return 
     
     
 class ActionSkill(models.Model):
-    skill_id = models.ForeignKey()
-    action_id = models.ForeignKey(Actions, on_delete=models.SET_NULL)
+    skill_id = models.ForeignKey(Skill, on_delete=models.PROTECT)
+    # action_id = models.ForeignKey(Actions, on_delete=models.SET_NULL)
+    action_id = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE) 
 

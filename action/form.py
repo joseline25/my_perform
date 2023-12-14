@@ -1,5 +1,5 @@
 from django import forms
-from action.models import Question
+from action.models import Question, Actions
 
 # validators
 # when number has a value answer is null, when answer has a value number is null
@@ -14,3 +14,11 @@ class QuestionForm(forms.ModelForm):
             answer = None
         elif answer:
             number = None
+            
+            
+            
+# form for action
+class ActionForm(forms.ModelForm):
+    class Meta:
+        model = Actions
+        fields = ['objective', 'questions_id', 'completion_time', 'collaborators_id', 'comment', 'added_by']

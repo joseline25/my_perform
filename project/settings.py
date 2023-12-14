@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     
     # perform app
     'objective',
+    'action',
     
 ]
 
