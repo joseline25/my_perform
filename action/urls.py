@@ -4,9 +4,7 @@ from .views import ActionView
 
 
 urlpatterns = [
-    path('action/create'),
-    path('action/list'),
-    path('action/view/<int:action_id>/'),
-    path('create/', ActionView.as_view(), name='create-action'),
-
+    path('', views.list_actions, name='list_actions'),
+    #path('create/', views.create_objective, name='create_objective'),
+    path('details/<int:id>/', views.details_action, name="details_action"),
 ]
