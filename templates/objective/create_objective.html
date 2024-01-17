@@ -4,7 +4,7 @@
 
 <h1>Create Objective</h1>
 
-<form method="POST">
+<form method="POST" >
   {% csrf_token %} {{ form.as_p}}
 
   <button type="submit" value="create" class="btn btn-primary">Create</button>
