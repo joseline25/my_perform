@@ -34,16 +34,22 @@ class Team(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(max_length=300, null=False)
     created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE)
+        User, on_delete=models.CASCADE, related_name='team_created')
     updated_at = models.DateTimeField(auto_now=True)
     skills = models.ManyToManyField(
         Skill, related_name="skills", through="TeamSkill")
+    users = models.ManyToManyField(User, through='UserTeam')
 
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
         return self.name
+
+
+class UserTeam(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', on_delete=models.CASCADE)
 
 
 class Tool(models.Model):
@@ -99,6 +105,8 @@ class Objective(models.Model):
     complexities = [('Easy', 'Easy'), ('Hard', 'Hard')]
     objective_types = [('Financial', 'Financial'),
                        ('Non-Financial', 'Non-Financial')]
+    repeat_frequency = [('Daily', 'Daily'), ('Weekly',
+                                             'Weekly'), ('Monthly', 'Monthly')]
 
     objective_id = models.AutoField(primary_key=True)
     objective_name = models.CharField(max_length=300, blank=True, null=True)
@@ -114,7 +122,7 @@ class Objective(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     evaluator = models.ForeignKey(
         User, related_name="evaluator", on_delete=models.CASCADE, blank=True, null=True)
-    repeat_date = models.DateTimeField(null=True, blank=True)
+    repeat_date = models.CharField(choices=repeat_frequency, max_length=100, blank=True, null=True)
     deadline = models.DateTimeField(null=True, blank=True)
     action_phrase = models.CharField(max_length=300, null=False, blank=True)
     number = models.IntegerField(null=False)
@@ -132,7 +140,6 @@ class Objective(models.Model):
         "DefinitionOfGood", related_name="definition_of_good", blank=True, null=True)
     is_draft = models.BooleanField(default=False)
     repeat = models.BooleanField(default=False)
-    
 
     class Meta:
         ordering = ['-created_at']
@@ -140,8 +147,21 @@ class Objective(models.Model):
     def __str__(self):
         return f"{self.objective_name}"
 
+    # override the save method
+    def save(self, *args, **kwargs):
+        # check if end_date is further than deadline
+        if self.deadline and self.end_date and self.deadline < self.end_date:
+            # set the end_date to the deadline
+            self.end_date = self.deadline
+            
+        # check that repeat == True before setting repeat date
+        if self.repeat == False:
+            self.repeat_date = None
+        # on renvoit la main à la méthode save originale
+        super().save(*args, **kwargs)
 
-# Create the Defination of Good Model
+
+# Create the Definition of Good Model
 
 class DefinitionOfGood(models.Model):
     dog_id = models.AutoField(primary_key=True)
@@ -218,7 +238,6 @@ class KPI(models.Model):
     # the associated objectives
     objective = models.ForeignKey(
         Objective, blank=True, null=True, related_name="objective_kpis", on_delete=models.CASCADE)
-    
 
     class Meta:
         ordering = ['-created_at']

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'objective',
     'action',
     
+    # DRF
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

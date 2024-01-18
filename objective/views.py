@@ -131,7 +131,7 @@ def create_objective(request):
             # form.save()
             # create a new Objective instance without saving it to the database immediately.
             new_objective = form.save(commit=False)
-
+            print(form)
             # Proceed field
             assign_to = form.cleaned_data['assign_to']
             visible_to = form.cleaned_data['visible_to']
@@ -149,7 +149,7 @@ def create_objective(request):
             skills = form.cleaned_data['skills']
             tools = form.cleaned_data['tools']
             dog = form.cleaned_data['dog']
-            is_draft = form.cleaned_data['is_draft']
+            #is_draft = form.cleaned_data['is_draft']
             repeat = form.cleaned_data['repeat']
             deadline = form.cleaned_data['deadline']
             # save

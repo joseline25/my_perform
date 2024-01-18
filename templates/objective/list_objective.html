@@ -30,7 +30,7 @@
             <!-- <h5 class="card-title">Objective</h5> -->
             <p>Assign_to: {% for user in obj.assign_to.all %} <p>{{ user.username }}</p>  {% endfor %}</p>
             <hr />
-            <p>Objective Name: {{ obj.objective_name}}  {% if obj.is_draft %} (Draft version) {% endif %} </p>
+            <p>Action Phrase: {{ obj.action_phrase}}  {% if obj.is_draft %} (Draft version) {% endif %} </p>
             <hr />
             <p>Visible to : {% for p in obj.assign_to.all %} <p>{{ p.username}}</p> {% endfor %}</p>
             <hr />
