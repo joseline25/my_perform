@@ -39,15 +39,15 @@ class ObjectiveForm(forms.ModelForm):
             'units': forms.TextInput(attrs={'class': 'form-control italic-placeholder units-input', 'placeholder': 'E.g. Emails, Notes'}),
             'priority': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-priority'}),
             'complexity': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-complexity'}),
-            'dog': forms.CheckboxSelectMultiple (attrs={'class': 'form-select border-0  form-select-lg italic-placeholder',  'placeholder': 'Enter Acceptance Criteria', 'style': 'background-color: #EBEBEB;'}, ),
-            'assign_to': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder option checkbox',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'visible_to': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Visible To', 'style': 'height: 100px;'}),
-            'tools': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'associated_task': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'evaluator': forms.Select(attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'skills': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'dog': forms.CheckboxSelectMultiple (attrs={ 'placeholder': 'Enter Acceptance Criteria', 'style': 'background-color: #EBEBEB;'}, ),
+            'assign_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'visible_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Visible To', 'style': 'height: 100px;'}),
+            'tools': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'associated_task': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'evaluator': forms.Select(attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'skills': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
             # 'choices': Objective.objective_types}
-            'objective_type': forms.RadioSelect(attrs={'class': 'radio objective-type', 'type': 'radio', }),
+            'objective_type': forms.RadioSelect(attrs={ 'type': 'radio', }),
             # 'repeat': forms.RadioSelect(attrs={'class': 'repeat-radio', 'type': 'radio'}),
         }
 
