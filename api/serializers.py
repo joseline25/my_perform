@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from objective.models import Objective, Team
+from objective.models import Objective, Team, KPI
 from action.models import Action
 from django.contrib.auth.models import User
 
@@ -28,4 +28,12 @@ class ActionSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class  Meta:
         model = User
+        fields = '__all__'
+        
+
+# KPI
+
+class KPISerializer(serializers.ModelSerializer):
+    class  Meta:
+        model = KPI
         fields = '__all__'

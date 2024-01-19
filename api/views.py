@@ -1,20 +1,15 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer
-from objective.models import Objective, Team, UserTeam
+from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer
+from objective.models import Objective, Team, UserTeam, KPI
 from action.models import Action
-
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import status
-
-
-
-
+from django.shortcuts import get_object_or_404
 
 
 # list of objectives
-
 
 @api_view(['GET'])
 def all_objectives(request):
@@ -44,10 +39,31 @@ def objective_detail(request, objective_id):
 def create_objective(request):
     serializer = ObjectiveSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        print(serializer.data)
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        print("Validated Data:", serializer.validated_data)
+
+        # save 
+        new_objective = serializer.save()
+
+        # many to many fields
+        new_objective.assign_to.set(serializer.validated_data.get('assign_to'))
+        new_objective.visible_to.set(
+            serializer.validated_data.get('visible_to'))
+        new_objective.associated_task.set(
+            serializer.validated_data.get('associated_task'))
+        # if 'skills' in serializer.validated_data:
+        #     new_objective.skills.set(serializer.validated_data['skills'])
+        # if 'tools' in serializer.validated_data:
+        #     new_objective.tools.set(serializer.validated_data.get('tools'))
+        
+        new_objective.skills.set(serializer.validated_data.get('skills'))
+        new_objective.tools.set(serializer.validated_data.get('tools'))
+        new_objective.dog.set(serializer.validated_data.get('dog'))
+
+        return Response({'status': 'success', 'message': 'Objective created successfully'}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # list of actions
@@ -88,9 +104,9 @@ def team_users(request, id):
     return Response(serializer.data['users'])
 
 
-# Users 
+# Users
 
-# get all the users 
+# get all the users
 @api_view(['GET'])
 def all_users(request):
     users = User.objects.all()
@@ -110,20 +126,40 @@ def user_detail(request, user_id):
     return Response(serializer.data)
 
 
-
-
 # get the users in the same team as a specific user
 @api_view(['GET'])
 def users_in_same_team(request, user_id):
     try:
-        # get the user 
+        # get the user
         user = User.objects.get(pk=user_id)
         # get allthe users of his team
         user_teams = Team.objects.filter(userteam__user=user)
         # filter all the other users except user
-        users_in_same_team = User.objects.filter(userteam__team__in=user_teams).exclude(id=user_id)
+        users_in_same_team = User.objects.filter(
+            userteam__team__in=user_teams).exclude(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serializer = UserSerializer(users_in_same_team, many=True)
     return Response(serializer.data)
+
+
+# list of kpis for an objective
+
+@api_view(['GET', 'POST'])
+def kpi_list_create(request, objective_id):
+    objective = get_object_or_404(Objective, objective_id=objective_id)
+
+    if request.method == 'GET':
+        kpis = KPI.objects.filter(objective=objective)
+        serializer = KPISerializer(kpis, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = KPISerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(objective=objective)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

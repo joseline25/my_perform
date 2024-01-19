@@ -246,4 +246,26 @@ class KPI(models.Model):
         return self.name
 
 
-#
+
+{
+  "objective_name": "Test Objective",
+  "assign_to": [1, 2],  
+  "visible_to": [1],    
+  "associated_task": [1], 
+  "evaluator": 1,       
+  "repeat_date": "Weekly",
+  "deadline": "2024-02-01T12:00:00Z",
+  "action_phrase": "Test Action",
+  "number": 5,
+  "units": "Test Units",
+  "start_date": "2024-01-01T08:00:00Z",
+  "end_date": "2024-01-31T18:00:00Z",
+  "priority": "High",
+  "complexity": "Hard",
+  "objective_type": "Financial",
+  "skills": [1, 2],     
+  "tools": [3],        
+  "dog": [4],           
+  "is_draft": False,
+  "repeat": True
+}

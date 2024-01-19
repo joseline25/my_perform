@@ -5,6 +5,11 @@ urlpatterns = [
     # objectives
     path('', views.all_objectives, name='objectives_api'),
     path('create/', views.create_objective, name='create_objective_api'),  
+    # get all the kpis of an objective and create one for this objectiive
+    path('objective/<int:objective_id>/kpis/', views.kpi_list_create, name='kpi_list_create'),
+    # details of an objective
+    path('<int:objective_id>/', views.objective_detail, name='objective_detail'),
+    
     
     path('<int:objective_id>/', views.objective_detail, name='objective_detail'),  
     # actions
