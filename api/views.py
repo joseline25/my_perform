@@ -63,13 +63,14 @@ def all_actions(request):
 
 #list of actions for a specific objective 
 @api_view(["GET"])
-def objectives_action(request, id, objective_id):
+def action_objective(request, objective_id):
     try:
-        action = Action.objects.get(objective=objective_id)
+        actions = Action.objects.filter(objective=objective_id)
+
     except Action.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    serializer = ActionSerializer(action)
+    serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data)
 
 
@@ -88,11 +89,11 @@ def action_details(request, id):
 @api_view(['GET'])
 def questions(request, objective_id):
     try:
-        question = Question.objects.get(pk=objective_id)
+        questions = Question.objects.filter(objective_id=objective_id)
     except Question.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    serializer = QuestionSerializer(question)
+    serializer = QuestionSerializer(questions)
     return Response(serializer.data)
 
 

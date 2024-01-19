@@ -19,9 +19,12 @@ class TeamSerializer(serializers.ModelSerializer):
 
 # Action       
 class ActionSerializer(serializers.ModelSerializer):
+    action_name = serializers.CharField()
     class Meta:
         model = Action
         fields = '__all__'
+        #['action_name', 'objective', 'completion_time', 'collaborators', 'comment', 'tools',
+          #        'skills', 'achievements', 'added_by']
             
         
 # User
