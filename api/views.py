@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer
+from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, QuestionSerializer
 from objective.models import Objective, Team, UserTeam
-from action.models import Action
+from action.models import Action, Question
 
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
@@ -22,6 +22,8 @@ def all_objectives(request):
     serializer = ObjectiveSerializer(objectives, many=True)
     return Response(serializer.data)
 
+
+
 # creation du endpoint qui est l'url dans urls.py
 
 # details of one objective
@@ -36,6 +38,8 @@ def objective_detail(request, objective_id):
 
     serializer = ObjectiveSerializer(objective)
     return Response(serializer.data)
+
+
 
 # create an objective
 
@@ -56,6 +60,41 @@ def all_actions(request):
     actions = Action.objects.all()
     serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data)
+
+#list of actions for a specific objective 
+@api_view(["GET"])
+def objectives_action(request, id, objective_id):
+    try:
+        action = Action.objects.get(objective=objective_id)
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ActionSerializer(action)
+    return Response(serializer.data)
+
+
+#action details
+@api_view(["GET"])
+def action_details(request, id):
+    try:
+        action = Action.objects.get(pk=id)
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ActionSerializer(action)
+    return Response(serializer.data)
+
+#list of questions for an objective
+@api_view(['GET'])
+def questions(request, objective_id):
+    try:
+        question = Question.objects.get(pk=objective_id)
+    except Question.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = QuestionSerializer(question)
+    return Response(serializer.data)
+
 
 # create an action
 
