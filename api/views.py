@@ -9,6 +9,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 
+
+
 # list of objectives
 
 @api_view(['GET'])
@@ -39,10 +41,10 @@ def objective_detail(request, objective_id):
 def create_objective(request):
     serializer = ObjectiveSerializer(data=request.data)
     if serializer.is_valid():
-        
+
         print("Validated Data:", serializer.validated_data)
 
-        # save 
+        # save
         new_objective = serializer.save()
 
         # many to many fields
@@ -55,15 +57,14 @@ def create_objective(request):
         #     new_objective.skills.set(serializer.validated_data['skills'])
         # if 'tools' in serializer.validated_data:
         #     new_objective.tools.set(serializer.validated_data.get('tools'))
-        
+
         new_objective.skills.set(serializer.validated_data.get('skills'))
         new_objective.tools.set(serializer.validated_data.get('tools'))
-        new_objective.dog.set(serializer.validated_data.get('dog'))
+        #new_objective.dog.set(serializer.validated_data.get('dog'))
 
         return Response({'status': 'success', 'message': 'Objective created successfully'}, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 # list of actions
@@ -146,14 +147,41 @@ def users_in_same_team(request, user_id):
 
 # list of kpis for an objective
 
+# @api_view(['GET', 'POST'])
+# def kpi_list_create(request, objective_id):
+#     objective = get_object_or_404(Objective, objective_id=objective_id)
+
+#     if request.method == 'GET':
+#         kpis = KPI.objects.filter(objective=objective)
+#         serializer = KPISerializer(kpis, many=True)
+#         return Response(serializer.data)
+
+#     elif request.method == 'POST':
+#         serializer = KPISerializer(data=request.data)
+
+#         if serializer.is_valid():
+#             serializer.save(objective=objective)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET', 'POST'])
 def kpi_list_create(request, objective_id):
     objective = get_object_or_404(Objective, objective_id=objective_id)
 
     if request.method == 'GET':
+        # serialize the objective details and the KPIs
+        objective_serializer = ObjectiveSerializer(objective)
         kpis = KPI.objects.filter(objective=objective)
-        serializer = KPISerializer(kpis, many=True)
-        return Response(serializer.data)
+        kpi_serializer = KPISerializer(kpis, many=True)
+
+        response_data = {
+            'objective': objective_serializer.data,
+            'kpis': kpi_serializer.data
+        }
+
+        return Response(response_data)
 
     elif request.method == 'POST':
         serializer = KPISerializer(data=request.data)
@@ -163,3 +191,29 @@ def kpi_list_create(request, objective_id):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# create a kpi indepedently 
+@api_view(['POST'])
+def create_kpi(request):
+    serializer = KPISerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+# get all the kpis
+@api_view(['GET'])
+def kpis_all(request):
+    kpis = KPI.objects.all()
+    kpi_serializer = KPISerializer(kpis, many=True)
+    return Response(kpi_serializer.data)
+
+
+
+{"name": "kpi_1",
+"description": "the first kpis too test the KPI form",
+"number": 3 ,
+"frequency": "Weekly",
+"unit": 1 ,
+"objective": 1}

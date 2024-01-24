@@ -40,7 +40,7 @@ class ObjectiveForm(forms.ModelForm):
             'units': forms.TextInput(attrs={'class': 'form-control italic-placeholder units-input', 'placeholder': 'E.g. Emails, Notes'}),
             'priority': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-priority'}),
             'complexity': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-complexity'}),
-            'dog': forms.CheckboxSelectMultiple (attrs={ 'placeholder': 'Enter Acceptance Criteria', 'style': 'background-color: #EBEBEB;'}, ),
+            'dog': forms.TextInput(attrs={'placeholder': 'E.g Employ 5 Developers by March'}),
             'assign_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To'}),
             'visible_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Visible To', 'style': 'height: 100px;'}),
             'tools': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),

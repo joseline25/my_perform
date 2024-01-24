@@ -10,6 +10,9 @@ urlpatterns = [
     path('edit/<int:id>/', views.edit_objective, name="edit_objective"),
     path('edit_kpi/<int:id>/<int:objective_id>', views.edit_kpi, name="edit_kpi"),
     path('details_kpi/<int:id>',views.details_kpi, name='detail_kpi'),
+    # assign_to_to
+    path('get_all_teams/', views.get_all_teams, name='get_all_teams'),
+    path('get_all_users/', views.get_all_users, name='get_all_users'),
     
     # corrections after the demo of december 12th
     path('create_two/', views.create_objective_two, name= 'create_objective_two'),

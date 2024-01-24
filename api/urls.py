@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:objective_id>/', views.objective_detail, name='objective_detail'),
     
     
-    path('<int:objective_id>/', views.objective_detail, name='objective_detail'),  
+
     # actions
     path('actions', views.all_actions, name='actions_api'),
     path('create_action/', views.create_action, name='create_action'),
@@ -26,4 +26,12 @@ urlpatterns = [
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('users/<int:user_id>/same-team/', views.users_in_same_team, name='users_in_same_team'),
     
+    # KPIs
+    # create a kpi
+    path('create_kpi', views.create_kpi, name="create_kpi"),
+    # get the list of all kpis 
+    path('kpis_all', views.kpis_all, name="kpis_all"),
+    
 ]
+
+
