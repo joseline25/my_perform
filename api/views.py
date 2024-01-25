@@ -16,8 +16,20 @@ from django.shortcuts import get_object_or_404
 @api_view(['GET'])
 def all_objectives(request):
     objectives = Objective.objects.all()
-    serializer = ObjectiveSerializer(objectives, many=True)
-    return Response(serializer.data)
+    objectives_serializer = ObjectiveSerializer(objectives, many=True)
+    
+    users = User.objects.values('username', 'first_name', 'last_name', 'email')
+    users_serializer = UserSerializer(users, many=True)
+
+
+    response_data = {
+            'objectives': objectives_serializer.data,
+            'users': users_serializer.data
+        }
+
+    
+    
+    return Response(response_data)
 
 # creation du endpoint qui est l'url dans urls.py
 
