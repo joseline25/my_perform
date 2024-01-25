@@ -23,7 +23,6 @@ def all_objectives(request):
     return Response(serializer.data)
 
 
-
 # creation du endpoint qui est l'url dans urls.py
 
 # details of one objective
