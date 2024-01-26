@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer
-from objective.models import Objective, Team, UserTeam, KPI
+from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer, ToolSerializer, SkillSerializer, TaskSerializer
+from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill, Task 
 from action.models import Action
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
@@ -223,3 +223,22 @@ def kpis_all(request):
  "frequency": "Weekly",
  "unit": 1,
  "objective": 1}
+
+@api_view(['GET'])
+def all_tools(request):
+    tools = Tool.objects.all()
+    serializer = ToolSerializer(tools, many=True)
+    return Response(serializer.data)
+    
+@api_view(['GET'])
+def get_skills(request):
+    skills = Skill.objects.all()
+    serializer = SkillSerializer(skills, many=True)
+    return Response(serializer.data) 
+
+@api_view(['GET'])
+def get_all_tasks(request):
+    tasks = Task.objects.all()
+    serializer = TaskSerializer(tasks, many=True)
+    return Response(serializer.data) 
+
