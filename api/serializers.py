@@ -68,6 +68,7 @@ class ActionSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     tools = ToolSerializer(many=True)
     achievements = AchievementSerializer(many=True)
+    
     class Meta:
         model = Action
         fields = '__all__'
