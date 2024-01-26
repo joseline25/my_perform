@@ -3,6 +3,8 @@ from objective.models import Objective, Team, KPI
 from action.models import Action
 from django.contrib.auth.models import User
 
+
+
 # Objective
 class ObjectiveSerializer(serializers.ModelSerializer):
     class  Meta:
@@ -24,12 +26,7 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
         
-# User
-class UserSerializer(serializers.ModelSerializer):
-    class  Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-        
+
 
 # KPI
 
