@@ -1,15 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-<<<<<<< HEAD
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, QuestionSerializer
-from objective.models import Objective, Team, UserTeam
-from action.models import Action, Question
-
-=======
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer
+from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer, QuestionSerializer
 from objective.models import Objective, Team, UserTeam, KPI
-from action.models import Action
->>>>>>> master
+from action.models import Action, Question
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import status

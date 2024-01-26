@@ -4,10 +4,6 @@ from .import views
 urlpatterns = [
     # objectives
     path('', views.all_objectives, name='objectives_api'),
-<<<<<<< HEAD
-    path('create/', views.create_objective, name='create_objective_api'), 
-    path('<int:objective_id>/', views.objective_detail, name='objective_detail'),  
-=======
     path('create/', views.create_objective, name='create_objective_api'),  
     # get all the kpis of an objective and create one for this objectiive
     path('objective/<int:objective_id>/kpis/', views.kpi_list_create, name='kpi_list_create'),
@@ -15,7 +11,6 @@ urlpatterns = [
     path('<int:objective_id>/', views.objective_detail, name='objective_detail'),
     
     
->>>>>>> master
 
     # actions
     path('actions', views.all_actions, name='actions_api'),

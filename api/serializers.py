@@ -47,12 +47,16 @@ class ObjectiveSerializer(serializers.ModelSerializer):
 
 # Team
 class TeamSerializer(serializers.ModelSerializer):
+    skills = SkillSerializer(many=True)
+    created_by = UserSerializer()
+    users = UserSerializer(many=True)
     class  Meta:
         model = Team
         fields = '__all__'
 
 #Questions
 class QuestionSerializer(serializers.ModelSerializer):
+    objective = ObjectiveSerializer()
     class  Meta:
         model = Question
         fields = '__all__'       
@@ -68,6 +72,9 @@ class ActionSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     tools = ToolSerializer(many=True)
     achievements = AchievementSerializer(many=True)
+    questions = QuestionSerializer(many=True)
+    collaborators = UserSerializer(many=True)
+    added_by = UserSerializer(many=True)
     
     class Meta:
         model = Action
@@ -78,4 +85,14 @@ class ActionSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class  Meta:
         model = User
+        fields = '__all__'
+
+class KPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KPI
+        fields = '__all__'
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
         fields = '__all__'
