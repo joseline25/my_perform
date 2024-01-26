@@ -4,7 +4,7 @@ from .import views
 urlpatterns = [
     # objectives
     path('', views.all_objectives, name='objectives_api'),
-    path('create/', views.create_objective, name='create_objective_api'),  
+    path('create/', views.create_objective, name='create_objective_api'), 
     path('<int:objective_id>/', views.objective_detail, name='objective_detail'),  
 
     # actions
