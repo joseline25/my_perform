@@ -10,6 +10,7 @@ class ObjectiveForm(forms.ModelForm):
     objective_type = forms.ChoiceField(
         choices=Objective.objective_types, widget=forms.RadioSelect)
     complexity = forms.ChoiceField(choices=Objective.complexities)
+    repeat_date = forms.ChoiceField(choices=Objective.repeat_frequency)
     priority = forms.ChoiceField(choices=Objective.priorities)
     # Set the queryset to the desired choices
     evaluator = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
@@ -26,7 +27,7 @@ class ObjectiveForm(forms.ModelForm):
             # format='%Y-%m-%d',
             'deadline': forms.DateInput(attrs={'class': 'form-control italic-placeholder deadline-input', 'placeholder': 'Deadline', 'type': 'date'}),
 
-            'repeat_date': forms.DateInput(attrs={'class': 'form-control form-control-lg italic-placeholder repeat-date', 'placeholder': 'Repeat date', 'type': 'date'}),
+            'repeat_date': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder '}),
             'start_date': forms.DateInput(attrs={'class': ' start-date form-control form-control-lg italic-placeholder', 'placeholder': 'Select a '
                                                  'date',
                                                  'type': 'date'}),
@@ -39,8 +40,8 @@ class ObjectiveForm(forms.ModelForm):
             'units': forms.TextInput(attrs={'class': 'form-control italic-placeholder units-input', 'placeholder': 'E.g. Emails, Notes'}),
             'priority': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-priority'}),
             'complexity': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-complexity'}),
-            'dog': forms.CheckboxSelectMultiple (attrs={ 'placeholder': 'Enter Acceptance Criteria', 'style': 'background-color: #EBEBEB;'}, ),
-            'assign_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'dog': forms.TextInput(attrs={'placeholder': 'E.g Employ 5 Developers by March'}),
+            'assign_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To'}),
             'visible_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Visible To', 'style': 'height: 100px;'}),
             'tools': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
             'associated_task': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),

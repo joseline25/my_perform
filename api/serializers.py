@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from objective.models import Objective, Team, Skill, Tool, DefinitionOfGood
+from objective.models import Objective, Team, KPI, Skill, Tool, DefinitionOfGood
 from action.models import Action, Question, Achievement
 from django.contrib.auth.models import User
 
@@ -74,7 +74,8 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = '__all__'
             
         
-
-
-
-
+# User
+class UserSerializer(serializers.ModelSerializer):
+    class  Meta:
+        model = User
+        fields = '__all__'
