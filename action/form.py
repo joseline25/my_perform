@@ -1,5 +1,5 @@
 from django import forms
-from action.models import Question, Actions
+from action.models import Question, Action
 
 # validators
 # when number has a value answer is null, when answer has a value number is null
@@ -20,5 +20,5 @@ class QuestionForm(forms.ModelForm):
 # form for action
 class ActionForm(forms.ModelForm):
     class Meta:
-        model = Actions
-        fields = ['objective', 'questions_id', 'completion_time', 'collaborators_id', 'comment', 'added_by']
+        model = Action
+        fields = ['action_name','objective', 'questions', 'completion_time', 'collaborators', 'comment', 'skills', 'achievements', 'added_by']

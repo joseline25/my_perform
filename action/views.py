@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 from django.views import View
-from .models import Actions
+from .models import Action
 from .form import ActionForm
 
 # Create your views here.
@@ -11,10 +11,9 @@ class ActionView(View):
         form = ActionForm(request.POST)
         if form.is_valid():
             form.save()
-            return True
-        else:
-            return False    
-    
+            return redirect('create-action')     
+        return render(request, 'action/create_action.html', {'form': form})    
+ # redirect('create-action')    
 # list of actions
 
 def list_actions(request):
