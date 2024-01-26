@@ -9,26 +9,21 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 
-
-
 # list of objectives
 
 @api_view(['GET'])
 def all_objectives(request):
     objectives = Objective.objects.all()
     objectives_serializer = ObjectiveSerializer(objectives, many=True)
-    
+
     users = User.objects.values('username', 'first_name', 'last_name', 'email')
     users_serializer = UserSerializer(users, many=True)
 
-
     response_data = {
-            'objectives': objectives_serializer.data,
-            'users': users_serializer.data
-        }
+        'objectives': objectives_serializer.data,
+        'users': users_serializer.data
+    }
 
-    
-    
     return Response(response_data)
 
 # creation du endpoint qui est l'url dans urls.py
@@ -72,7 +67,7 @@ def create_objective(request):
 
         new_objective.skills.set(serializer.validated_data.get('skills'))
         new_objective.tools.set(serializer.validated_data.get('tools'))
-        #new_objective.dog.set(serializer.validated_data.get('dog'))
+        # new_objective.dog.set(serializer.validated_data.get('dog'))
 
         return Response({'status': 'success', 'message': 'Objective created successfully'}, status=status.HTTP_201_CREATED)
     else:
@@ -205,7 +200,7 @@ def kpi_list_create(request, objective_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# create a kpi indepedently 
+# create a kpi indepedently
 @api_view(['POST'])
 def create_kpi(request):
     serializer = KPISerializer(data=request.data)
@@ -222,10 +217,9 @@ def kpis_all(request):
     return Response(kpi_serializer.data)
 
 
-
 {"name": "kpi_1",
-"description": "the first kpis too test the KPI form",
-"number": 3 ,
-"frequency": "Weekly",
-"unit": 1 ,
-"objective": 1}
+ "description": "the first kpis too test the KPI form",
+ "number": 3,
+ "frequency": "Weekly",
+ "unit": 1,
+ "objective": 1}
