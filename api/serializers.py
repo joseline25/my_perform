@@ -57,8 +57,17 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = '__all__'       
 
+#Achievements
+class AchievementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Achievement
+        fields = '__all__'
+
 # Action       
 class ActionSerializer(serializers.ModelSerializer):
+    skills = SkillSerializer(many=True)
+    tools = ToolSerializer(many=True)
+    achievements = AchievementSerializer(many=True)
     class Meta:
         model = Action
         fields = '__all__'
