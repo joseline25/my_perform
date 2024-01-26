@@ -8,3 +8,4 @@ admin.site.register(ActionTool)
 admin.site.register(ActionSkill)
 admin.site.register(Achievement)
 admin.site.register(Question)
+
