@@ -14,7 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 # Skill
 
-
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
@@ -50,10 +49,19 @@ class ObjectiveSerializer(serializers.ModelSerializer):
     assign_to = UserSerializer(many=True)
     visible_to = UserSerializer(many=True)
     associated_task = TaskSerializer(many=True)
+    
+    # Datetime fields formatting 
+    
+    #created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Objective
         fields = '__all__'
+        
+    # def get_created_at(self, obj):
+    #     # Modify the representation of your datetime field here
+    #     formatted_datetime = obj.created_at.strftime("%b %d, %Y %I:%M %p")
+    #     return formatted_datetime
 
 
 
