@@ -263,3 +263,22 @@ def kpis_all(request):
  "frequency": "Weekly",
  "unit": 1,
  "objective": 1}
+
+@api_view(['GET'])
+def all_tools(request):
+    tools = Tool.objects.all()
+    serializer = ToolSerializer(tools, many=True)
+    return Response(serializer.data)
+    
+@api_view(['GET'])
+def get_skills(request):
+    skills = Skill.objects.all()
+    serializer = SkillSerializer(skills, many=True)
+    return Response(serializer.data) 
+
+@api_view(['GET'])
+def get_all_tasks(request):
+    tasks = Task.objects.all()
+    serializer = TaskSerializer(tasks, many=True)
+    return Response(serializer.data) 
+
