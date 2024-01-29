@@ -1,0 +1,16 @@
+List of endpoints
+
+List of all objectives: 
+List of all actions
+Create objectives
+Create actions 
+Create KPIs
+List of all KPIs 
+List of all teams 
+List of all KPIs of an objectives
+Create KPI of an objective 
+List of all uses 
+List of users in terms 
+Details of an objective 
+Details of a users 
+List of questions for an objective 
