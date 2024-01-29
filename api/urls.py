@@ -29,16 +29,19 @@ urlpatterns = [
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('users/<int:user_id>/same-team/', views.users_in_same_team, name='users_in_same_team'),
     
-    
+
     # KPIs
     # create a kpi
     path('create_kpi', views.create_kpi, name="create_kpi"),
     # get the list of all kpis 
     path('kpis_all', views.kpis_all, name="kpis_all"),
+
     # get tools
     path('all_tools', views.all_tools, name="all_tools"), 
+
     # get skills
     path('skills', views.get_skills, name="skills"), 
+    
     # get all tasks
     path('tasks', views.get_all_tasks, name="tasks"), 
 ]

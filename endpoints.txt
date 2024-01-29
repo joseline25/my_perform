@@ -22,4 +22,6 @@ List of users in a specific team http://127.0.0.1:8000/api/users/1/same-team/
 Create a KPI http://127.0.0.1:8000/api/create_kpi
 List of all the KPIs http://127.0.0.1:8000/api/kpis_all
 
-
+List of all tools http://127.0.0.1:8000/api/all_tools
+List of all skills http://127.0.0.1:8000/api/skills
+List of all tasks http://127.0.0.1:8000/api/tasks
