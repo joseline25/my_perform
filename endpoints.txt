@@ -10,7 +10,8 @@ List of all actions http://127.0.0.1:8000/api/actions
 Create action http://127.0.0.1:8000/api/actions
 
 
-List of all teams http://127.0.0.1:8000/api/teams
+List of all te
+ams http://127.0.0.1:8000/api/teams
 List of all users in a team  http://127.0.0.1:8000/api/teams/1/users/ there is somethings to fix here 
 
 List of all users http://127.0.0.1:8000/api/users/
