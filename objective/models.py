@@ -119,7 +119,7 @@ class Objective(models.Model):
     visible_to = models.ManyToManyField(
         User,  related_name="visible_objectives", blank=True)
     created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="objectives_created", default=1)
+        User, on_delete=models.CASCADE, related_name="objectives_created", default=1,)
     associated_task = models.ManyToManyField(
         Task, related_name="objectives", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
