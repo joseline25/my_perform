@@ -29,6 +29,7 @@ urlpatterns = [
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('users/<int:user_id>/same-team/', views.users_in_same_team, name='users_in_same_team'),
     
+    
     # KPIs
     # create a kpi
     path('create_kpi', views.create_kpi, name="create_kpi"),
