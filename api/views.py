@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer
+from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer, QuestionSerializer
 from objective.models import Objective, Team, UserTeam, KPI
-from action.models import Action
+from action.models import Action, Question
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import status
@@ -27,6 +27,7 @@ def all_objectives(request):
 
     return Response(response_data)
 
+
 # creation du endpoint qui est l'url dans urls.py
 
 # details of one objective
@@ -41,6 +42,8 @@ def objective_detail(request, objective_id):
 
     serializer = ObjectiveSerializer(objective)
     return Response(serializer.data)
+
+
 
 # create an objective
 
@@ -81,6 +84,42 @@ def all_actions(request):
     actions = Action.objects.all()
     serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data)
+
+#list of actions for a specific objective 
+@api_view(["GET"])
+def action_objective(request, objective_id):
+    try:
+        actions = Action.objects.filter(objective=objective_id)
+
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ActionSerializer(actions, many=True)
+    return Response(serializer.data)
+
+
+#action details
+@api_view(["GET"])
+def action_details(request, id):
+    try:
+        action = Action.objects.get(pk=id)
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ActionSerializer(action)
+    return Response(serializer.data)
+
+#list of questions for an objective
+@api_view(['GET'])
+def questions(request, objective_id):
+    try:
+        questions = Question.objects.filter(objective_id=objective_id)
+    except Question.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = QuestionSerializer(questions)
+    return Response(serializer.data)
+
 
 # create an action
 
@@ -224,3 +263,22 @@ def kpis_all(request):
  "frequency": "Weekly",
  "unit": 1,
  "objective": 1}
+
+@api_view(['GET'])
+def all_tools(request):
+    tools = Tool.objects.all()
+    serializer = ToolSerializer(tools, many=True)
+    return Response(serializer.data)
+    
+@api_view(['GET'])
+def get_skills(request):
+    skills = Skill.objects.all()
+    serializer = SkillSerializer(skills, many=True)
+    return Response(serializer.data) 
+
+@api_view(['GET'])
+def get_all_tasks(request):
+    tasks = Task.objects.all()
+    serializer = TaskSerializer(tasks, many=True)
+    return Response(serializer.data) 
+

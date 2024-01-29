@@ -15,6 +15,9 @@ urlpatterns = [
     # actions
     path('actions', views.all_actions, name='actions_api'),
     path('create_action/', views.create_action, name='create_action'),
+    path('actions/<int:id>/', views.action_details, name='actions_detail_api'),
+    path('actions_objective/<int:objective_id>/', views.action_objective, name='objective_actions_detail_api'),
+    path('question/<int:objective_id>/', views.questions, name="action_questions"),
     
     # teams
      path('teams', views.all_teams, name='teams_api'),
@@ -31,7 +34,12 @@ urlpatterns = [
     path('create_kpi', views.create_kpi, name="create_kpi"),
     # get the list of all kpis 
     path('kpis_all', views.kpis_all, name="kpis_all"),
-    
+    # get tools
+    path('all_tools', views.all_tools, name="all_tools"), 
+    # get skills
+    path('skills', views.get_skills, name="skills"), 
+    # get all tasks
+    path('tasks', views.get_all_tasks, name="tasks"), 
 ]
 
 
