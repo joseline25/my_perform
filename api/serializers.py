@@ -22,7 +22,7 @@ class ToolSerializer(serializers.ModelSerializer):
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ['skill_name']
+        fields = ['skill_id', 'skill_name']
 
 #DefinitionOfGood
 class DefinitionOfGoodSerializer(serializers.ModelSerializer):
