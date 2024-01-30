@@ -16,6 +16,11 @@ class ToolSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tool
         fields = ['tool_name']
+#Achievements
+class AchievementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Achievement
+        fields = '__all__'
 
 
 #Skill
@@ -63,14 +68,17 @@ class ToolSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+        
+
 class TaskSerializer(serializers.ModelSerializer):
+    achievement = AchievementSerializer()
     class Meta:
         model = Task
         fields = '__all__'
-        
+
         
 # Objective
-
 
 class ObjectiveSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
@@ -96,7 +104,6 @@ class ObjectiveSerializer(serializers.ModelSerializer):
 
 
 
-# Action
 
 #Questions
 class QuestionSerializer(serializers.ModelSerializer):
@@ -105,11 +112,9 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = '__all__'       
 
-#Achievements
-class AchievementSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Achievement
-        fields = '__all__'
+
+
+
 
 # Action       
 class ActionSerializer(serializers.ModelSerializer):
@@ -137,6 +142,7 @@ class UserSerializer(serializers.ModelSerializer):
 # KPI
 
 class KPISerializer(serializers.ModelSerializer):
+    objective = ObjectiveSerializer()
     class Meta:
         model = KPI
         fields = '__all__'
