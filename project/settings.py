@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
       # DRF
     'rest_framework',
+    #cors middleware
+    'corsheaders',
     
     # drf yasg
     'drf_yasg',
@@ -58,6 +60,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'project.urls'
