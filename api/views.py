@@ -18,7 +18,7 @@ def all_objectives(request):
     objectives = Objective.objects.all()
     objectives_serializer = ObjectiveSerializer(objectives, many=True)
 
-    users = User.objects.values('username', 'first_name', 'last_name', 'email')
+    users = User.objects.all()
     users_serializer = UserSerializer(users, many=True)
 
     response_data = {
