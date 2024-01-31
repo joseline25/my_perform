@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     class  Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = [ 'first_name', 'last_name', 'email']
 
 #Tool
 class ToolSerializer(serializers.ModelSerializer):
@@ -36,10 +36,9 @@ class DefinitionOfGoodSerializer(serializers.ModelSerializer):
 class ObjectiveSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     tools = ToolSerializer(many=True)
-    dog = DefinitionOfGoodSerializer(many=True)
-    assign_to = UserSerializer(many=True)
-    visible_to = UserSerializer(many=True)
-    evaluator = UserSerializer(many=False)
+    assign_to = UserSerializer()
+    visible_to = UserSerializer()
+    evaluator = UserSerializer()
     
     class  Meta:
         model = Objective
@@ -72,20 +71,7 @@ class TaskSerializer(serializers.ModelSerializer):
 # Objective
 
 
-class ObjectiveSerializer(serializers.ModelSerializer):
-    skills = SkillSerializer(many=True)
-    tools = ToolSerializer(many=True)
-    assign_to = UserSerializer(many=True)
-    visible_to = UserSerializer(many=True)
-    associated_task = TaskSerializer(many=True)
-    
-    # Datetime fields formatting 
-    
-    #created_at = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Objective
-        fields = '__all__'
         
     # def get_created_at(self, obj):
     #     # Modify the representation of your datetime field here
@@ -100,7 +86,6 @@ class ObjectiveSerializer(serializers.ModelSerializer):
 
 #Questions
 class QuestionSerializer(serializers.ModelSerializer):
-    objective = ObjectiveSerializer()
     class  Meta:
         model = Question
         fields = '__all__'       
@@ -116,20 +101,16 @@ class ActionSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     tools = ToolSerializer(many=True)
     achievements = AchievementSerializer(many=True)
-    questions = QuestionSerializer(many=True)
-    collaborators = UserSerializer(many=True)
-    added_by = UserSerializer(many=True)
+    questions = QuestionSerializer()
+    collaborators = UserSerializer()
+    added_by = UserSerializer()
     
     class Meta:
         model = Action
         fields = '__all__'
             
         
-# User
-class UserSerializer(serializers.ModelSerializer):
-    class  Meta:
-        model = User
-        fields = '__all__'
+
         
         
 
@@ -141,7 +122,3 @@ class KPISerializer(serializers.ModelSerializer):
         model = KPI
         fields = '__all__'
 
-class QuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Question
-        fields = '__all__'

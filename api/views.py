@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer
+from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer, QuestionSerializer,  ToolSerializer, SkillSerializer, TaskSerializer
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill, Task
 from action.models import Action, Question
 from django.contrib.auth.models import User
