@@ -240,7 +240,6 @@ class KPI(models.Model):
     description = models.TextField(null=False, blank=False)
     number = models.DecimalField(max_digits=10, decimal_places=1, null=False, blank=False, validators=[
                                  MinValueValidator(Decimal('0.01'), "Amount must be a positive interger")])
-    frequency = models.CharField(max_length=50, blank=False, null=True)
     unit = models.CharField(max_length=50, blank=False, null=False)
     frequency = models.CharField(max_length=250, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)

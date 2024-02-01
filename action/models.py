@@ -1,15 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 from objective.models import Objective, Tool, Skill
-from .models_additionals.question import Question
 from objective.models import Tool, Skill
 
 
 class Action(models.Model):
     action_name = models.CharField(max_length=300)
-    objective = models.ForeignKey(Objective, on_delete=models.PROTECT)
-    questions = models.ForeignKey(
-        Question, on_delete=models.PROTECT, related_name="related_actions")
+    objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     completion_time = models.IntegerField(null=False)
     collaborators = models.ManyToManyField(
         User, related_name="actions", blank=True)
@@ -21,7 +18,7 @@ class Action(models.Model):
     achievements = models.ManyToManyField(
         "Achievement", through="ActionAchievement", related_name="achievement_actions")
     created_at = models.DateTimeField(auto_now_add=True)
-    added_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-created_at']
