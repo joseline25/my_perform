@@ -28,7 +28,6 @@ def all_objectives(request):
     return Response(response_data)
 
 
-# creation du endpoint qui est l'url dans urls.py
 
 # details of one objective
 
@@ -62,16 +61,10 @@ def create_objective(request):
         new_objective.assign_to.set(serializer.validated_data.get('assign_to'))
         new_objective.visible_to.set(
             serializer.validated_data.get('visible_to'))
-        new_objective.associated_task.set(
-            serializer.validated_data.get('associated_task'))
-        # if 'skills' in serializer.validated_data:
-        #     new_objective.skills.set(serializer.validated_data['skills'])
-        # if 'tools' in serializer.validated_data:
-        #     new_objective.tools.set(serializer.validated_data.get('tools'))
-
+        
         new_objective.skills.set(serializer.validated_data.get('skills'))
         new_objective.tools.set(serializer.validated_data.get('tools'))
-        # new_objective.dog.set(serializer.validated_data.get('dog'))
+        
 
         return Response({'status': 'success', 'message': 'Objective created successfully'}, status=status.HTTP_201_CREATED)
     else:

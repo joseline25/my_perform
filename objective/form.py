@@ -101,42 +101,8 @@ class SkillForm(forms.ModelForm):
         fields = ['skill_name', 'skill_description']
 
 
-class DefinitionOfGoodForm(forms.Form):
-    class Meta:
-        model = DefinitionOfGood
-        fields = ['dog_criteria']
 
 
-# import modelformset_factory : from django.forms import modelformset_factory
-# then
-
-ObjectiveFormSet = modelformset_factory(
-    Objective,
-    fields=[
-        'objective_type', 'deadline', 'repeat_date', 'start_date', 'end_date',
-        'objective_name', 'action_phrase', 'number', 'units', 'priority',
-        'complexity', 'assign_to', 'visible_to', 'evaluator'
-    ],
-    extra=1,  # Number of empty forms to display
-)
-
-DefinitionOfGoodFormSet = modelformset_factory(
-    DefinitionOfGood,
-    form=DefinitionOfGoodForm,
-    extra=1,
-)
-
-ToolFormSet = modelformset_factory(
-    Tool,
-    form=ToolForm,
-    extra=1,
-)
-
-SkillFormSet = modelformset_factory(
-    Skill,
-    form=SkillForm,
-    extra=1,
-)
 
 
 """ 

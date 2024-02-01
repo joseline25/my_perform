@@ -53,7 +53,7 @@ class Team(models.Model):
 
 class UserTeam(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
 
 class Tool(models.Model):
@@ -103,7 +103,6 @@ class TeamTool(models.Model):
 
 
 class Objective(models.Model):
-
     priorities = [('Low', 'Low'), ('Intermediate',
                                    'Intermediate'), ('High', 'High')]
     complexities = [('Easy', 'Easy'), ('Hard', 'Hard')]
@@ -120,8 +119,7 @@ class Objective(models.Model):
         User,  related_name="visible_objectives", blank=True)
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="objectives_created", default=1,)
-    associated_task = models.ManyToManyField(
-        Task, related_name="objectives", blank=True)
+    associated_task = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     evaluator = models.ForeignKey(
@@ -144,16 +142,18 @@ class Objective(models.Model):
     dog = models.TextField()
     is_draft = models.BooleanField(default=False)
     repeat = models.BooleanField(default=False)
-    
+
     # test assign_to a team or user
-    
+
     # use GenericForeignKey to allow assignment to either User or Team
-    assign_to_to_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    assign_to_to_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True, blank=True)
     assign_to_to_id = models.PositiveIntegerField(null=True, blank=True)
     assign_to_to = GenericForeignKey('assign_to_to_type', 'assign_to_to_id')
-    
+
     # GenericRelation to store reverse relations
-    assign_to_to_objectives = GenericRelation('Objective', related_query_name='assign_to_to_objectives')
+    assign_to_to_objectives = GenericRelation(
+        'Objective', related_query_name='assign_to_to_objectives')
 
     class Meta:
         ordering = ['-created_at']
@@ -171,7 +171,7 @@ class Objective(models.Model):
         # check that repeat == True before setting repeat date
         if self.repeat == False:
             self.repeat_date = None
-            
+
         # management de assign_to avec User and Team
         # set assign_to_totype based on the instance type
         if isinstance(self.assign_to_to, User):
@@ -182,20 +182,6 @@ class Objective(models.Model):
         super().save(*args, **kwargs)
 
 
-# Create the Definition of Good Model
-
-class DefinitionOfGood(models.Model):
-    dog_id = models.AutoField(primary_key=True)
-    dog_criteria = models.CharField(max_length=100)
-    # objective_id = models.ForeignKey(Objective, on_delete=models.CASCADE)
-    date_added = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'Dog'
-
-    def __str__(self):
-        return f"{self.dog_criteria}"
 
 
 class ObjectiveSkill(models.Model):
@@ -242,7 +228,6 @@ class KPI(models.Model):
                                  MinValueValidator(Decimal('0.01'), "Amount must be a positive interger")])
     frequency = models.CharField(max_length=50, blank=False, null=True)
     unit = models.CharField(max_length=50, blank=False, null=False)
-    frequency = models.CharField(max_length=250, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     # the associated objectives
     objective = models.ForeignKey(
@@ -259,15 +244,15 @@ class KPI(models.Model):
     "objective_name": "Test Objective",
     "assign_to": [1, 2],
     "visible_to": [1],
-    "associated_task": [1],
+    "associated_task": "create the form",
     "evaluator": 1,
     "repeat_date": "Weekly",
-    "deadline": "2024-02-01T12:00:00Z",
+    "deadline": "2024-02-11T12:00:00Z",
     "action_phrase": "Test Action",
     "number": 5,
     "units": "Test Units",
-    "start_date": "2024-01-01T08:00:00Z",
-    "end_date": "2024-01-31T18:00:00Z",
+    "start_date": "2024-01-04T08:00:00Z",
+    "end_date": "2024-10-31T18:00:00Z",
     "priority": "High",
     "complexity": "Hard",
     "objective_type": "Financial",

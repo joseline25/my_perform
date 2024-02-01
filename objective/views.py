@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.contrib import messages
 from .form import *
-from .models import Objective, ObjectiveDraft, Tool, Skill, DefinitionOfGood
+from .models import Objective, ObjectiveDraft, Tool, Skill
 # assign_to_to
 from django.contrib.contenttypes.models import ContentType
 from .models import User, Team
