@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill
 from objective.models_additional.task import Task 
 from action.models import Action, Question
@@ -49,7 +49,7 @@ def objective_detail(request, objective_id):
 
 @api_view(['POST'])
 def create_objective(request):
-    serializer = ObjectiveSerializer(data=request.data)
+    serializer = ObjectiveSerializerPost(data=request.data)
     if serializer.is_valid():
 
         print("Validated Data:", serializer.validated_data)
@@ -119,7 +119,7 @@ def questions(request, objective_id):
 
 @api_view(['POST'])
 def create_action(request):
-    serializer = ActionSerializer(data=request.data)
+    serializer = ActionSerializerPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
@@ -224,7 +224,7 @@ def kpi_list_create(request, objective_id):
         return Response(response_data)
 
     elif request.method == 'POST':
-        serializer = KPISerializer(data=request.data)
+        serializer = KPISerializerPost(data=request.data)
 
         if serializer.is_valid():
             serializer.save(objective=objective)
@@ -236,7 +236,7 @@ def kpi_list_create(request, objective_id):
 # create a kpi indepedently
 @api_view(['POST'])
 def create_kpi(request):
-    serializer = KPISerializer(data=request.data)
+    serializer = KPISerializerPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
