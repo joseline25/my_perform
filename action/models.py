@@ -9,10 +9,10 @@ class Action(models.Model):
                                                             "Deliverable"), ("Learning", "Learning"), ("Miscellaneous", "Miscellaneous")]
     action_name = models.CharField(max_length=300)
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
+    # decimal avec 2 decimal , max = 10, blank=False, null=False
     completion_time = models.IntegerField(null=False)
     # ca va venir du front end en heures pour etre converti en secondes, nous on doit convertir en heures pour envoyer au front end
-    collaborators = models.ManyToManyField(
-        User, related_name="actions", blank=True)
+    collaborators = models.ManyToManyField(User, related_name="collaborators_action", blank=True)
     comment = models.TextField(max_length=200, null=True, blank=True)
     tools = models.ManyToManyField(
         Tool, through="ActionTool", related_name="tool_actions")

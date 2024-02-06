@@ -2,7 +2,7 @@ from rest_framework import serializers
 from objective.models import Objective, Team, KPI, Skill, Tool, Skill, Tool
 from objective.models_additional.task import Task
 from action.models import Action, Question
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User``
 
 
 # User
