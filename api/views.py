@@ -1,8 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ActionSerializer, TeamSerializer, KPISerializer
-from objective.models import Objective, Team, UserTeam, KPI
-from action.models import Action
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer
+from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill
+from objective.models_additional.task import Task 
+from action.models import Action, Question
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import status
@@ -16,7 +17,7 @@ def all_objectives(request):
     objectives = Objective.objects.all()
     objectives_serializer = ObjectiveSerializer(objectives, many=True)
 
-    users = User.objects.values('username', 'first_name', 'last_name', 'email')
+    users = User.objects.all()
     users_serializer = UserSerializer(users, many=True)
 
     response_data = {
@@ -26,7 +27,7 @@ def all_objectives(request):
 
     return Response(response_data)
 
-# creation du endpoint qui est l'url dans urls.py
+
 
 # details of one objective
 
@@ -41,12 +42,14 @@ def objective_detail(request, objective_id):
     serializer = ObjectiveSerializer(objective)
     return Response(serializer.data)
 
+
+
 # create an objective
 
 
 @api_view(['POST'])
 def create_objective(request):
-    serializer = ObjectiveSerializer(data=request.data)
+    serializer = ObjectiveSerializerPost(data=request.data)
     if serializer.is_valid():
 
         print("Validated Data:", serializer.validated_data)
@@ -58,16 +61,10 @@ def create_objective(request):
         new_objective.assign_to.set(serializer.validated_data.get('assign_to'))
         new_objective.visible_to.set(
             serializer.validated_data.get('visible_to'))
-        new_objective.associated_task.set(
-            serializer.validated_data.get('associated_task'))
-        # if 'skills' in serializer.validated_data:
-        #     new_objective.skills.set(serializer.validated_data['skills'])
-        # if 'tools' in serializer.validated_data:
-        #     new_objective.tools.set(serializer.validated_data.get('tools'))
-
+        
         new_objective.skills.set(serializer.validated_data.get('skills'))
         new_objective.tools.set(serializer.validated_data.get('tools'))
-        # new_objective.dog.set(serializer.validated_data.get('dog'))
+        
 
         return Response({'status': 'success', 'message': 'Objective created successfully'}, status=status.HTTP_201_CREATED)
     else:
@@ -81,12 +78,48 @@ def all_actions(request):
     serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data)
 
+#list of actions for a specific objective 
+@api_view(["GET"])
+def action_objective(request, objective_id):
+    try:
+        actions = Action.objects.filter(objective=objective_id)
+
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ActionSerializer(actions, many=True)
+    return Response(serializer.data)
+
+
+#action details
+@api_view(["GET"])
+def action_details(request, id):
+    try:
+        action = Action.objects.get(pk=id)
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ActionSerializer(action)
+    return Response(serializer.data)
+
+#list of questions for an objective
+@api_view(['GET'])
+def questions(request, objective_id):
+    try:
+        questions = Question.objects.filter(objective_id=objective_id)
+    except Question.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = QuestionSerializer(questions)
+    return Response(serializer.data)
+
+
 # create an action
 
 
 @api_view(['POST'])
 def create_action(request):
-    serializer = ActionSerializer(data=request.data)
+    serializer = ActionSerializerPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
@@ -191,7 +224,7 @@ def kpi_list_create(request, objective_id):
         return Response(response_data)
 
     elif request.method == 'POST':
-        serializer = KPISerializer(data=request.data)
+        serializer = KPISerializerPost(data=request.data)
 
         if serializer.is_valid():
             serializer.save(objective=objective)
@@ -203,7 +236,7 @@ def kpi_list_create(request, objective_id):
 # create a kpi indepedently
 @api_view(['POST'])
 def create_kpi(request):
-    serializer = KPISerializer(data=request.data)
+    serializer = KPISerializerPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
@@ -223,3 +256,22 @@ def kpis_all(request):
  "frequency": "Weekly",
  "unit": 1,
  "objective": 1}
+
+@api_view(['GET'])
+def all_tools(request):
+    tools = Tool.objects.all()
+    serializer = ToolSerializer(tools, many=True)
+    return Response(serializer.data)
+    
+@api_view(['GET'])
+def get_skills(request):
+    skills = Skill.objects.all()
+    serializer = SkillSerializer(skills, many=True)
+    return Response(serializer.data) 
+
+@api_view(['GET'])
+def get_all_tasks(request):
+    tasks = Task.objects.all()
+    serializer = TaskSerializer(tasks, many=True)
+    return Response(serializer.data) 
+

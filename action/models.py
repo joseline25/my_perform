@@ -1,27 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
 from objective.models import Objective, Tool, Skill
-from .models_additionals.question import Question
-from objective.models import Tool, Skill
 
 
 class Action(models.Model):
+    achievements_type = [("Work-Product", "Work-Product"), ("Deliverable",
+                                                            "Deliverable"), ("Learning", "Learning"), ("Miscellaneous", "Miscellaneous")]
     action_name = models.CharField(max_length=300)
-    objective = models.ForeignKey(Objective, on_delete=models.PROTECT)
-    questions = models.ForeignKey(
-        Question, on_delete=models.PROTECT, related_name="related_actions")
+    objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
+    # decimal avec 2 decimal , max = 10, blank=False, null=False
     completion_time = models.IntegerField(null=False)
+    # ca va venir du front end en heures pour etre converti en secondes, nous on doit convertir en heures pour envoyer au front end
     collaborators = models.ManyToManyField(
-        User, related_name="actions", blank=True)
+        User, related_name="collaborators_action", blank=True)
     comment = models.TextField(max_length=200, null=True, blank=True)
     tools = models.ManyToManyField(
         Tool, through="ActionTool", related_name="tool_actions")
     skills = models.ManyToManyField(
         Skill, through="ActionSkill", related_name="skill_actions")
-    achievements = models.ManyToManyField(
-        "Achievement", through="ActionAchievement", related_name="achievement_actions")
+    achievements = models.CharField(
+        max_length=100, choices=achievements_type, default="Deliverable")
     created_at = models.DateTimeField(auto_now_add=True)
-    added_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-created_at']
@@ -53,27 +53,31 @@ class ActionSkill(models.Model):
         return f"{self.skill_id.skill_name} for {self.action_id.action_name}"
 
 
-class Achievement(models.Model):
-    achievement_name = models.CharField(max_length=200)
-    description = models.TextField(max_length=200, null=True, blank=True)
-    date_added = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
-
-    class Meta:
-        ordering = ['-date_added']
-
-    def __str__(self):
-        return self.achievement_name
-
-
-class ActionAchievement(models.Model):
-    achievement_id = models.ForeignKey(Achievement, on_delete=models.PROTECT)
-    action_id = models.ForeignKey(Action, on_delete=models.PROTECT)
+class Question(models.Model):
+    question = models.TextField(null=True, blank=True)
+    action = models.ForeignKey(
+        Action, related_name='questions', on_delete=models.CASCADE)
+    objective = models.ForeignKey(
+        Objective, on_delete=models.CASCADE, null=True)
+    number = models.IntegerField(null=True,)
+    answer = models.BooleanField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    added_by = models.ForeignKey(User, on_delete=models.PROTECT)
-
-    class Meta:
-        ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.achievement_id.achievement_name} for {self.action_id.action_name} "
+        return self.question
+
+
+
+
+
+{
+    "action_name": "first action",
+    "objective": 1,
+    "completion_time": 3,
+    "collaborators": [1, 2],
+    "comment": "the first action to test the form of the model",
+    "tools": [],
+    "skills": [],
+    "achievements": "Deliverable",
+    "added_by": 1
+}

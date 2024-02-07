@@ -10,6 +10,7 @@ class ObjectiveForm(forms.ModelForm):
     objective_type = forms.ChoiceField(
         choices=Objective.objective_types, widget=forms.RadioSelect)
     complexity = forms.ChoiceField(choices=Objective.complexities)
+    repeat_date = forms.ChoiceField(choices=Objective.repeat_frequency)
     priority = forms.ChoiceField(choices=Objective.priorities)
     # Set the queryset to the desired choices
     evaluator = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
@@ -26,7 +27,7 @@ class ObjectiveForm(forms.ModelForm):
             # format='%Y-%m-%d',
             'deadline': forms.DateInput(attrs={'class': 'form-control italic-placeholder deadline-input', 'placeholder': 'Deadline', 'type': 'date'}),
 
-            'repeat_date': forms.DateInput(attrs={'class': 'form-control form-control-lg italic-placeholder repeat-date', 'placeholder': 'Repeat date', 'type': 'date'}),
+            'repeat_date': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder '}),
             'start_date': forms.DateInput(attrs={'class': ' start-date form-control form-control-lg italic-placeholder', 'placeholder': 'Select a '
                                                  'date',
                                                  'type': 'date'}),
@@ -39,15 +40,15 @@ class ObjectiveForm(forms.ModelForm):
             'units': forms.TextInput(attrs={'class': 'form-control italic-placeholder units-input', 'placeholder': 'E.g. Emails, Notes'}),
             'priority': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-priority'}),
             'complexity': forms.Select(attrs={'class': 'form-select  form-select-lg italic-placeholder objective-complexity'}),
-            'dog': forms.CheckboxSelectMultiple (attrs={'class': 'form-select border-0  form-select-lg italic-placeholder',  'placeholder': 'Enter Acceptance Criteria', 'style': 'background-color: #EBEBEB;'}, ),
-            'assign_to': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder option checkbox',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'visible_to': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Visible To', 'style': 'height: 100px;'}),
-            'tools': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'associated_task': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'evaluator': forms.Select(attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
-            'skills': forms.CheckboxSelectMultiple (attrs={'class': 'border-0  form-select italic-placeholder',  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'dog': forms.TextInput(attrs={'placeholder': 'E.g Employ 5 Developers by March'}),
+            'assign_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To'}),
+            'visible_to': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Visible To', 'style': 'height: 100px;'}),
+            'tools': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'associated_task': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'evaluator': forms.Select(attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
+            'skills': forms.CheckboxSelectMultiple (attrs={  'placeholder': 'Assign To', 'style': 'height: 100px;'}),
             # 'choices': Objective.objective_types}
-            'objective_type': forms.RadioSelect(attrs={'class': 'radio objective-type', 'type': 'radio', }),
+            'objective_type': forms.RadioSelect(attrs={ 'type': 'radio', }),
             # 'repeat': forms.RadioSelect(attrs={'class': 'repeat-radio', 'type': 'radio'}),
         }
 
@@ -100,42 +101,8 @@ class SkillForm(forms.ModelForm):
         fields = ['skill_name', 'skill_description']
 
 
-class DefinitionOfGoodForm(forms.Form):
-    class Meta:
-        model = DefinitionOfGood
-        fields = ['dog_criteria']
 
 
-# import modelformset_factory : from django.forms import modelformset_factory
-# then
-
-ObjectiveFormSet = modelformset_factory(
-    Objective,
-    fields=[
-        'objective_type', 'deadline', 'repeat_date', 'start_date', 'end_date',
-        'objective_name', 'action_phrase', 'number', 'units', 'priority',
-        'complexity', 'assign_to', 'visible_to', 'evaluator'
-    ],
-    extra=1,  # Number of empty forms to display
-)
-
-DefinitionOfGoodFormSet = modelformset_factory(
-    DefinitionOfGood,
-    form=DefinitionOfGoodForm,
-    extra=1,
-)
-
-ToolFormSet = modelformset_factory(
-    Tool,
-    form=ToolForm,
-    extra=1,
-)
-
-SkillFormSet = modelformset_factory(
-    Skill,
-    form=SkillForm,
-    extra=1,
-)
 
 
 """ 

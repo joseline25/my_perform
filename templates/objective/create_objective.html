@@ -123,7 +123,7 @@
 
       {% else %}
       <div style="width: 80%" class="m-auto mb-3 mt-5">
-        <h2>Objective Creation</h2>
+        <h2 class="text-center fw-bold">Objective Creation</h2>
       </div>
 
       {% endif %}
@@ -142,6 +142,7 @@
               </div>
             </div>
             <button
+              type="button"
               class="nextBtn btn border-0 d-flex align-items-center color-warning"
             >
               Next<i class="bx bx-chevron-right fs-3"></i>
@@ -155,7 +156,7 @@
               <button type="submit" class="btn btn-primary">Create</button>
             </form>
             {% endcomment %}
-            <section class="_formContainer d-flex gap-5">
+            <section class="_formContainer d-flex">
               <div class="_leftForms d-flex flex-column gap-4 p-2">
                 <div class="_group">
                   <h4 class="fs-5">Objective Name</h4>
@@ -222,7 +223,7 @@
         </div>
 
         {% comment %} STEP 2 {% endcomment %}
-        <div class="d-flex flex-column gap-4 py-4 px-4 _stepTwo">
+        <div class="d-flex flex-column px-4 _stepTwo">
           <div
             class="_formHead d-flex align-items-center justify-content-between"
           >
@@ -232,24 +233,49 @@
               <i class="bx bx-chevron-left fs-3"></i> Previous
             </button>
           </div>
-          <section class="_formFields d-flex flex-column gap-4">
+          <section class="_formFields d-flex flex-column">
             {% comment %}
             <form method="POST">
               {% csrf_token %} {{ form.as_p}}
               <button type="submit" class="btn btn-primary">Create</button>
             </form>
             {% endcomment %}
-            <section class="_formContainer d-flex gap-3">
-              <div class="_leftForms d-flex flex-column gap-4 p-2">
-                <div class="d-flex flex-column gap-1">
+            <section class="_formContainer d-flex">
+              <div class="_leftForms d-flex flex-column">
+                <div class="d-flex flex-column">
                   <p>Visible To:</p>
                   {{ form.visible_to }}
                 </div>
-                <div class="d-flex flex-column gap-1">
+                <div class="d-flex flex-column">
                   <p>Assign to:</p>
                   {{ form.assign_to }}
                 </div>
-                <div class="d-flex flex-column gap-1">
+                {% comment %}
+                <div class="d-flex flex-column">
+                  <label for="id_assign_to_to">Assign To to:</label>
+                  <select name="assign_to_to" id="id_assign_to_to">
+                    {% for choice in assign_to_choices %}
+                    <option value="{{ choice.value }}">
+                      {{ choice.label }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                {% endcomment %}
+                <div class="d-flex flex-column">
+                  <label for="id_assign_to_to">Assign To To:</label>
+                  <select name="assign_to_to" id="id_assign_to_to">
+                    <option value="{{ user_content_type.id }}">User</option>
+                    <option value="{{ team_content_type.id }}">Team</option>
+                  </select>
+                </div>
+                <div class="d-flex flex-column">
+                  <label for="id_assign_to_to_id">Team/User:</label>
+                  <select name="assign_to_to_id" id="id_assign_to_to_id">
+                    <!-- Options will be dynamically populated via JavaScript -->
+                  </select>
+                </div>
+                <div class="d-flex flex-column">
                   <p>Tools</p>
                   {{ form.tools }}
                 </div>
@@ -358,6 +384,65 @@
           stepTwo.classList.remove("show");
           stepTwo.classList.add("hide");
         }
+      });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Event listener for  "Assign To to" dropdown 
+        $("#id_assign_to_to").on("change", function () {
+          var selectedValue = $(this).val();
+
+          // If the selected value is for "Team," make an AJAX call to fetch all teams
+          if (selectedValue === '{{ team_content_type.id|stringformat:"s" }}') {
+            $.ajax({
+              url: '{% url "objective:get_all_teams" %}',
+              method: "GET",
+              success: function (data) {
+                // Clear existing options
+                $("#id_assign_to_to_id").empty();
+
+                // populate with teams
+                $.each(data, function (index, team) {
+                  $("#id_assign_to_to_id").append(
+                    $("<option>", {
+                      value: team.id,
+                      text: team.name,
+                    })
+                  );
+                });
+              },
+              error: function () {
+                console.error("Failed to fetch teams.");
+              },
+            });
+          }
+          // else handle User options
+          if (selectedValue === '{{  user_content_type.id|stringformat:"s" }}') {
+            // Make an AJAX call to fetch all users
+            $.ajax({
+              url: '{% url "objective:get_all_users" %}',
+              method: "GET",
+              success: function (data) {
+                // Clear existing options
+                $("#id_assign_to_to_id").empty();
+
+                // Populate the dropdown with users
+                $.each(data, function (index, user) {
+                  $("#id_assign_to_to_id").append(
+                    $("<option>", {
+                      value: user.id,
+                      text: user.username, 
+                    })
+                  );
+                });
+              },
+              error: function () {
+                console.error("Failed to fetch users.");
+              },
+            });
+          }
+        });
       });
     </script>
 

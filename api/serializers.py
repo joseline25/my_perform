@@ -1,75 +1,152 @@
 from rest_framework import serializers
-from objective.models import Objective, Team, KPI, Skill, Tool
+from objective.models import Objective, Team, KPI, Skill, Tool, Skill, Tool
 from objective.models_additional.task import Task
-from action.models import Action
+from action.models import Action, Question
 from django.contrib.auth.models import User
 
 
-# User
 
+# User GET
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
-# Skill
+# User POST
+class UserSerialiazerPost(serializers.ModelSerializer):
+    class Meta:
+        model = User 
+        fields = '__all__'
 
-
+# Skill GET
 class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = ['skill_id', 'skill_name', 'skill_description']
+        
+# Skill POST
+
+class SkillSerialiserPost(serializers.ModelSerializer):
     class Meta:
         model = Skill
         fields = '__all__'
 
+# Team GET
 
-# Team
+
 class TeamSerializer(serializers.ModelSerializer):
+    skills = SkillSerializer(many=True)
+    created_by = UserSerializer()
+    users = UserSerializer(many=True)
+
     class Meta:
         model = Team
         fields = '__all__'
 
-# Tool
+
+# Team POST
+
+class TeamSerializerPost(serializers.ModelSerializer):
+    class  Meta:
+        model = Team
+        fields = '__all__'
+
+# Tool GET
 class ToolSerializer(serializers.ModelSerializer):
-    teams =TeamSerializer(many=True)
     class Meta:
         model = Tool
-        fields = '__all__'
+        fields = ['tool_id', 'tool_name', 'description']
 
-
-class TaskSerializer(serializers.ModelSerializer):
+# Tool POST
+class ToolSerializerPost(serializers.ModelSerializer):
     class Meta:
-        model = Task
+        
+        model = Tool
         fields = '__all__'
         
         
-# Objective
-
-
+        
+# Objective GET
 class ObjectiveSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     tools = ToolSerializer(many=True)
     assign_to = UserSerializer(many=True)
     visible_to = UserSerializer(many=True)
-    associated_task = TaskSerializer(many=True)
+    evaluator = UserSerializer()
 
     class Meta:
         model = Objective
         fields = '__all__'
 
+# Objective POST
+class ObjectiveSerializerPost(serializers.ModelSerializer):
+    class Meta:
+        model = Objective
+        fields = '__all__'
+        
+
+# Task GET and POST
+class TaskSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Task
+        fields = '__all__'
 
 
 
 
-# Action
+# Questions GET
+class QuestionSerializer(serializers.ModelSerializer):
+    objective = ObjectiveSerializer()
+
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+# Question POST
+
+class QuestionSerializerPost(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = '__all__'
+        
+        
+
+# Action Get
 class ActionSerializer(serializers.ModelSerializer):
+    skills = SkillSerializer(many=True)
+    tools = ToolSerializer(many=True)
+    collaborators = UserSerializer(many=True)
+    added_by = UserSerializer()
+    objective = ObjectiveSerializer()
+
+    class Meta:
+        model = Action
+        fields = '__all__'
+
+# Action POST
+class ActionSerializerPost(serializers.ModelSerializer):
+   
+
     class Meta:
         model = Action
         fields = '__all__'
 
 
-# KPI
+# KPI GET
 
 class KPISerializer(serializers.ModelSerializer):
     objective = ObjectiveSerializer()
+
     class Meta:
         model = KPI
         fields = '__all__'
+        
+
+# KPI POST
+
+class KPISerializerPost(serializers.ModelSerializer):   
+    class Meta:
+        model = KPI
+        fields = '__all__'
+

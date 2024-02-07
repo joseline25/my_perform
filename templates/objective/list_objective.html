@@ -30,13 +30,20 @@
             <!-- <h5 class="card-title">Objective</h5> -->
             <p>Assign_to: {% for user in obj.assign_to.all %} <p>{{ user.username }}</p>  {% endfor %}</p>
             <hr />
-            <p>Objective Name: {{ obj.objective_name}}  {% if obj.is_draft %} (Draft version) {% endif %} </p>
+            <p>Action Phrase: {{ obj.action_phrase}}  {% if obj.is_draft %} (Draft version) {% endif %} </p>
             <hr />
-            <p>Visible to : {% for p in obj.assign_to.all %} <p>{{ p.username}}</p> {% endfor %}</p>
+            <p>Number : {{ obj.number}}   </p>
+            <hr />
+            <p>Unit: {{ obj.units}}  </p>
+            <hr />
+            <p>Deadline {{ obj.deadline}}   </p>
+            <hr />
+            
+            {% comment %} <p>Visible to : {% for p in obj.assign_to.all %} <p>{{ p.username}}</p> {% endfor %}</p>
             <hr />
             <p>Start Date: {{obj.start_date}}</p>
             <hr />
-            <p>End Date: {{ obj.end_date }}</p>
+            <p>End Date: {{ obj.end_date }}</p> {% endcomment %}
           </div>
 
           <a
