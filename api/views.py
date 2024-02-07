@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill
-from objective.models_additional.task import Task 
+from objective.models_additional.task import Task
 from action.models import Action, Question
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
@@ -28,7 +28,6 @@ def all_objectives(request):
     return Response(response_data)
 
 
-
 # details of one objective
 
 
@@ -41,7 +40,6 @@ def objective_detail(request, objective_id):
 
     serializer = ObjectiveSerializer(objective)
     return Response(serializer.data)
-
 
 
 # create an objective
@@ -61,10 +59,9 @@ def create_objective(request):
         new_objective.assign_to.set(serializer.validated_data.get('assign_to'))
         new_objective.visible_to.set(
             serializer.validated_data.get('visible_to'))
-        
+
         new_objective.skills.set(serializer.validated_data.get('skills'))
         new_objective.tools.set(serializer.validated_data.get('tools'))
-        
 
         return Response({'status': 'success', 'message': 'Objective created successfully'}, status=status.HTTP_201_CREATED)
     else:
@@ -78,7 +75,9 @@ def all_actions(request):
     serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data)
 
-#list of actions for a specific objective 
+# list of actions for a specific objective
+
+
 @api_view(["GET"])
 def action_objective(request, objective_id):
     try:
@@ -86,30 +85,32 @@ def action_objective(request, objective_id):
 
     except Action.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data)
 
 
-#action details
+# action details
 @api_view(["GET"])
 def action_details(request, id):
     try:
         action = Action.objects.get(pk=id)
     except Action.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     serializer = ActionSerializer(action)
     return Response(serializer.data)
 
-#list of questions for an objective
+# list of questions for an objective
+
+
 @api_view(['GET'])
 def questions(request, objective_id):
     try:
         questions = Question.objects.filter(objective_id=objective_id)
     except Question.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     serializer = QuestionSerializer(questions)
     return Response(serializer.data)
 
@@ -257,21 +258,122 @@ def kpis_all(request):
  "unit": 1,
  "objective": 1}
 
+
 @api_view(['GET'])
 def all_tools(request):
     tools = Tool.objects.all()
     serializer = ToolSerializer(tools, many=True)
     return Response(serializer.data)
-    
+
+
 @api_view(['GET'])
 def get_skills(request):
     skills = Skill.objects.all()
     serializer = SkillSerializer(skills, many=True)
-    return Response(serializer.data) 
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 def get_all_tasks(request):
     tasks = Task.objects.all()
     serializer = TaskSerializer(tasks, many=True)
-    return Response(serializer.data) 
+    return Response(serializer.data)
 
+
+@api_view(['PUT'])
+def update_tool(request, tool_id):
+    try:
+        tool = Tool.objects.get(pk=tool_id)
+    except Tool.DoesNotExist:
+        return Response({"message": "No tool found"},status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ToolSerializer(tool, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response({"message": "Tool successfilly updated"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_tool(request, tool_id):
+    try:
+        tool = Tool.objects.get(pk=tool_id)
+    except Tool.DoesNotExist:
+        return Response({"message": "No Tool found"},status=status.HTTP_404_NOT_FOUND)
+
+    tool.delete()
+    return Response({"message": "This Tool is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['PUT'])
+def update_skill(request, skill_id):
+    try:
+        skill = Skill.objects.get(pk=skill_id)
+    except Skill.DoesNotExist:
+        return Response({"message": "No skill found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = SkillSerializer(skill, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response({"message": "Skill updated succesfully"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_skill(request, skill_id):
+    try:
+        skill = Skill.objects.get(pk=skill_id)
+    except Skill.DoesNotExist:
+        return Response({"message": "No skill found"}, status=status.HTTP_404_NOT_FOUND)
+
+    skill.delete()
+    return Response({"message": "Skill deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['PUT'])
+def update_user(request, id):
+    try:
+        user = User.objects.get(pk=id)
+    except User.DoesNotExist:
+        return Response({"message": "No user found with this id"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = UserSerializer(user, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "User saved successfully"})
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_user(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({"message": "No user found with this id"}, status=status.HTTP_404_NOT_FOUND)
+    user.delete()
+    return Response({"message": "User deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['PUT'])
+def update_team(request, pk):
+    try:
+        team = Team.objects.get(pk=pk)
+    except Team.DoesNotExist:
+        return Response({"message": "Team not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = TeamSerializer(team, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Team updated successfully"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_team(request, pk):
+    try:
+        team = Team.objects.get(pk=pk)
+    except Team.DoesNotExist:
+        return Response({"message": "Team not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    team.delete()
+    return Response({"message": "Team deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
