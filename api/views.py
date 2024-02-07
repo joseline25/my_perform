@@ -102,6 +102,33 @@ def action_details(request, id):
     serializer = ActionSerializer(action)
     return Response(serializer.data)
 
+@api_view(['PUT'])
+def update_action(request, pk):
+    try:
+        action = Action.objects.get(id=pk)
+    except Action.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'PUT':
+        serializer = ActionSerializerPost(action, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['Delete'])
+def delete_action(request, pk):
+    try:
+        action = Action.objects.get(id=pk)
+    except Action.DoesNotExist:
+        return Response({"message": "No action found"}, status=status.HTTP_404_NOT_FOUND)
+    if request.method =='Delete':
+        action.delete()
+        return Response({"message": "Action has been deleted"}, status=status.HTTP_204_NO_CONTENT)
+    return Response({'error': 'Invalid HTTP method'}, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 #list of questions for an objective
 @api_view(['GET'])
 def questions(request, objective_id):
@@ -248,6 +275,32 @@ def kpis_all(request):
     kpis = KPI.objects.all()
     kpi_serializer = KPISerializer(kpis, many=True)
     return Response(kpi_serializer.data)
+
+# update a kpi
+@api_view(['PUT'])
+def update_kpi(request, pk):
+    try:
+        kpi = KPI.objects.get(id=pk)
+    except KPI.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method =='PUT':
+        serializer = KPISerializerPost(kpi, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['DELETE'])
+def delete_kpi(request, pk):
+    try:
+        kpi = KPI.objects.get(id=pk)
+    except KPI.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'DELETE':
+        kpi.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 {"name": "kpi_1",

@@ -18,6 +18,10 @@ urlpatterns = [
     path('actions/<int:id>/', views.action_details, name='actions_detail_api'),
     path('actions_objective/<int:objective_id>/', views.action_objective, name='objective_actions_detail_api'),
     path('question/<int:objective_id>/', views.questions, name="action_questions"),
+    #update action
+    path('update-action/<int:pk>/', views.update_action, name='update-action'),
+    #delete action
+    path('delete-action/<int:pk>/', views.delete_action, name='delete-action'),
     
     # teams
      path('teams', views.all_teams, name='teams_api'),
@@ -40,6 +44,10 @@ urlpatterns = [
     path('skills', views.get_skills, name="skills"), 
     # get all tasks
     path('tasks', views.get_all_tasks, name="tasks"), 
+    #update kpi
+    path('update-kpi/<int:pk>/', views.update_kpi, name='update-kpi'),
+    #delete kpi
+    path('delete-kpi/<int:pk>/', views.delete_kpi, name='delete-kpi'),
 ]
 
 
