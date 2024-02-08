@@ -18,16 +18,26 @@ urlpatterns = [
     path('actions/<int:id>/', views.action_details, name='actions_detail_api'),
     path('actions_objective/<int:objective_id>/', views.action_objective, name='objective_actions_detail_api'),
     path('question/<int:objective_id>/', views.questions, name="action_questions"),
+    #update action
+    path('update-action/<int:pk>/', views.update_action, name='update-action'),
+    #delete action
+    path('delete-action/<int:pk>/', views.delete_action, name='delete-action'),
     
     # teams
-     path('teams', views.all_teams, name='teams_api'),
-     path('teams/<int:id>/users/', views.team_users, name='team_users'),
+    path('teams', views.all_teams, name='teams_api'),
+    path('teams/<int:id>/users/', views.team_users, name='team_users'),
+    path('teams/<int:pk>/', views.update_team, name='update_team'),
+    path('delete-teams/<int:pk>/', views.delete_team, name='delete_team'),
     
     
     # users
     path('users/', views.all_users, name='all_users'),
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('users/<int:user_id>/same-team/', views.users_in_same_team, name='users_in_same_team'),
+    path('update-users/<int:id>/', views.update_user, name='update_user'),
+    path('delete-users/<int:id>/', views.delete_user, name='delete_user'),
+
+
     
     # KPIs
     # create a kpi
@@ -36,10 +46,16 @@ urlpatterns = [
     path('kpis_all', views.kpis_all, name="kpis_all"),
     # get tools
     path('all_tools', views.all_tools, name="all_tools"), 
+    path('tool/<int:tool_id>/', views.update_tool, name="update_tool"),
+    path('delete-tool/<int:tool_id>/', views.delete_tool, name="delete_tool"),
     # get skills
     path('skills', views.get_skills, name="skills"), 
+    path('skills/<int:skill_id>', views.update_skill, name="update_skill"), 
+    path('delete-skills/<int:skill_id>', views.delete_skill, name="delete_skill"),
     # get all tasks
     path('tasks', views.get_all_tasks, name="tasks"), 
-]
-
-
+    #update kpi
+    path('update-kpi/<int:pk>/', views.update_kpi, name='update-kpi'),
+    #delete kpi
+    path('delete-kpi/<int:pk>/', views.delete_kpi, name='delete-kpi'),
+    ]
