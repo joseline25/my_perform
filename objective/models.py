@@ -163,6 +163,10 @@ class Objective(models.Model):
 
     # override the save method
     def save(self, *args, **kwargs):
+        
+        if not self.objective_name:  # Check if objective_name is null
+            # Concatenate the desired fields for the default value
+            self.objective_name = f"{self.objective_id} {self.action_phrase} {self.number} {self.units} {self.deadline}"
         # check if end_date is further than deadline
         if self.deadline and self.end_date and self.deadline < self.end_date:
             # set the end_date to the deadline

@@ -53,6 +53,20 @@ class ObjectiveForm(forms.ModelForm):
         }
 
     # validators
+    
+    # tools and skills cannot be empty
+    def clean(self):
+        cleaned_data = super().clean()
+        tools = cleaned_data.get('tools')
+        skills = cleaned_data.get('skills')
+
+        if not tools or tools.count() == 0:
+            self.add_error('tools', 'Please select at least one tool.')
+
+        if not skills or skills.count() == 0:
+            self.add_error('skills', 'Please select at least one skill.')
+
+        return cleaned_data
 
     # Start date not earlier than current date
 
