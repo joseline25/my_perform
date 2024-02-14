@@ -68,6 +68,35 @@ def create_objective(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# update an objective
+
+@api_view(['PUT'])
+def update_objective(request, objective_id):
+    try:
+        objective = Objective.objects.get(pk=objective_id)
+    except Objective.DoesNotExist:
+        return Response({"message": "No objective found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ObjectiveSerializerPost(objective, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response({"message": "Objective successfilly updated"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# delete an objective
+
+
+@api_view(['DELETE'])
+def delete_objective(request, objective_id):
+    try:
+        objective = Objective.objects.get(pk=objective_id)
+    except Objective.DoesNotExist:
+        return Response({"message": "No Objective found"}, status=status.HTTP_404_NOT_FOUND)
+
+    objective.delete()
+    return Response({"message": "This Objective is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
+
+
 # list of actions
 @api_view(['GET'])
 def all_actions(request):
@@ -101,13 +130,14 @@ def action_details(request, id):
     serializer = ActionSerializer(action)
     return Response(serializer.data)
 
+
 @api_view(['PUT'])
 def update_action(request, pk):
     try:
         action = Action.objects.get(id=pk)
     except Action.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     if request.method == 'PUT':
         serializer = ActionSerializerPost(action, data=request.data)
         if serializer.is_valid():
@@ -116,13 +146,14 @@ def update_action(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
 @api_view(['Delete'])
 def delete_action(request, pk):
     try:
         action = Action.objects.get(id=pk)
     except Action.DoesNotExist:
         return Response({"message": "No action found"}, status=status.HTTP_404_NOT_FOUND)
-    if request.method =='Delete':
+    if request.method == 'Delete':
         action.delete()
         return Response({"message": "Action has been deleted"}, status=status.HTTP_204_NO_CONTENT)
     return Response({'error': 'Invalid HTTP method'}, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -215,24 +246,6 @@ def users_in_same_team(request, user_id):
 
 # list of kpis for an objective
 
-# @api_view(['GET', 'POST'])
-# def kpi_list_create(request, objective_id):
-#     objective = get_object_or_404(Objective, objective_id=objective_id)
-
-#     if request.method == 'GET':
-#         kpis = KPI.objects.filter(objective=objective)
-#         serializer = KPISerializer(kpis, many=True)
-#         return Response(serializer.data)
-
-#     elif request.method == 'POST':
-#         serializer = KPISerializer(data=request.data)
-
-#         if serializer.is_valid():
-#             serializer.save(objective=objective)
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET', 'POST'])
 def kpi_list_create(request, objective_id):
@@ -278,19 +291,22 @@ def kpis_all(request):
     return Response(kpi_serializer.data)
 
 # update a kpi
+
+
 @api_view(['PUT'])
 def update_kpi(request, pk):
     try:
         kpi = KPI.objects.get(id=pk)
     except KPI.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    if request.method =='PUT':
+    if request.method == 'PUT':
         serializer = KPISerializerPost(kpi, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 @api_view(['DELETE'])
 def delete_kpi(request, pk):
@@ -302,14 +318,6 @@ def delete_kpi(request, pk):
         kpi.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
-{"name": "kpi_1",
- "description": "the first kpis too test the KPI form",
- "number": 3,
- "frequency": "Weekly",
- "unit": 1,
- "objective": 1}
 
 
 @api_view(['GET'])
@@ -338,7 +346,7 @@ def update_tool(request, tool_id):
     try:
         tool = Tool.objects.get(pk=tool_id)
     except Tool.DoesNotExist:
-        return Response({"message": "No tool found"},status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "No tool found"}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = ToolSerializer(tool, data=request.data)
     if serializer.is_valid():
@@ -352,7 +360,7 @@ def delete_tool(request, tool_id):
     try:
         tool = Tool.objects.get(pk=tool_id)
     except Tool.DoesNotExist:
-        return Response({"message": "No Tool found"},status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "No Tool found"}, status=status.HTTP_404_NOT_FOUND)
 
     tool.delete()
     return Response({"message": "This Tool is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
@@ -430,3 +438,11 @@ def delete_team(request, pk):
 
     team.delete()
     return Response({"message": "Team deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+{"name": "kpi_1",
+ "description": "the first kpis too test the KPI form",
+ "number": 3,
+ "frequency": "Weekly",
+ "unit": 1,
+ "objective": 1}
