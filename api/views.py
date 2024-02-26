@@ -8,6 +8,12 @@ from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from django.db.models import Count
+
+
+# additionals method to compute metrics
+from .metrics import *
 
 
 # list of objectives
@@ -283,6 +289,14 @@ def create_kpi(request):
     return Response(serializer.data)
 
 
+{"name": "kpi_1",
+ "description": "the first kpis too test the KPI form",
+ "number": 3,
+ "frequency": "Weekly",
+ "unit": 1,
+ "objective": 1}
+
+
 # get all the kpis
 @api_view(['GET'])
 def kpis_all(request):
@@ -440,9 +454,201 @@ def delete_team(request, pk):
     return Response({"message": "Team deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
-{"name": "kpi_1",
- "description": "the first kpis too test the KPI form",
- "number": 3,
- "frequency": "Weekly",
- "unit": 1,
- "objective": 1}
+# API views for Performance - Profuctivity metrics
+""" 
+Objective Achievement Rate (OAR) for an employee
+OAR=[Completed Objectives/Assigned Objectives] * 100
+
+"""
+
+
+@api_view(['GET'])
+def user_performance(request, user_id, start_date, end_date):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # get the list of all objectives assigned to the user with user_id in a timeframe
+
+    list_1 = Objective.objects.filter(
+        assign_to__id__in=user_id,
+        start_date__lte=end_date,    # Objective starts before or on the end date
+        end_date__gte=start_date     # Objective ends after or on the start date
+    )
+    list_1_count = list_1.count()
+
+    # to include objectives that overlap with the timeframe
+    # but don't necessarily start or end within it
+    objectives = Objective.objects.filter(
+        Q(assign_to__id__in=user_id),  # Filter by user IDs
+        Q(start_date__lte=end_date) | Q(end_date__gte=start_date)
+    )
+
+    # get the list of completed objective
+    # how do we know that an objective is completed? with the status field
+    # Filter objectives completed by the user within the specified timeframe
+    list_2 = Objective.objects.filter(
+        assign_to__id__in=user_id,
+        status='Completed',
+        # objective's deadline is after or on start_date
+        deadline__gte=start_date,
+        deadline__lte=end_date                # objective's deadline is before or on end_date
+    )
+
+    list_2_count = list_2.count()
+
+    # to include objectives that were completed within the timeframe
+    # but don't necessarily have a deadline within it
+    completed_objectives = Objective.objects.filter(
+        Q(created_by=user_id),
+        Q(status='Completed'),
+        Q(deadline__gte=start_date) | Q(deadline__lte=end_date)
+    )
+
+    # Objective Achievement Rate (OAR)
+    if list_1_count > 0:
+        oar = (list_2_count / list_1_count) * 100
+    else:
+        oar = 0
+    data = {
+        'user': UserSerializer(user).data,
+        'completed_objectives': list_2,
+        'assigned_objectives': list_1,
+        'completed_objectives_count': list_2_count,
+        'assigned_objectives_count': list_1_count,
+        'oar': oar
+    }
+
+    return Response(data)
+
+
+""" 
+Average Number of Actions per Objective
+
+"""
+
+
+@api_view(['GET'])
+def average_actions_per_objective(request, user_id, start_date, end_date):
+    # get the user
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # retrieve all actions related to objectives in timeframe
+    actions = Action.objects.filter(
+        objective__start_date__lte=end_date,
+        objective__end_date__gte=start_date,
+        # if user_id is in the assign_to list
+        objective__assign_to__in=[user_id]
+
+    )
+
+    # total
+    total_actions = actions.count()
+
+    # number of objectives
+    total_objectives = Objective.objects.filter(
+        assign_to__id__in=user_id,
+        start_date__lte=end_date,
+        end_date__gte=start_date
+    ).count()
+
+    # ANA/O
+    if total_objectives > 0:
+        average_actions_per_objective = total_actions / total_objectives
+    else:
+        average_actions_per_objective = 0
+
+    data = {
+        'user': UserSerializer(user).data,
+        'total_actions': total_actions,
+        'total_objectives': total_objectives,
+        'average_actions_per_objective': average_actions_per_objective
+    }
+
+    return Response(data)
+
+
+""" 
+Time to Objective Completion
+
+Time to Objective Completion = Actual Completion Date-Objective Start Date
+"""
+
+
+@api_view(['GET'])
+def time_objective_completion(request, objective_id):
+    # get the user
+    try:
+        objective = Objective.objects.get(pk=objective_id)
+    except Objective.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # completion date of the objective
+    completion_date = objective.completion_date
+    # start date of the objective
+    start_date = objective.start_date
+
+    # get the time to objective completion
+    if completion_date is None:
+        return Response({"message": "The completion time of the objective is not set", "time_to_completion": -1}, status=status.HTTP_200_OK)
+    else:
+
+        time_to_completion = completion_date - start_date
+        if time_to_completion.total_seconds() < 0:
+            return Response({"message": "Objective has already been completed", "time_to_completion": -1}, status=status.HTTP_200_OK)
+        else:
+            return Response({"time_to_completion": time_to_completion.total_seconds()}, status=status.HTTP_200_OK)
+
+
+""" 
+Number of Objectives Assigned vs Completed
+
+Objective Completion Rate (OCR) = 
+[Number of Objectives Completed/Total Number of Objectives Assigned] * 100
+"""
+
+@api_view(['GET'])
+def objective_completion_rate(request, user_id, start_date, end_date):
+    # get the user
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # retrieve all objectives assigned in timeframe
+    list_1 = Objective.objects.filter(
+        assign_to__id__in=user_id,
+        start_date__lte=end_date,   
+        end_date__gte=start_date     
+    )
+    list_1_count = list_1.count()
+    
+    # retrieve all the objectives completed from the assigned ones in the timeframe
+    list_2 = Objective.objects.filter(
+        assign_to__id__in=user_id,
+        status='Completed',
+        # objective's deadline is after or on start_date
+        deadline__gte=start_date,
+        deadline__lte=end_date                # objective's deadline is before or on end_date
+    )
+    list_2_count = list_2.count()
+    
+    # Objective Achievement Rate (OAR)
+    if list_1_count > 0:
+        ocr = (list_2_count / list_1_count) * 100
+    else:
+        ocr = 0
+    data = {
+        'user': UserSerializer(user).data,
+        'completed_objectives': list_2,
+        'assigned_objectives': list_1,
+        'completed_objectives_count': list_2_count,
+        'assigned_objectives_count': list_1_count,
+        'ocr': ocr
+    }
+
+    return Response(data)

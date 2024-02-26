@@ -1,8 +1,11 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from .models_additional.task import Task
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+
+from django.utils import timezone
 
 # to enable assign_to field to point to User or team
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -110,6 +113,11 @@ class Objective(models.Model):
                        ('Non-Financial', 'Non-Financial')]
     repeat_frequency = [('Daily', 'Daily'), ('Weekly',
                                              'Weekly'), ('Monthly', 'Monthly')]
+    status_choices = [
+        ('Pending', 'Pending'),
+        ('In Progress', 'In Progress'),
+        ('Completed', 'Completed'),
+    ]
 
     objective_id = models.AutoField(primary_key=True)
     objective_name = models.CharField(max_length=300, blank=True, null=True)
@@ -142,6 +150,9 @@ class Objective(models.Model):
     dog = models.TextField()
     is_draft = models.BooleanField(default=False)
     repeat = models.BooleanField(default=False)
+    status = models.CharField(choices=status_choices, default='Pending', max_length=20)
+    completion_date = models.DateTimeField(blank=True, null=True)
+    estimated_hours = models.IntegerField(default=0, help_text="Estimated number of hours to complete the task")
 
     # test assign_to a team or user
 
@@ -163,7 +174,7 @@ class Objective(models.Model):
 
     # override the save method
     def save(self, *args, **kwargs):
-        
+
         if not self.objective_name:  # Check if objective_name is null
             # Concatenate the desired fields for the default value
             self.objective_name = f"{self.objective_id} {self.action_phrase} {self.number} {self.units} {self.deadline}"
@@ -182,11 +193,27 @@ class Objective(models.Model):
             self.assign_to_to_type = ContentType.objects.get_for_model(User)
         elif isinstance(self.assign_to_to, Team):
             self.assign_to_to_type = ContentType.objects.get_for_model(Team)
+            
+        # update the status field depending on the date  
+        # check if the objective is in progress
+        if self.start_date <= timezone.now() <= self.end_date:
+            self.status = 'In Progress'
+        # # check if the objective is completed
+        # elif timezone.now() >= self.deadline:
+        #     self.status = 'Completed'
+        
+        # manage completion_date
+        # if the status has changed to "Completed" update the completion_date to the current datetime
+        if self.status == 'Completed' and self.completion_date is None:
+            self.completion_date = timezone.now()
+        elif self.status != 'Completed':
+            # keep  it to None
+            self.completion_date = None
         # on renvoit la main à la méthode save originale
         super().save(*args, **kwargs)
 
-
-
+start_date = datetime(2024, 1, 1)  # Example start date
+end_date = datetime(2024, 1, 31)    # Example end date
 
 class ObjectiveSkill(models.Model):
     objective_skill_id = models.AutoField(primary_key=True)
