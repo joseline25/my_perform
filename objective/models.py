@@ -22,7 +22,7 @@ objective_types = [('Financial', 'Financial'),
 # Create skills models
 class Skill(models.Model):
     skill_id = models.AutoField(primary_key=True, null=False)
-    skill_name = models.CharField(max_length=100, null=False)
+    skill_name = models.CharField(max_length=300, null=False)
     skill_description = models.TextField(max_length=100, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -37,7 +37,7 @@ class Skill(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(max_length=300, null=False)
     created_by = models.ForeignKey(
@@ -61,8 +61,8 @@ class UserTeam(models.Model):
 
 class Tool(models.Model):
     tool_id = models.AutoField(primary_key=True)
-    tool_name = models.CharField(max_length=200, null=True, blank=True)
-    description = models.TextField(max_length=200, null=True, blank=True)
+    tool_name = models.CharField(max_length=300, null=True, blank=True)
+    description = models.TextField(max_length=300, null=True, blank=True)
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -133,16 +133,16 @@ class Objective(models.Model):
     evaluator = models.ForeignKey(
         User, related_name="evaluator", on_delete=models.CASCADE, blank=True, null=True)
     repeat_date = models.CharField(
-        choices=repeat_frequency, max_length=100, blank=True, null=True)
+        choices=repeat_frequency, max_length=300, blank=True, null=True)
     deadline = models.DateTimeField(null=True, blank=True)
     action_phrase = models.CharField(max_length=300, null=False, blank=True)
     number = models.IntegerField(null=False)
-    units = models.CharField(max_length=10)
+    units = models.CharField(max_length=300)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
-    priority = models.CharField(choices=priorities, max_length=100)
-    complexity = models.CharField(choices=complexities, max_length=100)
-    objective_type = models.CharField(choices=objective_types, max_length=100)
+    priority = models.CharField(choices=priorities, max_length=300)
+    complexity = models.CharField(choices=complexities, max_length=300)
+    objective_type = models.CharField(choices=objective_types, max_length=300)
     skills = models.ManyToManyField(
         Skill, related_name='objectives_skill', blank=True)
     tools = models.ManyToManyField(
@@ -150,7 +150,7 @@ class Objective(models.Model):
     dog = models.TextField()
     is_draft = models.BooleanField(default=False)
     repeat = models.BooleanField(default=False)
-    status = models.CharField(choices=status_choices, default='Pending', max_length=20)
+    status = models.CharField(choices=status_choices, default='Pending', max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
     estimated_hours = models.IntegerField(default=0, help_text="Estimated number of hours to complete the task")
 
@@ -287,12 +287,15 @@ We measure an objectives with the KPIs associated to the objective.
 
 
 class KPI(models.Model):
+    repeat_frequency = [('Daily', 'Daily'), ('Weekly',
+                                             'Weekly'), ('Monthly', 'Monthly')]
     name = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(null=False, blank=False)
     number = models.DecimalField(max_digits=10, decimal_places=1, null=False, blank=False, validators=[
                                  MinValueValidator(Decimal('0.01'), "Amount must be a positive interger")])
     unit = models.CharField(max_length=50, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    frequency = models.CharField(choices=repeat_frequency, max_length=300,default='Daily')
     # the associated objectives
     objective = models.ForeignKey(
         Objective, blank=True, null=True, related_name="objective_kpis", on_delete=models.CASCADE)
