@@ -46,6 +46,7 @@ urlpatterns = [
          views.users_in_same_team, name='users_in_same_team'),
     path('update-users/<int:id>/', views.update_user, name='update_user'),
     path('delete-users/<int:id>/', views.delete_user, name='delete_user'),
+    path('create_user/', views.create_user, name='create_user'),
 
 
 

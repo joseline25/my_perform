@@ -1,7 +1,7 @@
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer, ActionMainEntrySerializer, ActionMainEntryPostSerializer
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer, ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill
 from objective.models_additional.task import Task
 from action.models import Action, Question, ActionMainEntry
@@ -212,6 +212,15 @@ def team_users(request, id):
 
 
 # Users
+
+# create a new user ()
+@api_view(['POST'])
+def create_user(request):
+    serializer = UserSerialiazerPost(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # get all the users
 @api_view(['GET'])
