@@ -24,6 +24,7 @@ from django.urls import path, include
 
 
 
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Perform 1.0 API",

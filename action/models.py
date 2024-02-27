@@ -28,6 +28,34 @@ class Action(models.Model):
 
     def __str__(self):
         return f" {self.action_name} for {self.objective.objective_name}"
+    
+    
+# action entry following the main action entry sheet
+""" 
+date, name, What you did you do today, objective(foreignkey), duration, 
+achievements(learnings, deliverable, work product, innovation, miscellaneous)
+"""
+
+class ActionMainEntry(models.Model):
+    achievements_values = [
+        ('Learnings', 'Learnings'),
+        ('Deliverable', 'Deliverable'),
+        ('Work-Product', 'Work-Product'),
+        ('Innovation', 'Innovation'),
+        ('Miscellaneous', 'Miscellaneous'),
+    ]
+    
+    date= models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=300)
+    what_you_did_today = models.TextField()
+    objective = models.ForeignKey(Objective, related_name='action_entry', on_delete=models.CASCADE)
+    duration = models.IntegerField(null=True)
+    achievements = models.CharField(choices=achievements_values, default='Learnings', max_length=20)
+    collaborators = models.ManyToManyField(User, related_name="action_main_entry_collaborators")
+    
+    def __str__(self):
+        return f"{self.name}'s actions for {self.date}"
+    
 
 
 class ActionTool(models.Model):

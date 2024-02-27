@@ -1,9 +1,10 @@
+from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer, ActionMainEntrySerializer, ActionMainEntryPostSerializer
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill
 from objective.models_additional.task import Task
-from action.models import Action, Question
+from action.models import Action, Question, ActionMainEntry
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework import status
@@ -83,7 +84,7 @@ def update_objective(request, objective_id):
     except Objective.DoesNotExist:
         return Response({"message": "No objective found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ObjectiveSerializerPost(objective, data=request.data)
+    serializer = ObjectiveSerializerPost(objective, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -145,7 +146,7 @@ def update_action(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'PUT':
-        serializer = ActionSerializerPost(action, data=request.data)
+        serializer = ActionSerializerPost(action, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -314,7 +315,7 @@ def update_kpi(request, pk):
     except KPI.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'PUT':
-        serializer = KPISerializerPost(kpi, data=request.data)
+        serializer = KPISerializerPost(kpi, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -362,7 +363,7 @@ def update_tool(request, tool_id):
     except Tool.DoesNotExist:
         return Response({"message": "No tool found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ToolSerializer(tool, data=request.data)
+    serializer = ToolSerializer(tool, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -387,7 +388,7 @@ def update_skill(request, skill_id):
     except Skill.DoesNotExist:
         return Response({"message": "No skill found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = SkillSerializer(skill, data=request.data)
+    serializer = SkillSerializer(skill, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -412,7 +413,7 @@ def update_user(request, id):
     except User.DoesNotExist:
         return Response({"message": "No user found with this id"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = UserSerializer(user, data=request.data)
+    serializer = UserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "User saved successfully"})
@@ -436,7 +437,7 @@ def update_team(request, pk):
     except Team.DoesNotExist:
         return Response({"message": "Team not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = TeamSerializer(team, data=request.data)
+    serializer = TeamSerializer(team, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "Team updated successfully"}, status=status.HTTP_200_OK)
@@ -453,6 +454,69 @@ def delete_team(request, pk):
     team.delete()
     return Response({"message": "Team deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
+
+# Main Action Entry
+
+# create an action entry
+@api_view(['POST'])
+def create_action_main_entry(request):
+    if request.method == 'POST':
+        serializer = ActionMainEntryPostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# all actions for a particular date
+
+
+@api_view(['GET'])
+def get_actions_for_date(request, date):
+    try:
+        # date string to datetime object
+        date_ = datetime.strptime(date, '%Y-%m-%d').date()
+
+        # get all actions for the specific date
+        actions = ActionMainEntry.objects.filter(date=date_)
+        serializer = ActionMainEntrySerializer(actions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except ValueError:
+        # if invalid date format
+        return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# all actions within a specified time frame
+
+@api_view(['GET'])
+def get_actions_in_timeframe(request, start_date, end_date):
+    try:
+        # convert start and end date strings to datetime objects
+        start_date_ = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date_ = datetime.strptime(end_date, '%Y-%m-%d').date()
+        
+        # get all actions within the time frame
+        actions = ActionMainEntry.objects.filter(date__range=(start_date_, end_date_))
+        serializer = ActionMainEntrySerializer(actions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    except ValueError:
+        # if invalid date format
+        return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+# get all the actions of an objective
+
+@api_view(["GET"])
+def action_main_entry_objective(request, objective_id):
+    try:
+        actions = ActionMainEntry.objects.filter(objective=objective_id)
+
+    except ActionMainEntry.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ActionMainEntrySerializer(actions, many=True)
+    return Response(serializer.data)
 
 # API views for Performance - Profuctivity metrics
 """ 
@@ -611,6 +675,7 @@ Objective Completion Rate (OCR) =
 [Number of Objectives Completed/Total Number of Objectives Assigned] * 100
 """
 
+
 @api_view(['GET'])
 def objective_completion_rate(request, user_id, start_date, end_date):
     # get the user
@@ -622,11 +687,11 @@ def objective_completion_rate(request, user_id, start_date, end_date):
     # retrieve all objectives assigned in timeframe
     list_1 = Objective.objects.filter(
         assign_to__id__in=user_id,
-        start_date__lte=end_date,   
-        end_date__gte=start_date     
+        start_date__lte=end_date,
+        end_date__gte=start_date
     )
     list_1_count = list_1.count()
-    
+
     # retrieve all the objectives completed from the assigned ones in the timeframe
     list_2 = Objective.objects.filter(
         assign_to__id__in=user_id,
@@ -636,7 +701,7 @@ def objective_completion_rate(request, user_id, start_date, end_date):
         deadline__lte=end_date                # objective's deadline is before or on end_date
     )
     list_2_count = list_2.count()
-    
+
     # Objective Achievement Rate (OAR)
     if list_1_count > 0:
         ocr = (list_2_count / list_1_count) * 100

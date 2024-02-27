@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     # drf yasg
     'drf_yasg',
     
+    # documentation with drf swagger
+    'rest_framework_swagger',
+    
     # perform app
     'objective',
     'action',

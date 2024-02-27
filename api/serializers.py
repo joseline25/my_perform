@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from objective.models import Objective, Team, KPI, Skill, Tool, Skill, Tool
 from objective.models_additional.task import Task
-from action.models import Action, Question
+from action.models import Action, Question, ActionMainEntry
 from django.contrib.auth.models import User
-
 
 
 # User GET
@@ -13,18 +12,23 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
 # User POST
+
+
 class UserSerialiazerPost(serializers.ModelSerializer):
     class Meta:
-        model = User 
+        model = User
         fields = '__all__'
 
 # Skill GET
+
+
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
         fields = ['skill_id', 'skill_name', 'skill_description']
-        
+
 # Skill POST
+
 
 class SkillSerialiserPost(serializers.ModelSerializer):
     class Meta:
@@ -47,25 +51,28 @@ class TeamSerializer(serializers.ModelSerializer):
 # Team POST
 
 class TeamSerializerPost(serializers.ModelSerializer):
-    class  Meta:
+    class Meta:
         model = Team
         fields = '__all__'
 
 # Tool GET
+
+
 class ToolSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tool
         fields = ['tool_id', 'tool_name', 'description']
 
 # Tool POST
+
+
 class ToolSerializerPost(serializers.ModelSerializer):
     class Meta:
-        
+
         model = Tool
         fields = '__all__'
-        
-        
-        
+
+
 # Objective GET
 class ObjectiveSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
@@ -79,11 +86,13 @@ class ObjectiveSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Objective POST
+
+
 class ObjectiveSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = Objective
         fields = '__all__'
-        
+
 
 # Task GET and POST
 class TaskSerializer(serializers.ModelSerializer):
@@ -91,8 +100,6 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'
-
-
 
 
 # Questions GET
@@ -105,12 +112,12 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 # Question POST
 
+
 class QuestionSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = '__all__'
-        
-        
+
 
 # Action Get
 class ActionSerializer(serializers.ModelSerializer):
@@ -125,11 +132,27 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Action POST
-class ActionSerializerPost(serializers.ModelSerializer):
-   
 
+
+class ActionSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = Action
+        fields = '__all__'
+
+
+# ActionMainEntry Get
+class ActionMainEntrySerializer(serializers.ModelSerializer):
+    collaborators = UserSerializer(many=True)
+    objective = ObjectiveSerializer()
+
+    class Meta:
+        model = ActionMainEntry
+        fields = '__all__'
+
+# ActionMainEntry POST
+class ActionMainEntryPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActionMainEntry
         fields = '__all__'
 
 
@@ -141,12 +164,11 @@ class KPISerializer(serializers.ModelSerializer):
     class Meta:
         model = KPI
         fields = '__all__'
-        
+
 
 # KPI POST
 
-class KPISerializerPost(serializers.ModelSerializer):   
+class KPISerializerPost(serializers.ModelSerializer):
     class Meta:
         model = KPI
         fields = '__all__'
-

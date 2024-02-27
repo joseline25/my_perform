@@ -1,6 +1,12 @@
 from django.urls import path
 from .import views
 
+# documentation with swagger
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='API Documentation')
+
+
 urlpatterns = [
     # objectives
     path('', views.all_objectives, name='objectives_api'),
@@ -64,6 +70,23 @@ urlpatterns = [
     # delete kpi
     path('delete-kpi/<int:pk>/', views.delete_kpi, name='delete-kpi'),
 
+    # Main Action Entry
+    # create
+    path('create_action_main_entry/', views.create_action_main_entry,
+         name='create_action_main_entry'),
+    # get actions for a particular date
+    path('actions/<str:date>/', views.get_actions_for_date,
+         name='get_actions_for_date'),
+    # http://localhost:8000/actions/2023-01-01/
+    # actions entries in a timeframe
+    path('actions/<str:start_date>/<str:end_date>/',
+         views.get_actions_in_timeframe, name='get_actions_i_timeframe'),
+    # YYYY-MM-DD
+    # get all actions of an objective
+    path('action_main_entry_objective//<int:objective_id>/', views.action_main_entry_objective,
+         name='action_main_entry_objective'),
+
+
 
     # Performance metrics
 
@@ -71,10 +94,12 @@ urlpatterns = [
     path('api/user_performance/<int:user_id>/<str:start_date>/<str:end_date>/',
          views.user_performance, name='user_performance'),
     # e.g.  /api/user_performance/<user_id>/2024-01-01/2024-01-31/
-    
+
     # Average Number of Actions per Objective (ANA/O)
     path('api/user_average_actions_objective/<int:user_id>/<str:start_date>/<str:end_date>/',
          views.average_actions_per_objective, name='user_average_actions_objective'),
-    
-    
+
+
+
+
 ]
