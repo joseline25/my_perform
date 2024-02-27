@@ -84,7 +84,8 @@ def update_objective(request, objective_id):
     except Objective.DoesNotExist:
         return Response({"message": "No objective found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ObjectiveSerializerPost(objective, data=request.data, partial=True)
+    serializer = ObjectiveSerializerPost(
+        objective, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -146,7 +147,8 @@ def update_action(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'PUT':
-        serializer = ActionSerializerPost(action, data=request.data, partial=True)
+        serializer = ActionSerializerPost(
+            action, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -223,6 +225,8 @@ def create_user(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # get all the users
+
+
 @api_view(['GET'])
 def all_users(request):
     users = User.objects.all()
@@ -504,17 +508,19 @@ def get_actions_in_timeframe(request, start_date, end_date):
         # convert start and end date strings to datetime objects
         start_date_ = datetime.strptime(start_date, '%Y-%m-%d').date()
         end_date_ = datetime.strptime(end_date, '%Y-%m-%d').date()
-        
+
         # get all actions within the time frame
-        actions = ActionMainEntry.objects.filter(date__range=(start_date_, end_date_))
+        actions = ActionMainEntry.objects.filter(
+            date__range=(start_date_, end_date_))
         serializer = ActionMainEntrySerializer(actions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     except ValueError:
         # if invalid date format
         return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
 
 # get all the actions of an objective
+
 
 @api_view(["GET"])
 def action_main_entry_objective(request, objective_id):
@@ -526,6 +532,18 @@ def action_main_entry_objective(request, objective_id):
 
     serializer = ActionMainEntrySerializer(actions, many=True)
     return Response(serializer.data)
+
+# get all the actions in the system
+
+
+@api_view(["GET"])
+def action_main_entry_all(request):
+
+    actions = ActionMainEntry.objects.all()
+
+    serializer = ActionMainEntrySerializer(actions, many=True)
+    return Response(serializer.data)
+
 
 # API views for Performance - Profuctivity metrics
 """ 

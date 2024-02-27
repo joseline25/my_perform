@@ -84,8 +84,10 @@ urlpatterns = [
          views.get_actions_in_timeframe, name='get_actions_i_timeframe'),
     # YYYY-MM-DD
     # get all actions of an objective
-    path('action_main_entry_objective//<int:objective_id>/', views.action_main_entry_objective,
+    path('action_main_entry_objective/<int:objective_id>/', views.action_main_entry_objective,
          name='action_main_entry_objective'),
+    # get all the actions
+    path('action_main_entry_all/', views.action_main_entry_all, name='action_main_entry_all'),
 
 
 
