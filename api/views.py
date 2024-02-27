@@ -304,7 +304,7 @@ def create_kpi(request):
 
 
 {"name": "kpi_1",
- "description": "the first kpis too test the KPI form",
+ "description": "the first kpis to test the KPI form",
  "number": 3,
  "frequency": "Weekly",
  "unit": 1,

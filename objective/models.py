@@ -171,13 +171,47 @@ class Objective(models.Model):
 
     def __str__(self):
         return f"{self.objective_name}"
+    
+    def generate_objective_name(self):
+        #  time remaining until the deadline
+        now = timezone.now()
+
+        # Calculate time remaining until the deadline
+        time_remaining = self.deadline - now
+        
+        
+        """ 
+        When dealing with a DateTimeField, ensure that both self.deadline and datetime.now() 
+        are either naive or aware of timezones. we can make datetime.now() timezone aware by 
+        using Django's timezone module.
+        """
+
+        if time_remaining.total_seconds() <= 0:
+            time_remaining_str = "0 days"
+        else:
+            # format time remaining
+            days = time_remaining.days
+            weeks = days // 7
+            if weeks > 0:
+                time_remaining_str = f"{weeks} {'week' if weeks == 1 else 'weeks'}"
+                days %= 7
+                if days > 0:
+                    time_remaining_str += f" {days} {'day' if days == 1 else 'days'}"
+            else:
+                time_remaining_str = f"{days} {'day' if days == 1 else 'days'}"
+
+        #  objective name
+        objective_name = f"{self.action_phrase} {self.number} {self.units} by {self.deadline.strftime('%B %d, %Y')} "
+        objective_name += f"({time_remaining_str} remaining)"
+
+        return objective_name
 
     # override the save method
     def save(self, *args, **kwargs):
 
-        if not self.objective_name:  # Check if objective_name is null
-            # Concatenate the desired fields for the default value
-            self.objective_name = f"{self.objective_id} {self.action_phrase} {self.number} {self.units} {self.deadline}"
+        if not self.objective_name:  # check if objective_name is null
+            # concatenate the desired fields for the default value
+            self.objective_name = self.generate_objective_name()
         # check if end_date is further than deadline
         if self.deadline and self.end_date and self.deadline < self.end_date:
             # set the end_date to the deadline
