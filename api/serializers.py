@@ -119,10 +119,21 @@ class ObjectiveSerializerPost(serializers.ModelSerializer):
         fields = '__all__'
     # change the update_at field when doing update
     def update(self, instance, validated_data):
+        
         instance = super().update(instance, validated_data)
         # update updated_at field
         instance.updated_at = timezone.now()  
         instance.save()
+        
+        # keep track of all updates
+        old_instance = self.Meta.model.objects.get(pk=instance.pk)
+        changes = {}
+        for attr, value in validated_data.items():
+            if getattr(instance, attr) != value:
+                changes[attr] = {
+                    'old_value': getattr(old_instance, attr),
+                    'new_value': value
+                }
         return instance
 
 

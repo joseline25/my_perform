@@ -363,6 +363,16 @@ class OperationalGoal(models.Model):
         to=User,  related_name="op_goal_assigned_to", blank=True)
     visible_to = models.ManyToManyField(
         to=User,  related_name="op_goal_visible_to", blank=True)
+    # all the objectives related to an operational goal
+    """ 
+    operational_goal = OperationalGoal.objects.get(id=1)
+    objectives = operational_goal.objectives.all()
+    """
+    # retrieve the user's operational goals
+    """ 
+    user = User.objects.get(username='example_user')
+    operational_goals = user.op_goal_assigned_to.all()
+    """
 
 
 {

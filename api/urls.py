@@ -17,7 +17,10 @@ urlpatterns = [
           views.kpi_list_create, name='kpi_list_create'),
      # details of an objective
      path('<int:objective_id>/', views.objective_detail, name='objective_detail'),
-
+     # update an objective
+      path('update_objective/<int:objective_id>/', views.update_objective, name='update_objective'),
+     # delete an objective
+     path('delete_objective/<int:objective_id>/', views.delete_objective, name='delete_objective'),
 
 
      # actions
@@ -52,10 +55,17 @@ urlpatterns = [
 
 
      # KPIs
-     # create a kpi
+     # create a kpi and get details of a kpi
      path('create_kpi', views.create_kpi, name="create_kpi"),
      # get the list of all kpis
      path('kpis_all', views.kpis_all, name="kpis_all"),
+     
+     # update a kpi
+      path('update_kpi/<int:pk>/', views.update_kpi, name='update_kpi'),
+     # delete a kpi
+     path('update_kpi/<int:pk>/', views.update_kpi, name='update_kpi'),
+     
+     
      # get tools
      path('all_tools', views.all_tools, name="all_tools"),
      path('tool/<int:tool_id>/', views.update_tool, name="update_tool"),
