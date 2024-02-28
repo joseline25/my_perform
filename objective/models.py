@@ -149,6 +149,7 @@ class Objective(models.Model):
         Tool, related_name='objectives_tool', blank=True)
     dog = models.TextField()
     is_draft = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=False)
     repeat = models.BooleanField(default=False)
     status = models.CharField(choices=status_choices, default='Pending', max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)

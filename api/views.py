@@ -545,6 +545,40 @@ def action_main_entry_all(request):
     return Response(serializer.data)
 
 
+# publish an objective
+
+@api_view(['POST'])
+def publish_objective(request, objective_id):
+    try:
+        objective = Objective.objects.get(pk=objective_id)
+    except Objective.DoesNotExist:
+        return Response({"message": "Objective not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # change is_published field to True
+    objective.is_published = True
+    objective.save()
+
+    return Response({"message": "Objective published successfully"}, status=status.HTTP_200_OK)
+
+# list of published objectives
+
+@api_view(['GET'])
+def published_objectives(request):
+    
+    published_objectives = Objective.objects.filter(is_published=True)
+    serializer = ObjectiveSerializer(published_objectives, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+# list of completed objectives ( objectives that have a value in the completion date field)
+
+@api_view(['GET'])
+def completed_objectives(request):
+    #  all completed objectives (where completion_date is not null)
+    completed_objectives = Objective.objects.exclude(completion_date__isnull=True)
+    serializer = ObjectiveSerializer(completed_objectives, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
 # API views for Performance - Profuctivity metrics
 """ 
 Objective Achievement Rate (OAR) for an employee
