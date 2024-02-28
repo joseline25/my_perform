@@ -112,7 +112,18 @@ urlpatterns = [
     # list of completed objectives
     path('completed_objectives/', views.completed_objectives,
          name='completed_objectives'),
-
+    
+    
+    
+    # Supervisor dashboard
+    
+     # Get op goals assigned to a aser and get all objectives related to those op goals
+     path('objectives_assigned_to_user/<int:user_id>/', views.objectives_assigned_to_user, name='objectives_assigned_to_user'),
+     # Get all completed objectives related to an operational goal
+      path('completed_objectives_for_op_goal/<int:op_goal_id>/', views.completed_objectives_for_op_goal, name='completed_objectives_for_op_goal'),
+     
+     
+     
     # Performance metrics
 
     # Objective Achievement Rate (OAR)

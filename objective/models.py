@@ -320,7 +320,7 @@ class KPI(models.Model):
     # the associated objectives
     objective = models.ForeignKey(
         Objective, blank=True, null=True, related_name="objective_kpis", on_delete=models.CASCADE)
-
+    # how do you know a kpi is completed, evaluate it??
     class Meta:
         ordering = ['-created_at']
 
@@ -397,3 +397,13 @@ class OperationalGoal(models.Model):
     "is_draft": False,
     "repeat": True
 }
+
+# to keep track of the changes in Objective object
+class ObjectiveAuditLog(models.Model):
+    objective = models.ForeignKey('Objective', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    changes = models.TextField()
+
+    def __str__(self):
+        return f"{self.objective} - {self.timestamp}"

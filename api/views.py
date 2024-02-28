@@ -1,8 +1,8 @@
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer, ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost
-from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer, ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost, OperationalGoalSerializer, OperationalGoalSerializerPost
+from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill, OperationalGoal
 from objective.models_additional.task import Task
 from action.models import Action, Question, ActionMainEntry
 from django.contrib.auth.models import User
@@ -553,7 +553,7 @@ def publish_objective(request, objective_id):
         objective = Objective.objects.get(pk=objective_id)
     except Objective.DoesNotExist:
         return Response({"message": "Objective not found"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     # change is_published field to True
     objective.is_published = True
     objective.save()
@@ -562,24 +562,98 @@ def publish_objective(request, objective_id):
 
 # list of published objectives
 
+
 @api_view(['GET'])
 def published_objectives(request):
-    
+
     published_objectives = Objective.objects.filter(is_published=True)
     serializer = ObjectiveSerializer(published_objectives, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # list of completed objectives ( objectives that have a value in the completion date field)
 
+
 @api_view(['GET'])
 def completed_objectives(request):
     #  all completed objectives (where completion_date is not null)
-    #completed_objectives = Objective.objects.exclude(completion_date__isnull=True)
+    # completed_objectives = Objective.objects.exclude(completion_date__isnull=True)
     completed_objectives = Objective.objects.filter(status='Completed')
     serializer = ObjectiveSerializer(completed_objectives, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
+
+# Get op goals assigned to a aser and get all objectives related to those op goals
+
+@api_view(['GET'])
+def objectives_assigned_to_user(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        # Total Numer of Goals
+        op_goals = OperationalGoal.objects.filter(assign_to=user_id)
+        op_goals_count = op_goals.count()
+        # Total Number of Objectives
+        objectives = Objective.objects.filter(operational_goal__in=op_goals)
+        objectives_count = objectives.count()
+        #  completed objectives within
+        completed_objectives = objectives.filter(status='Completed')
+        completed_objectives_count = completed_objectives.count()
+        # Goal Progress
+        goal_progress = (completed_objectives_count/objectives_count)*100
+
+        serializer_op_goals = OperationalGoalSerializer(op_goals, many=True)
+        serializer_objectives = ObjectiveSerializer(objectives, many=True)
+        serializer_completed_objectives = ObjectiveSerializer(
+            completed_objectives, many=True)
+
+        # Get all users assigned to the objectives of the operational goals: Number of Supervisees
+        # exclude the user with user_id
+        users_assigned = User.objects.filter(
+            Q(objectives_assigned_to__operational_goal__in=op_goals) & ~Q(id=user_id)).distinct()
+
+        data = {
+            'user': UserSerializer(user).data,
+            'operational_goals': serializer_op_goals.data,
+            'all_objectives': serializer_objectives.data,
+            'completed_objectives': serializer_completed_objectives.data,
+            'goal_progress': goal_progress,
+            'operational_goals_count': op_goals_count,
+            'objectives_count': objectives_count,
+
+        }
+        return Response(data)
+    except OperationalGoal.DoesNotExist:
+        return Response({"message": "Operational goals not found"}, status=status.HTTP_404_NOT_FOUND)
+
+# Get all completed objectives related to an operational goal
+
+
+@api_view(['GET'])
+def completed_objectives_for_op_goal(request, op_goal_id):
+    try:
+        objectives = Objective.objects.filter(
+            operational_goal=op_goal_id, status='Completed')
+        serializer = ObjectiveSerializer(objectives, many=True)
+        return Response(serializer.data)
+    except Objective.DoesNotExist:
+        return Response({"message": "Objectives not found"}, status=status.HTTP_404_NOT_FOUND)
+
+# Objective Progress
+@api_view(['GET'])
+def objective_progress(request, objective_id):
+    try:
+        #  KPIs related to the objective
+        kpis = KPI.objects.filter(objective_id=objective_id)
+        serializer = KPISerializer(kpis, many=True)
+        
+        #  KPIs completed within
+        #kpis_completed = KPI.objects.filter(kpi__in=kpis)
+        # work on the KPI model
+        
+        serializer = KPISerializer(kpis, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except KPI.DoesNotExist:
+        return Response({"message": "KPIs not found for the objective"}, status=status.HTTP_404_NOT_FOUND)
+
 # API views for Performance - Profuctivity metrics
 """ 
 Objective Achievement Rate (OAR) for an employee

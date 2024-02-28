@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from objective.models import Objective, Team, KPI, Skill, Tool, Skill, Tool
+from objective.models import Objective, OperationalGoal, Team, KPI, Skill, Tool, Skill, Tool, ObjectiveAuditLog
 from objective.models_additional.task import Task
 from action.models import Action, Question, ActionMainEntry
 from django.contrib.auth.models import User
@@ -20,6 +20,7 @@ class UserSerialiazerPost(serializers.ModelSerializer):
         model = User
         fields = ['first_name', 'last_name', 'username', 'password']
         extra_kwargs = {'password': {'write_only': True}}
+
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
@@ -40,9 +41,10 @@ class SkillSerialiserPost(serializers.ModelSerializer):
         model = Skill
         fields = '__all__'
     # change the update_at field when doing update
+
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
-        instance.updated_at = timezone.now()  
+        instance.updated_at = timezone.now()
         instance.save()
         return instance
 
@@ -66,10 +68,11 @@ class TeamSerializerPost(serializers.ModelSerializer):
         model = Team
         fields = '__all__'
     # change the update_at field when doing update
+
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         # update updated_at field
-        instance.updated_at = timezone.now()  
+        instance.updated_at = timezone.now()
         instance.save()
         return instance
 
@@ -94,17 +97,38 @@ class ToolSerializerPost(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         # update updated_at field
-        instance.updated_at = timezone.now()  
+        instance.updated_at = timezone.now()
         instance.save()
         return instance
 
+
+
+
+# OperationalGoal GET
+class OperationalGoalSerializer(serializers.ModelSerializer):
+    assign_to = UserSerializer(many=True)
+    visible_to = UserSerializer(many=True)
+    class Meta:
+        model = OperationalGoal
+        fields = '__all__'
+        
+# OperationalGoal POST
+class OperationalGoalSerializerPost(serializers.ModelSerializer):
+    
+        model = OperationalGoal
+        fields = '__all__'
+
+
 # Objective GET
+
+
 class ObjectiveSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
     tools = ToolSerializer(many=True)
     assign_to = UserSerializer(many=True)
     visible_to = UserSerializer(many=True)
     evaluator = UserSerializer()
+    operational_goal = OperationalGoalSerializer()
 
     class Meta:
         model = Objective
@@ -114,27 +138,37 @@ class ObjectiveSerializer(serializers.ModelSerializer):
 
 
 class ObjectiveSerializerPost(serializers.ModelSerializer):
+    # initialize changes dictionary to keep track of every updates
+
     class Meta:
         model = Objective
         fields = '__all__'
-    # change the update_at field when doing update
+
     def update(self, instance, validated_data):
-        
         instance = super().update(instance, validated_data)
+
         # update updated_at field
-        instance.updated_at = timezone.now()  
+        instance.updated_at = timezone.now()
         instance.save()
-        
+
         # keep track of all updates
         old_instance = self.Meta.model.objects.get(pk=instance.pk)
-        changes = {}
+
         for attr, value in validated_data.items():
             if getattr(instance, attr) != value:
-                changes[attr] = {
+                # Add new changes to the existing changes dictionary
+                self.changes[attr] = {
                     'old_value': getattr(old_instance, attr),
                     'new_value': value
                 }
+
+        # Create audit log entry
+        # user=self.context['request'].user,
+        ObjectiveAuditLog.objects.create(
+            objective=instance, changes=self.changes)
         return instance
+
+
 
 
 # Task GET and POST
@@ -193,6 +227,8 @@ class ActionMainEntrySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # ActionMainEntry POST
+
+
 class ActionMainEntryPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActionMainEntry
