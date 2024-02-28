@@ -574,7 +574,8 @@ def published_objectives(request):
 @api_view(['GET'])
 def completed_objectives(request):
     #  all completed objectives (where completion_date is not null)
-    completed_objectives = Objective.objects.exclude(completion_date__isnull=True)
+    #completed_objectives = Objective.objects.exclude(completion_date__isnull=True)
+    completed_objectives = Objective.objects.filter(status='Completed')
     serializer = ObjectiveSerializer(completed_objectives, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models_additional.task import Task
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.core.exceptions import ValidationError
 
 from django.utils import timezone
 
@@ -153,6 +154,9 @@ class Objective(models.Model):
     repeat = models.BooleanField(default=False)
     status = models.CharField(choices=status_choices, default='Pending', max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
+    """
+    To have a completion_date, mark the status as Completed! 
+    """
     estimated_hours = models.IntegerField(default=0, help_text="Estimated number of hours to complete the task")
 
     # test assign_to a team or user
@@ -213,6 +217,15 @@ class Objective(models.Model):
         if not self.objective_name:  # check if objective_name is null
             # concatenate the desired fields for the default value
             self.objective_name = self.generate_objective_name()
+            
+        # make sure start_date is not further than deadline
+        if self.deadline and self.start_date and self.deadline < self.start_date:
+            raise ValidationError("Deadline cannot be earlier than the start date.")
+        # check if start_date is further than end_date
+        if  self.end_date and self.start_date and  self.end_date < self.start_date:
+            # set the end_date to the deadline
+            self.end_date = self.deadline
+        
         # check if end_date is further than deadline
         if self.deadline and self.end_date and self.deadline < self.end_date:
             # set the end_date to the deadline
@@ -231,7 +244,7 @@ class Objective(models.Model):
             
         # update the status field depending on the date  
         # check if the objective is in progress
-        if self.start_date <= timezone.now() <= self.end_date:
+        if self.start_date <= timezone.now() <= self.end_date and self.status != 'Completed':
             self.status = 'In Progress'
         # # check if the objective is completed
         # elif timezone.now() >= self.deadline:
