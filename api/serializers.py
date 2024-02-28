@@ -3,6 +3,7 @@ from objective.models import Objective, Team, KPI, Skill, Tool, Skill, Tool
 from objective.models_additional.task import Task
 from action.models import Action, Question, ActionMainEntry
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 # User GET
@@ -38,6 +39,12 @@ class SkillSerialiserPost(serializers.ModelSerializer):
     class Meta:
         model = Skill
         fields = '__all__'
+    # change the update_at field when doing update
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        instance.updated_at = timezone.now()  
+        instance.save()
+        return instance
 
 # Team GET
 
@@ -58,6 +65,13 @@ class TeamSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = '__all__'
+    # change the update_at field when doing update
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        # update updated_at field
+        instance.updated_at = timezone.now()  
+        instance.save()
+        return instance
 
 # Tool GET
 
@@ -76,6 +90,13 @@ class ToolSerializerPost(serializers.ModelSerializer):
         model = Tool
         fields = '__all__'
 
+    # change the update_at field when doing update
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        # update updated_at field
+        instance.updated_at = timezone.now()  
+        instance.save()
+        return instance
 
 # Objective GET
 class ObjectiveSerializer(serializers.ModelSerializer):
@@ -96,6 +117,13 @@ class ObjectiveSerializerPost(serializers.ModelSerializer):
     class Meta:
         model = Objective
         fields = '__all__'
+    # change the update_at field when doing update
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        # update updated_at field
+        instance.updated_at = timezone.now()  
+        instance.save()
+        return instance
 
 
 # Task GET and POST

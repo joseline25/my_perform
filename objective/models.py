@@ -152,13 +152,17 @@ class Objective(models.Model):
     is_draft = models.BooleanField(default=False)
     is_published = models.BooleanField(default=False)
     repeat = models.BooleanField(default=False)
-    status = models.CharField(choices=status_choices, default='Pending', max_length=300)
+    status = models.CharField(choices=status_choices,
+                              default='Pending', max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
     """
     To have a completion_date, mark the status as Completed! 
     """
-    estimated_hours = models.IntegerField(default=0, help_text="Estimated number of hours to complete the task")
-
+    estimated_hours = models.IntegerField(
+        default=0, help_text="Estimated number of hours to complete the task")
+    # an objective is related to an operational goal
+    operational_goal = models.ForeignKey("OperationalGoal", on_delete=models.SET_NULL, blank=True, null=True, related_name='objectives'
+    )
     # test assign_to a team or user
 
     # use GenericForeignKey to allow assignment to either User or Team
@@ -176,15 +180,14 @@ class Objective(models.Model):
 
     def __str__(self):
         return f"{self.objective_name}"
-    
+
     def generate_objective_name(self):
         #  time remaining until the deadline
         now = timezone.now()
 
         # Calculate time remaining until the deadline
         time_remaining = self.deadline - now
-        
-        
+
         """ 
         When dealing with a DateTimeField, ensure that both self.deadline and datetime.now() 
         are either naive or aware of timezones. we can make datetime.now() timezone aware by 
@@ -217,15 +220,16 @@ class Objective(models.Model):
         if not self.objective_name:  # check if objective_name is null
             # concatenate the desired fields for the default value
             self.objective_name = self.generate_objective_name()
-            
+
         # make sure start_date is not further than deadline
         if self.deadline and self.start_date and self.deadline < self.start_date:
-            raise ValidationError("Deadline cannot be earlier than the start date.")
+            raise ValidationError(
+                "Deadline cannot be earlier than the start date.")
         # check if start_date is further than end_date
-        if  self.end_date and self.start_date and  self.end_date < self.start_date:
+        if self.end_date and self.start_date and self.end_date < self.start_date:
             # set the end_date to the deadline
             self.end_date = self.deadline
-        
+
         # check if end_date is further than deadline
         if self.deadline and self.end_date and self.deadline < self.end_date:
             # set the end_date to the deadline
@@ -241,15 +245,15 @@ class Objective(models.Model):
             self.assign_to_to_type = ContentType.objects.get_for_model(User)
         elif isinstance(self.assign_to_to, Team):
             self.assign_to_to_type = ContentType.objects.get_for_model(Team)
-            
-        # update the status field depending on the date  
+
+        # update the status field depending on the date
         # check if the objective is in progress
         if self.start_date <= timezone.now() <= self.end_date and self.status != 'Completed':
             self.status = 'In Progress'
         # # check if the objective is completed
         # elif timezone.now() >= self.deadline:
         #     self.status = 'Completed'
-        
+
         # manage completion_date
         # if the status has changed to "Completed" update the completion_date to the current datetime
         if self.status == 'Completed' and self.completion_date is None:
@@ -260,8 +264,10 @@ class Objective(models.Model):
         # on renvoit la main à la méthode save originale
         super().save(*args, **kwargs)
 
+
 start_date = datetime(2024, 1, 1)  # Example start date
 end_date = datetime(2024, 1, 31)    # Example end date
+
 
 class ObjectiveSkill(models.Model):
     objective_skill_id = models.AutoField(primary_key=True)
@@ -309,7 +315,8 @@ class KPI(models.Model):
                                  MinValueValidator(Decimal('0.01'), "Amount must be a positive interger")])
     unit = models.CharField(max_length=50, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    frequency = models.CharField(choices=repeat_frequency, max_length=300,default='Daily')
+    frequency = models.CharField(
+        choices=repeat_frequency, max_length=300, default='Daily')
     # the associated objectives
     objective = models.ForeignKey(
         Objective, blank=True, null=True, related_name="objective_kpis", on_delete=models.CASCADE)
@@ -319,6 +326,43 @@ class KPI(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Operational Goal
+        """
+        An operational goal has one or many objectives related to.
+        An operational goal is assigned to a user who can created all the objectives
+        
+        for that operational goal
+        """
+
+
+class OperationalGoal(models.Model):
+
+    priorities = [('Low', 'Low'), ('Intermediate',
+                                   'Intermediate'), ('High', 'High')]
+
+    objective_types = [('Financial', 'Financial'),
+                       ('Non-Financial', 'Non-Financial')]
+
+    status_choices = [
+        ('Pending', 'Pending'),
+        ('In Progress', 'In Progress'),
+        ('Completed', 'Completed'),
+    ]
+
+    name = models.CharField(max_length=1000, blank=True, null=True)
+    description = models.TextField()
+    goal_type = models.CharField(choices=objective_types, max_length=300)
+    priority = models.CharField(choices=priorities, max_length=300)
+    start_date = models.DateTimeField(null=False)
+    end_date = models.DateTimeField(null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    assign_to = models.ManyToManyField(
+        to=User,  related_name="op_goal_assigned_to", blank=True)
+    visible_to = models.ManyToManyField(
+        to=User,  related_name="op_goal_visible_to", blank=True)
 
 
 {
