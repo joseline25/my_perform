@@ -124,4 +124,4 @@ class ObjectiveAPITestCase(TestCase):
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        #self.assertFalse(Objective.objects.filter(objective_id=objective_id).exists())
+        self.assertFalse(Objective.objects.filter(objective_id=objective_id).exists())

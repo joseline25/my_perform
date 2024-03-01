@@ -33,7 +33,7 @@ urlpatterns = [
 
     # get all changes made on an objective
     
-    path('objectives/<int:objective_id>/changes/', views.objective_update_changes, name='objective_detail'),
+    path('objectives/<int:objective_id>/changes/', views.objective_update_changes, name='objective_changes'),
 
     # Action
     
