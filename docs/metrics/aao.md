@@ -8,7 +8,7 @@ Example: <http://localhost:8000/api/objectives/user_average_actions_objective/1/
 
 **Method:** GET
 
-**Path Parameters:**
+**Parameters:**
 
 - `user_id` (integer, required): Unique identifier for the user.
 - `start_date` (string, required): Start date of the timeframe (format: "YYYY-MM-DD").
