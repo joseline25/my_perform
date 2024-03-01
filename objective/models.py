@@ -400,10 +400,10 @@ class OperationalGoal(models.Model):
 
 # to keep track of the changes in Objective object
 class ObjectiveAuditLog(models.Model):
-    objective = models.ForeignKey('Objective', on_delete=models.CASCADE)
+    objective = models.ForeignKey('Objective', on_delete=models.CASCADE, related_name="objectives_changes")
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     changes = models.TextField()
 
     def __str__(self):
-        return f"{self.objective} - {self.timestamp}"
+        return f"{self.objective.objective_name} - {self.timestamp}"

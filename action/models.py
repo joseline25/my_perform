@@ -46,7 +46,7 @@ class ActionMainEntry(models.Model):
     ]
     
     date= models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=300)
+    name = models.ForeignKey(User, related_name="action_main_entry_user", on_delete=models.SET_NULL, null=True)
     what_you_did_today = models.TextField()
     objective = models.ForeignKey(Objective, related_name='action_entry', on_delete=models.CASCADE)
     duration = models.IntegerField(null=True)
@@ -56,6 +56,17 @@ class ActionMainEntry(models.Model):
     def __str__(self):
         return f"{self.name}'s actions for {self.date}"
     
+
+
+{
+    "date": "2024-02-14T12:00:00Z",
+    "name": 1,  
+    "what_you_did_today": "Worked on project tasks.",
+    "objective": 1,  
+    "duration": 120,  
+    "achievements": "Deliverable",
+    "collaborators": [1, 2]  
+}
 
 
 class ActionTool(models.Model):

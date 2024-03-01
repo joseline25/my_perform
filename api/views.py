@@ -1,7 +1,7 @@
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, TeamSerializerPost, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, ToolSerializerPost, SkillSerializer, SkillSerialiserPost, TaskSerializer,  ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost, OperationalGoalSerializer, OperationalGoalSerializerPost
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, TeamSerializerPost, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, ToolSerializerPost, SkillSerializer, SkillSerialiserPost, TaskSerializer,  ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost, OperationalGoalSerializer, OperationalGoalSerializerPost, ObjectiveAuditLogSerializer, ObjectiveAuditLogSerializerPost
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill, OperationalGoal
 from objective.models_additional.task import Task
 from action.models import Action, Question, ActionMainEntry
@@ -46,6 +46,18 @@ def objective_detail(request, objective_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serializer = ObjectiveSerializer(objective)
+    return Response(serializer.data)
+
+# GET objectives changes
+@api_view(['GET'])
+def objective_update_changes(request, objective_id):
+    try:
+        objective = Objective.objects.get(objective_id=objective_id)
+    except Objective.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    changes = objective.objectives_changes.all()
+    serializer = ObjectiveAuditLogSerializer(changes, many=True)
     return Response(serializer.data)
 
 

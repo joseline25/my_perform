@@ -14,15 +14,15 @@ urlpatterns = [
     # GET all
     path('objectives/', views.all_objectives, name='objectives_api'),
     # POST
-    path('objectives/', views.create_objective, name='create_objective_api'),
+    path('objectives/create/', views.create_objective, name='create_objective_api'),
     # GET id
     path('objectives/<int:objective_id>/',
          views.objective_detail, name='objective_detail'),
     # PUT
-    path('objectives/<int:objective_id>/',
+    path('objectives/update/<int:objective_id>/',
          views.update_objective, name='update_objective'),
     # DELETE
-    path('delete_objective/<int:objective_id>/', views.delete_objective, name='delete_objective'),
+    path('objectives/delete/<int:objective_id>/', views.delete_objective, name='delete_objective'),
 
     # get all the kpis of an objective and create one for this objective
     path('objectives/<int:objective_id>/kpis/', views.kpi_list_create, name='kpi_list_create'),
@@ -31,19 +31,22 @@ urlpatterns = [
      # list of questions for an objective
     path('objectives/<int:objective_id>/questions/', views.questions, name="action_questions"),
 
+    # get all changes made on an objective
+    
+    path('objectives/<int:objective_id>/changes/', views.objective_update_changes, name='objective_detail'),
 
     # Action
     
     # GET all
     path('actions/', views.all_actions, name='actions_api'),
     # POST
-    path('actions/', views.create_action, name='create_action'),
+    path('actions/create/', views.create_action, name='create_action'),
     # GET id
     path('actions/<int:id>/', views.action_details, name='actions_detail_api'),
     # PUT
-    path('action/<int:id>/', views.update_action, name='update-action'),
+    path('action/update/<int:id>/', views.update_action, name='update-action'),
     # DELETE
-    path('actions/<int:id>/', views.delete_action, name='delete-action'),
+    path('actions/delete/<int:id>/', views.delete_action, name='delete-action'),
     
     
 
@@ -51,13 +54,13 @@ urlpatterns = [
     # GET all
     path('teams/', views.all_teams, name='teams_api'),
     # POST
-    path('teams/', views.create_team, name='team_create'),
+    path('teams/create/', views.create_team, name='team_create'),
     # GET id
     path('teams/<int:id>/', views.team_details, name='team_details'),
     # PUT
-    path('teams/<int:id>/', views.update_team, name='update_team'),
+    path('teams/update/<int:id>/', views.update_team, name='update_team'),
     # DELETE
-    path('delete-teams/<int:id>/', views.delete_team, name='delete_team'),
+    path('delete-teams/delete/<int:id>/', views.delete_team, name='delete_team'),
     
     # all users of a team
     path('teams/<int:id>/users/', views.team_users, name='team_users'),
@@ -69,11 +72,11 @@ urlpatterns = [
     # GET id 
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     # PUT
-    path('users/<int:id>/', views.update_user, name='update_user'),
+    path('users/update/<int:id>/', views.update_user, name='update_user'),
     # DELETE
-    path('users/<int:id>/', views.delete_user, name='delete_user'),
+    path('users/delete/<int:id>/', views.delete_user, name='delete_user'),
     # POST
-    path('users/', views.create_user, name='create_user'),
+    path('users/create/', views.create_user, name='create_user'),
     
     # get all user in the same team as a user
      path('users/<int:user_id>/teams/',
@@ -83,26 +86,26 @@ urlpatterns = [
 
     # KPI
     # POST
-    path('kpis/', views.create_kpi, name="create_kpi"),
+    path('kpis/create/', views.create_kpi, name="create_kpi"),
     # GET all
     path('kpis/', views.kpis_all, name="kpis_all"),
     # GET id
     path('kpis/<int:id>/', views.kpi_details, name="kpis_all"),
     # PUT
-    path('kpis/<int:id>/', views.update_kpi, name='update_kpi'),
+    path('kpis/update/<int:id>/', views.update_kpi, name='update_kpi'),
     # DELETE
-    path('kpis/<int:id>/', views.delete_kpi, name='delete_kpi'),
+    path('kpis/delete/<int:id>/', views.delete_kpi, name='delete_kpi'),
 
 
     # Tool
     # GET
     path('tools/', views.all_tools, name="all_tools"),
     # POST
-    path('tools/', views.create_tool, name="create_tool"),
+    path('tools/create/', views.create_tool, name="create_tool"),
     # PUT
-    path('tools/<int:tool_id>/', views.update_tool, name="update_tool"),
+    path('tools/update/<int:tool_id>/', views.update_tool, name="update_tool"),
     # DELETE
-    path('tools/<int:tool_id>/', views.delete_tool, name="delete_tool"),
+    path('tools/delete/<int:tool_id>/', views.delete_tool, name="delete_tool"),
     # GET id
     path('tools/<int:tool_id>/', views.tool_details, name="tool_details"),
     
@@ -112,13 +115,13 @@ urlpatterns = [
     # GET all
     path('skills/', views.get_skills, name="skills"),
     # POST
-    path('skills/', views.create_skill, name="skills"),
+    path('skills/create/', views.create_skill, name="skills"),
     # GET id
     path('skills/<int:skill_id>', views.skill_details, name="skill_details"),
     # PUT
-    path('skills/<int:skill_id>', views.update_skill, name="update_skill"),
+    path('skills/update/<int:skill_id>', views.update_skill, name="update_skill"),
     # DELETE
-    path('skills/<int:skill_id>',
+    path('skills/delete/<int:skill_id>',
          views.delete_skill, name="delete_skill"),
     
     
@@ -126,13 +129,13 @@ urlpatterns = [
     # GET all
     path('tasks/', views.get_all_tasks, name="tasks"),
     # POST
-    path('tasks/', views.create_task, name="tasks"),
+    path('tasks/create/', views.create_task, name="tasks"),
     # GET id
     path('tasks/<int:id>/', views.task_details, name='update-kpi'),
-    # UPDATE
-    path('tasks/<int:id>/', views.update_task, name='update-kpi'),
+    # PUT
+    path('tasks/update/<int:id>/', views.update_task, name='update-kpi'),
     # DELETE
-    path('tasks/<int:id>/', views.delete_task, name='delete-kpi'),
+    path('tasks/delete/<int:id>/', views.delete_task, name='delete-kpi'),
     
 
     # Main Action Entry
@@ -143,11 +146,12 @@ urlpatterns = [
     path('action-main-entries/<int:id>/', views.action_main_entry_details, name='action_main_entry_details'),
     
     # DELETE
-    path('action-main-entries/<int:id>/', views.delete_action_main_entry, name='delete_action_main_entry'),
+    path('action-main-entries/delete/<int:id>/', views.delete_action_main_entry, name='delete_action_main_entry'),
     # PUT
-    path('action-main-entries/<int:id>/', views.action_main_entry_update, name='action_main_entry_update'),
+    path('action-main-entries/update/<int:id>/', views.action_main_entry_update, name='action_main_entry_update'),
     # POST
-    path('action-main-entries/', views.create_action_main_entry, name='create_action_main_entry'),
+    path('action-main-entries/create/', views.create_action_main_entry, name='create_action_main_entry'),
+    
     # GET: get actions for a particular date
     path('action-main-entries/<str:date>/', views.get_actions_for_date, name='get_actions_for_date'),
     # http://localhost:8000/action-main-entries/2023-01-01/

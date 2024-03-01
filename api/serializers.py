@@ -139,6 +139,8 @@ class ObjectiveSerializer(serializers.ModelSerializer):
 
 class ObjectiveSerializerPost(serializers.ModelSerializer):
     # initialize changes dictionary to keep track of every updates
+    
+    changes = {}
 
     class Meta:
         model = Objective
@@ -157,6 +159,7 @@ class ObjectiveSerializerPost(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             if getattr(instance, attr) != value:
                 # Add new changes to the existing changes dictionary
+                # changes is in ObjectiveAuditLog!!
                 self.changes[attr] = {
                     'old_value': getattr(old_instance, attr),
                     'new_value': value
@@ -170,6 +173,24 @@ class ObjectiveSerializerPost(serializers.ModelSerializer):
 
 
 
+
+#ObjectiveAuditLog
+class ObjectiveAuditLogSerializer(serializers.ModelSerializer):
+    
+    # user = UserSerializer()
+    # objective = ObjectiveSerializer()
+    class Meta:
+        model = ObjectiveAuditLog
+        fields = '__all__'
+
+# Objective POST
+
+
+class ObjectiveAuditLogSerializerPost(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ObjectiveAuditLog
+        fields = '__all__'
 
 # Task GET and POST
 class TaskSerializer(serializers.ModelSerializer):
