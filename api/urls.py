@@ -193,7 +193,7 @@ urlpatterns = [
     # Objective Achievement Rate (OAR)
     path('objectives/user_performance/<int:user_id>/<str:start_date>/<str:end_date>/',
          views.user_performance, name='user_performance'),
-    # e.g.  /api/user_performance/<user_id>/2024-01-01/2024-01-31/
+    # e.g.  /api/objectives/user_performance/<user_id>/2024-01-01/2024-01-31/
 
     # Average Number of Actions per Objective (ANA/O)
     path('objectives/user_average_actions_objective/<int:user_id>/<str:start_date>/<str:end_date>/',

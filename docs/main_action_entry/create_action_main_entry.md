@@ -12,7 +12,7 @@ def create_action_main_entry(request):
 
 ``
 
-Endpoint URL : POST /api/actions/create_action_main_entry/
+Endpoint URL : POST /api/action-main-entries/create/
 
 Method: POST
 Request Body: JSON object representing the action main entry to be created. The request body should conform to the structure defined by the ActionMainEntryPostSerializer.

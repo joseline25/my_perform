@@ -4,7 +4,7 @@ This endpoint updates the details of a specific objective based on its ID.
 
 ## Endpoint URL
 
-PUT /objectives/{objective_id}/
+PUT /objectives/update/{objective_id}/
 
 Example: <http://localhost:8000/api/update_objective/1/>
 

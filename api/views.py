@@ -345,8 +345,6 @@ def kpis_all(request):
     return Response(kpi_serializer.data)
 
 # update a kpi
-
-
 @api_view(['PUT'])
 def update_kpi(request, id):
     try:

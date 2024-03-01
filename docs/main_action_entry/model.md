@@ -1,6 +1,6 @@
 # Model
 
-``
+```python
 class ActionMainEntry(models.Model):
     achievements_values = [
         ('Learnings', 'Learnings'),
@@ -19,8 +19,8 @@ class ActionMainEntry(models.Model):
     collaborators = models.ManyToManyField(User, related_name="action_main_entry_collaborators")
     
     def __str__(self):
-        return f"{self.name}'s actions for {self.date}"
-``
+        return f"{self.name.first_name}'s actions for {self.date}"
+```
 
 ## Fields
 

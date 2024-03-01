@@ -1,9 +1,9 @@
 
 # Purpose: This endpoint retrieves all actions recorded for a specific date
 
-# URL: GET /api/actions/{date}/
+# URL: GET /api/action-main-entries/<str:date>/
 
-Example: <http://localhost:8000/api/action/2023-01-01/>
+Example: <http://localhost:8000/api/action-main-entries/2023-01-01/>
 
 Method: GET
 URL Parameters:

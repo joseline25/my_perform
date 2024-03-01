@@ -1,6 +1,6 @@
 # Purpose : endpoint allows the deletion of an existing objective by submitting a DELETE request with the objective ID
 
-## Endpoint URL: DELETE /api/delete_objective/<objective_id>/
+## Endpoint URL: DELETE /api/objectives/delete/<objective_id>/
 
 Method: DELETE
 URL Parameters:

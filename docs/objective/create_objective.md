@@ -1,6 +1,6 @@
 # Purpose : endpoint allows the creation of new objectives by submitting a POST request with the necessary data
 
-## Endpoint URL : POST /api/create_objective/
+## Endpoint URL : POST /api/objectives/create/
 
 Method: POST
 Request Body:

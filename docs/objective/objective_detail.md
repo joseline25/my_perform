@@ -6,7 +6,7 @@ This endpoint retrieves details of a specific objective based on its ID.
 
 GET /objectives/{objective_id}/
 
-Example: <http://localhost:8000/api/objective_detail/1/>
+Example: <http://localhost:8000/api/objectives/1/>
 
 **Method:** GET
 

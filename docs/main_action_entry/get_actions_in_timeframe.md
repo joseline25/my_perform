@@ -1,6 +1,6 @@
 # Purpose: This endpoint retrieves all actions recorded within a specified time frame
 
-## Endpoint URL: GET /api/actions/get_actions_in_timeframe/{start_date}/{end_date}/
+## Endpoint URL: GET /api/action-main-entries/{start_date}/{end_date}/
 
 Method: GET
 

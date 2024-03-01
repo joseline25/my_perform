@@ -1,6 +1,6 @@
 # Purpose : This endpoint retrieves all actions associated with a specific objective
 
-## Endpoint URL : GET /api/actions/action_main_entry_objective/{objective_id}/
+## Endpoint URL : GET /api/action_main_entry_objective/{objective_id}/
 
 Method: GET
 
