@@ -52,9 +52,12 @@ class ActionMainEntry(models.Model):
     duration = models.IntegerField(null=True)
     achievements = models.CharField(choices=achievements_values, default='Learnings', max_length=20)
     collaborators = models.ManyToManyField(User, related_name="action_main_entry_collaborators")
+    skills = models.ManyToManyField(Skill, related_name='action_main_entry_skills', blank=True)
+    tools = models.ManyToManyField(Tool, related_name='action_main_entry_tools', blank=True)
+    
     
     def __str__(self):
-        return f"{self.name}'s actions for {self.date}"
+        return f"{self.name.first_name}'s actions for {self.date}"
     
 
 
