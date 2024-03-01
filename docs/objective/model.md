@@ -1,6 +1,6 @@
 # Model
 
-``
+```python
 class Objective(models.Model):
     priorities = [('Low', 'Low'), ('Intermediate',
                                    'Intermediate'), ('High', 'High')]
@@ -108,7 +108,7 @@ class Objective(models.Model):
         # on renvoit la main à la méthode save originale
         super().save(*args, **kwargs)
 
-``
+```
 
 ## Fields
 
@@ -283,7 +283,8 @@ Implementation: The method calls super().save(*args, **kwargs) to execute the or
 
 ## Usage
 
-``# Example usage of the Objective model
+```python
+# Example usage of the Objective model
 objective = Objective.objects.create(
     objective_name='Project Launch',
     assign_to=[user1, user2],
@@ -306,4 +307,4 @@ objective = Objective.objects.create(
     estimated_hours=100
 )
 
-``
+```

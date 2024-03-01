@@ -1,23 +1,29 @@
-# Purpose: endpoint retrieves details of a specific objective based on its ID
+# Purpose
 
-## Endpoint URL: GET /api/objective_detail/<int:objective_id>/
+This endpoint retrieves details of a specific objective based on its ID.
+
+## Endpoint URL
+
+GET /objectives/{objective_id}/
 
 Example: <http://localhost:8000/api/objective_detail/1/>
 
-Method: GET
-Path Parameters:
-objective_id (integer, required): Unique identifier for the objective.
+**Method:** GET
+
+**Path Parameters:**
+
+- `objective_id` (integer, required): Unique identifier for the objective.
 
 ## Response
 
 ### Status Codes
 
-200 OK: Objective details retrieved successfully.
-404 Not Found: Objective with the specified ID does not exist.
+- 200 OK: Objective details retrieved successfully.
+- 404 Not Found: Objective with the specified ID does not exist.
 
 ### Response Body (Success)
 
-``
+```json
 {
   "objective_id": 1,
   "objective_name": "Project Launch",
@@ -43,13 +49,11 @@ objective_id (integer, required): Unique identifier for the objective.
   "estimated_hours": 0
 }
 
-``
-
 ### Response Body (Error)
 
-``
+```json
 {
   "detail": "Not found."
 }
 
-``
+```

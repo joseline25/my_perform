@@ -1,7 +1,7 @@
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, SkillSerializer, TaskSerializer, ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost, OperationalGoalSerializer, OperationalGoalSerializerPost
+from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, TeamSerializerPost, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, ToolSerializerPost, SkillSerializer, SkillSerialiserPost, TaskSerializer,  ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost, OperationalGoalSerializer, OperationalGoalSerializerPost
 from objective.models import Objective, Team, UserTeam, KPI, Tool, Skill, OperationalGoal
 from objective.models_additional.task import Task
 from action.models import Action, Question, ActionMainEntry
@@ -17,7 +17,9 @@ from django.db.models import Count
 from .metrics import *
 
 
-# list of objectives
+# Objective
+
+# GET all
 
 @api_view(['GET'])
 def all_objectives(request):
@@ -35,13 +37,11 @@ def all_objectives(request):
     return Response(response_data)
 
 
-# details of one objective
-
-
+# GET id
 @api_view(['GET'])
 def objective_detail(request, objective_id):
     try:
-        objective = Objective.objects.get(pk=objective_id)
+        objective = Objective.objects.get(objective_id=objective_id)
     except Objective.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -49,8 +49,7 @@ def objective_detail(request, objective_id):
     return Response(serializer.data)
 
 
-# create an objective
-
+# POST
 
 @api_view(['POST'])
 def create_objective(request):
@@ -75,37 +74,34 @@ def create_objective(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# update an objective
-
+# PUT
 @api_view(['PUT'])
 def update_objective(request, objective_id):
     try:
-        objective = Objective.objects.get(pk=objective_id)
+        objective = Objective.objects.get(objective_id=objective_id)
     except Objective.DoesNotExist:
         return Response({"message": "No objective found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ObjectiveSerializerPost(
-        objective, data=request.data, partial=True)
+    serializer = ObjectiveSerializerPost(objective, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
     return Response({"message": "Objective successfilly updated"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# delete an objective
-
+# DELETE
 
 @api_view(['DELETE'])
 def delete_objective(request, objective_id):
     try:
-        objective = Objective.objects.get(pk=objective_id)
+        objective = Objective.objects.get(objective_id=objective_id)
     except Objective.DoesNotExist:
         return Response({"message": "No Objective found"}, status=status.HTTP_404_NOT_FOUND)
 
     objective.delete()
-    return Response({"message": "This Objective is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
+    return Response({"message": "Objective is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
 
-
-# list of actions
+# Action
+# GET all
 @api_view(['GET'])
 def all_actions(request):
     actions = Action.objects.all()
@@ -131,7 +127,7 @@ def action_objective(request, objective_id):
 @api_view(["GET"])
 def action_details(request, id):
     try:
-        action = Action.objects.get(pk=id)
+        action = Action.objects.get(id=id)
     except Action.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -140,9 +136,9 @@ def action_details(request, id):
 
 
 @api_view(['PUT'])
-def update_action(request, pk):
+def update_action(request, id):
     try:
-        action = Action.objects.get(id=pk)
+        action = Action.objects.get(id=id)
     except Action.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -157,24 +153,23 @@ def update_action(request, pk):
 
 
 @api_view(['Delete'])
-def delete_action(request, pk):
+def delete_action(request, id):
     try:
-        action = Action.objects.get(id=pk)
+        action = Action.objects.get(id=id)
     except Action.DoesNotExist:
         return Response({"message": "No action found"}, status=status.HTTP_404_NOT_FOUND)
     if request.method == 'Delete':
         action.delete()
-        return Response({"message": "Action has been deleted"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Action deleted"}, status=status.HTTP_204_NO_CONTENT)
     return Response({'error': 'Invalid HTTP method'}, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 # list of questions for an objective
 
-
 @api_view(['GET'])
 def questions(request, objective_id):
     try:
-        questions = Question.objects.filter(objective_id=objective_id)
+        questions = Question.objects.filter(objective=objective_id)
     except Question.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -198,6 +193,25 @@ def create_action(request):
 def all_teams(request):
     teams = Team.objects.all()
     serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def create_team(request):
+    serializer = TeamSerializerPost(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+# team details
+@api_view(["GET"])
+def team_details(request, id):
+    try:
+        team = Team.objects.get(id=id)
+    except Team.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ActionSerializer(team)
     return Response(serializer.data)
 
 
@@ -238,7 +252,7 @@ def all_users(request):
 @api_view(['GET'])
 def user_detail(request, user_id):
     try:
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -251,7 +265,7 @@ def user_detail(request, user_id):
 def users_in_same_team(request, user_id):
     try:
         # get the user
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(id=user_id)
         # get allthe users of his team
         user_teams = Team.objects.filter(userteam__user=user)
         # filter all the other users except user
@@ -322,9 +336,9 @@ def kpis_all(request):
 
 
 @api_view(['PUT'])
-def update_kpi(request, pk):
+def update_kpi(request, id):
     try:
-        kpi = KPI.objects.get(id=pk)
+        kpi = KPI.objects.get(id=id)
     except KPI.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'PUT':
@@ -337,9 +351,9 @@ def update_kpi(request, pk):
 
 
 @api_view(['DELETE'])
-def delete_kpi(request, pk):
+def delete_kpi(request, id):
     try:
-        kpi = KPI.objects.get(id=pk)
+        kpi = KPI.objects.get(id=id)
     except KPI.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'DELETE':
@@ -347,12 +361,82 @@ def delete_kpi(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+# kpi details
+@api_view(["GET"])
+def kpi_details(request, id):
+    try:
+        kpi = KPI.objects.get(id=id)
+    except KPI.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = KPISerializer(kpi)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def all_tools(request):
     tools = Tool.objects.all()
     serializer = ToolSerializer(tools, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def create_tool(request):
+    serializer = ToolSerializerPost(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def create_skill(request):
+    serializer = SkillSerialiserPost(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+    
+
+# create task
+
+@api_view(['POST'])
+def create_task(request):
+    serializer = TaskSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+ 
+  
+# task details
+@api_view(["GET"])
+def task_details(request, id):
+    try:
+        task = Task.objects.get(id=id)
+    except Task.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = TaskSerializer(task)
+    return Response(serializer.data)
+ 
+
+# tool details
+@api_view(["GET"])
+def tool_details(request, id):
+    try:
+        tool = Tool.objects.get(tool_id=id)
+    except Tool.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ToolSerializer(tool)
+    return Response(serializer.data)
+
+# skill details
+@api_view(["GET"])
+def skill_details(request, skill_id):
+    try:
+        skill = Skill.objects.get(skill_id=skill_id)
+    except Skill.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ToolSerializer(skill)
+    return Response(serializer.data)
+    
 
 
 @api_view(['GET'])
@@ -372,7 +456,7 @@ def get_all_tasks(request):
 @api_view(['PUT'])
 def update_tool(request, tool_id):
     try:
-        tool = Tool.objects.get(pk=tool_id)
+        tool = Tool.objects.get(id=tool_id)
     except Tool.DoesNotExist:
         return Response({"message": "No tool found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -386,18 +470,18 @@ def update_tool(request, tool_id):
 @api_view(['DELETE'])
 def delete_tool(request, tool_id):
     try:
-        tool = Tool.objects.get(pk=tool_id)
+        tool = Tool.objects.get(id=tool_id)
     except Tool.DoesNotExist:
         return Response({"message": "No Tool found"}, status=status.HTTP_404_NOT_FOUND)
 
     tool.delete()
-    return Response({"message": "This Tool is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
+    return Response({"message": "Tool deleted"}, tatus=status.HTTP_204_NO_CONTENT)
 
-
+# update a skill
 @api_view(['PUT'])
 def update_skill(request, skill_id):
     try:
-        skill = Skill.objects.get(pk=skill_id)
+        skill = Skill.objects.get(skill_id=skill_id)
     except Skill.DoesNotExist:
         return Response({"message": "No skill found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -407,22 +491,47 @@ def update_skill(request, skill_id):
         return Response(serializer.data)
     return Response({"message": "Skill updated succesfully"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# update task
+@api_view(['PUT'])
+def update_task(request, id):
+    try:
+        task = Task.objects.get(id=id)
+    except Task.DoesNotExist:
+        return Response({"message": "No task found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = TaskSerializer(task, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response({"message": "task updated succesfully"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 def delete_skill(request, skill_id):
     try:
-        skill = Skill.objects.get(pk=skill_id)
+        skill = Skill.objects.get(skill_id=skill_id)
     except Skill.DoesNotExist:
         return Response({"message": "No skill found"}, status=status.HTTP_404_NOT_FOUND)
 
     skill.delete()
-    return Response({"message": "Skill deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    return Response({"message": "Skill deleted "}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(['DELETE'])
+def delete_task(request, id):
+    try:
+        task = Task.objects.get(id=id)
+    except Task.DoesNotExist:
+        return Response({"message": "No task found"}, status=status.HTTP_404_NOT_FOUND)
+
+    task.delete()
+    return Response({"message": "Task deleted "}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['PUT'])
 def update_user(request, id):
     try:
-        user = User.objects.get(pk=id)
+        user = User.objects.get(id=id)
     except User.DoesNotExist:
         return Response({"message": "No user found with this id"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -436,7 +545,7 @@ def update_user(request, id):
 @api_view(['DELETE'])
 def delete_user(request, user_id):
     try:
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response({"message": "No user found with this id"}, status=status.HTTP_404_NOT_FOUND)
     user.delete()
@@ -444,9 +553,9 @@ def delete_user(request, user_id):
 
 
 @api_view(['PUT'])
-def update_team(request, pk):
+def update_team(request, id):
     try:
-        team = Team.objects.get(pk=pk)
+        team = Team.objects.get(id=id)
     except Team.DoesNotExist:
         return Response({"message": "Team not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -457,10 +566,34 @@ def update_team(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['DELETE'])
-def delete_team(request, pk):
+# PUT (Action Main Entry)
+@api_view(['PUT'])
+def action_main_entry_update(request, id):
     try:
-        team = Team.objects.get(pk=pk)
+        team = ActionMainEntry.objects.get(id=id)
+    except ActionMainEntry.DoesNotExist:
+        return Response({"message": "Action not found!"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = ActionMainEntryPostSerializer(team, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Action updated successfully"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# DELETE (Action Main Entry)
+@api_view(['DELETE'])
+def delete_action_main_entry(request, id):
+    try:
+        action = ActionMainEntry.objects.get(id=id)
+    except ActionMainEntry.DoesNotExist:
+        return Response({"message": "Action not found!"}, status=status.HTTP_404_NOT_FOUND)
+    action.delete()
+    return Response({"message": "Action deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['DELETE'])
+def delete_team(request, id):
+    try:
+        team = Team.objects.get(id=id)
     except Team.DoesNotExist:
         return Response({"message": "Team not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -526,11 +659,20 @@ def get_actions_in_timeframe(request, start_date, end_date):
 def action_main_entry_objective(request, objective_id):
     try:
         actions = ActionMainEntry.objects.filter(objective=objective_id)
-
     except ActionMainEntry.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
     serializer = ActionMainEntrySerializer(actions, many=True)
+    return Response(serializer.data)
+
+# GET id (Action Main Entry row)
+
+@api_view(["GET"])
+def action_main_entry_details(request, id):
+    try:
+        action = ActionMainEntry.objects.get(id=id)
+    except ActionMainEntry.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ActionMainEntrySerializer(action)
     return Response(serializer.data)
 
 # get all the actions in the system
@@ -550,7 +692,7 @@ def action_main_entry_all(request):
 @api_view(['POST'])
 def publish_objective(request, objective_id):
     try:
-        objective = Objective.objects.get(pk=objective_id)
+        objective = Objective.objects.get(objective_id=objective_id)
     except Objective.DoesNotExist:
         return Response({"message": "Objective not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -665,7 +807,7 @@ OAR=[Completed Objectives/Assigned Objectives] * 100
 @api_view(['GET'])
 def user_performance(request, user_id, start_date, end_date):
     try:
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -733,7 +875,7 @@ Average Number of Actions per Objective
 def average_actions_per_objective(request, user_id, start_date, end_date):
     # get the user
     try:
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -783,7 +925,7 @@ Time to Objective Completion = Actual Completion Date-Objective Start Date
 def time_objective_completion(request, objective_id):
     # get the user
     try:
-        objective = Objective.objects.get(pk=objective_id)
+        objective = Objective.objects.get(id=objective_id)
     except Objective.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -816,7 +958,7 @@ Objective Completion Rate (OCR) =
 def objective_completion_rate(request, user_id, start_date, end_date):
     # get the user
     try:
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
