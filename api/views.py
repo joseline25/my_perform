@@ -1,3 +1,4 @@
+from django.db import transaction
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -49,6 +50,8 @@ def objective_detail(request, objective_id):
     return Response(serializer.data)
 
 # GET objectives changes
+
+
 @api_view(['GET'])
 def objective_update_changes(request, objective_id):
     try:
@@ -94,26 +97,43 @@ def update_objective(request, objective_id):
     except Objective.DoesNotExist:
         return Response({"message": "No objective found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ObjectiveSerializerPost(objective, data=request.data, partial=True)
+    serializer = ObjectiveSerializerPost(
+        objective, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
     return Response({"message": "Objective successfilly updated"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 # DELETE
+
 
 @api_view(['DELETE'])
 def delete_objective(request, objective_id):
     try:
-        objective = Objective.objects.get(objective_id=objective_id)
+        with transaction.atomic():
+            objective = Objective.objects.get(pk=objective_id)
+
+            # Clear many-to-many relations
+            objective.assign_to.clear()
+            objective.visible_to.clear()
+            objective.skills.clear()
+            objective.tools.clear()
+            
+
+            # Delete the objective
+            objective.delete()
+
+            return Response({"message": "Objective and related relations deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
     except Objective.DoesNotExist:
         return Response({"message": "No Objective found"}, status=status.HTTP_404_NOT_FOUND)
-
-    objective.delete()
-    return Response({"message": "Objective is deleted"}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({"message": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Action
 # GET all
+
+
 @api_view(['GET'])
 def all_actions(request):
     actions = Action.objects.all()
@@ -206,6 +226,7 @@ def all_teams(request):
     teams = Team.objects.all()
     serializer = TeamSerializer(teams, many=True)
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 def create_team(request):
@@ -345,6 +366,8 @@ def kpis_all(request):
     return Response(kpi_serializer.data)
 
 # update a kpi
+
+
 @api_view(['PUT'])
 def update_kpi(request, id):
     try:
@@ -372,6 +395,8 @@ def delete_kpi(request, id):
     return Response({'error': 'Invalid HTTP method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 # kpi details
+
+
 @api_view(["GET"])
 def kpi_details(request, id):
     try:
@@ -382,11 +407,13 @@ def kpi_details(request, id):
     serializer = KPISerializer(kpi)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def all_tools(request):
     tools = Tool.objects.all()
     serializer = ToolSerializer(tools, many=True)
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 def create_tool(request):
@@ -395,13 +422,14 @@ def create_tool(request):
         serializer.save()
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 def create_skill(request):
     serializer = SkillSerialiserPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
-    
+
 
 # create task
 
@@ -411,8 +439,8 @@ def create_task(request):
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
- 
-  
+
+
 # task details
 @api_view(["GET"])
 def task_details(request, id):
@@ -423,7 +451,7 @@ def task_details(request, id):
 
     serializer = TaskSerializer(task)
     return Response(serializer.data)
- 
+
 
 # tool details
 @api_view(["GET"])
@@ -437,6 +465,8 @@ def tool_details(request, id):
     return Response(serializer.data)
 
 # skill details
+
+
 @api_view(["GET"])
 def skill_details(request, skill_id):
     try:
@@ -446,7 +476,6 @@ def skill_details(request, skill_id):
 
     serializer = ToolSerializer(skill)
     return Response(serializer.data)
-    
 
 
 @api_view(['GET'])
@@ -488,6 +517,8 @@ def delete_tool(request, tool_id):
     return Response({"message": "Tool deleted"}, tatus=status.HTTP_204_NO_CONTENT)
 
 # update a skill
+
+
 @api_view(['PUT'])
 def update_skill(request, skill_id):
     try:
@@ -502,6 +533,8 @@ def update_skill(request, skill_id):
     return Response({"message": "Skill updated succesfully"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # update task
+
+
 @api_view(['PUT'])
 def update_task(request, id):
     try:
@@ -515,6 +548,7 @@ def update_task(request, id):
         return Response(serializer.data)
     return Response({"message": "task updated succesfully"}, serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
 def delete_skill(request, skill_id):
     try:
@@ -524,7 +558,6 @@ def delete_skill(request, skill_id):
 
     skill.delete()
     return Response({"message": "Skill deleted "}, status=status.HTTP_204_NO_CONTENT)
-
 
 
 @api_view(['DELETE'])
@@ -583,7 +616,8 @@ def action_main_entry_update(request, id):
         team = ActionMainEntry.objects.get(id=id)
     except ActionMainEntry.DoesNotExist:
         return Response({"message": "Action not found!"}, status=status.HTTP_404_NOT_FOUND)
-    serializer = ActionMainEntryPostSerializer(team, data=request.data, partial=True)
+    serializer = ActionMainEntryPostSerializer(
+        team, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "Action updated successfully"}, status=status.HTTP_200_OK)
@@ -599,6 +633,7 @@ def delete_action_main_entry(request, id):
         return Response({"message": "Action not found!"}, status=status.HTTP_404_NOT_FOUND)
     action.delete()
     return Response({"message": "Action deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['DELETE'])
 def delete_team(request, id):
@@ -675,6 +710,7 @@ def action_main_entry_objective(request, objective_id):
     return Response(serializer.data)
 
 # GET id (Action Main Entry row)
+
 
 @api_view(["GET"])
 def action_main_entry_details(request, id):
@@ -790,21 +826,24 @@ def completed_objectives_for_op_goal(request, op_goal_id):
         return Response({"message": "Objectives not found"}, status=status.HTTP_404_NOT_FOUND)
 
 # Objective Progress
+
+
 @api_view(['GET'])
 def objective_progress(request, objective_id):
     try:
         #  KPIs related to the objective
         kpis = KPI.objects.filter(objective_id=objective_id)
         serializer = KPISerializer(kpis, many=True)
-        
+
         #  KPIs completed within
-        #kpis_completed = KPI.objects.filter(kpi__in=kpis)
+        # kpis_completed = KPI.objects.filter(kpi__in=kpis)
         # work on the KPI model
-        
+
         serializer = KPISerializer(kpis, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except KPI.DoesNotExist:
         return Response({"message": "KPIs not found for the objective"}, status=status.HTTP_404_NOT_FOUND)
+
 
 # API views for Performance - Profuctivity metrics
 """ 

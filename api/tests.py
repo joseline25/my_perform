@@ -98,9 +98,7 @@ class ObjectiveAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # since we set up with 2 objectives initially and one is created now
         self.assertEqual(Objective.objects.count(), 3)
-        print(Objective.objects.all())
-        for o in Objective.objects.all():
-            print(o.objective_id)
+        
 
     def test_update_objective(self):
         # update the first objective
@@ -121,7 +119,7 @@ class ObjectiveAPITestCase(TestCase):
 
     def test_delete_objective(self):
         # delete the second objective
-        objective_id = 4
+        objective_id = 2
         
 
         url = reverse('objective_detail', args=[objective_id])

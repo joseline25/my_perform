@@ -166,14 +166,14 @@ class Objective(models.Model):
     # test assign_to a team or user
 
     # use GenericForeignKey to allow assignment to either User or Team
-    assign_to_to_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, null=True, blank=True)
-    assign_to_to_id = models.PositiveIntegerField(null=True, blank=True)
-    assign_to_to = GenericForeignKey('assign_to_to_type', 'assign_to_to_id')
+    # assign_to_to_type = models.ForeignKey(
+    #     ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    # assign_to_to_id = models.PositiveIntegerField(null=True, blank=True)
+    # assign_to_to = GenericForeignKey('assign_to_to_type', 'assign_to_to_id')
 
-    # GenericRelation to store reverse relations
-    assign_to_to_objectives = GenericRelation(
-        'Objective', related_query_name='assign_to_to_objectives')
+    # # GenericRelation to store reverse relations
+    # assign_to_to_objectives = GenericRelation(
+    #     'Objective', related_query_name='assign_to_to_objectives')
 
     class Meta:
         ordering = ['-created_at']
@@ -241,10 +241,10 @@ class Objective(models.Model):
 
         # management de assign_to avec User and Team
         # set assign_to_totype based on the instance type
-        if isinstance(self.assign_to_to, User):
-            self.assign_to_to_type = ContentType.objects.get_for_model(User)
-        elif isinstance(self.assign_to_to, Team):
-            self.assign_to_to_type = ContentType.objects.get_for_model(Team)
+        # if isinstance(self.assign_to_to, User):
+        #     self.assign_to_to_type = ContentType.objects.get_for_model(User)
+        # elif isinstance(self.assign_to_to, Team):
+        #     self.assign_to_to_type = ContentType.objects.get_for_model(Team)
 
         # update the status field depending on the date
         # check if the objective is in progress
