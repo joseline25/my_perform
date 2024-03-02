@@ -110,7 +110,7 @@ def delete_objective(request, objective_id):
         return Response({"message": "No Objective found"}, status=status.HTTP_404_NOT_FOUND)
 
     objective.delete()
-    return Response({"message": "Objective is deleted"}, tatus=status.HTTP_204_NO_CONTENT)
+    return Response({"message": "Objective is deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 # Action
 # GET all

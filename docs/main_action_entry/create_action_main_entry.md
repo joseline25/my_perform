@@ -41,7 +41,7 @@ The response contains the same fields as the request body, along with any additi
 
 ## Sample Response
 
-``
+```python
 {
   "id": 1,
   "name": "Meeting with Team",
@@ -52,7 +52,7 @@ The response contains the same fields as the request body, along with any additi
   "collaborators": [1, 2, 3]
 }
 
-``
+```
 
 ## Error Responses
 
