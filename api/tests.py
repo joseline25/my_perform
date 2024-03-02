@@ -119,10 +119,10 @@ class ObjectiveAPITestCase(TestCase):
 
     def test_delete_objective(self):
         # delete the second objective
-        objective_id = 2
+        objective_id = self.objective_1.objective_id
         
 
-        url = reverse('objective_detail', args=[objective_id])
+        url = reverse('delete_objective', args=[objective_id])
 
         response = self.client.delete(url)
 
@@ -230,10 +230,10 @@ class ActionMainEntryAPITestCase(TestCase):
     #     
     def test_delete_action(self):
         # delete the second objective
-        action_id = 1
+        action_id = self.action.id
         
 
-        url = reverse('action_main_entry_details', args=[action_id])
+        url = reverse('delete_action_main_entry', args=[action_id])
 
         response = self.client.delete(url)
 
