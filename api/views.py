@@ -146,12 +146,13 @@ def all_actions(request):
 @api_view(["GET"])
 def action_objective(request, objective_id):
     try:
-        actions = Action.objects.filter(objective=objective_id)
+        objective = Objective.objects.get(objective_id=objective_id)
 
-    except Action.DoesNotExist:
+    except Objective.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+    actions = objective.action_entry.all()
 
-    serializer = ActionSerializer(actions, many=True)
+    serializer = ActionMainEntrySerializer(actions, many=True)
     return Response(serializer.data)
 
 

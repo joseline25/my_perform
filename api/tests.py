@@ -130,6 +130,34 @@ class ObjectiveAPITestCase(TestCase):
         print('No')
         self.assertFalse(Objective.objects.filter(
             objective_id=objective_id).exists())
+        
+        
+    def test_objective_details(self):
+        objective_id = self.objective_1.objective_id
+        url = reverse('objective_detail', args=[objective_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        print('get details')
+    # get all the kpis for an objective  
+    def test_objective_kpis(self):
+        objective_id = self.objective_1.objective_id
+        url = reverse('kpi_list_create', args=[objective_id])
+        response = self.client.get(url)
+        print(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print('objective kpis')
+    
+    # get all actions for an objective 
+        
+    def test_objective_actions(self):
+        objective_id = self.objective_1.objective_id
+        url = reverse('objective_actions_detail_api', args=[objective_id])
+        response = self.client.get(url)
+        print(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print('objective actions')
+          
 
 
 # ActionMainEntry
