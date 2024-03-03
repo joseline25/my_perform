@@ -52,7 +52,7 @@ urlpatterns = [
 
     # teams
     # GET all
-    path('teams/', views.all_teams, name='teams_api'),
+    path('teams/', views.all_teams, name='teams'),
     # POST
     path('teams/create/', views.create_team, name='team_create'),
     # GET id
@@ -115,7 +115,7 @@ urlpatterns = [
     # GET all
     path('skills/', views.get_skills, name="skills"),
     # POST
-    path('skills/create/', views.create_skill, name="skills"),
+    path('skills/create/', views.create_skill, name="create_skills"),
     # GET id
     path('skills/<int:skill_id>', views.skill_details, name="skill_details"),
     # PUT
