@@ -269,3 +269,4 @@ class ActionMainEntryAPITestCase(TestCase):
         print('Oh No! Oh no no no no')
         self.assertFalse(ActionMainEntry.objects.filter(
             id=action_id).exists())
+# py manage.py test api

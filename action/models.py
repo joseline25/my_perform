@@ -55,6 +55,8 @@ class ActionMainEntry(models.Model):
     skills = models.ManyToManyField(Skill, related_name='action_main_entry_skills', blank=True)
     tools = models.ManyToManyField(Tool, related_name='action_main_entry_tools', blank=True)
     
+    class Meta:
+        ordering = ['-date']
     
     def __str__(self):
         return f"{self.name.first_name}'s actions for {self.date}"
