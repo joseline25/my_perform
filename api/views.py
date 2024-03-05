@@ -234,7 +234,7 @@ def create_team(request):
     serializer = TeamSerializerPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # team details
@@ -429,7 +429,7 @@ def create_skill(request):
     serializer = SkillSerialiserPost(data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # create task
