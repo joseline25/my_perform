@@ -119,7 +119,6 @@ def delete_objective(request, objective_id):
             objective.visible_to.clear()
             objective.skills.clear()
             objective.tools.clear()
-            
 
             # Delete the objective
             objective.delete()
@@ -1045,3 +1044,105 @@ def objective_completion_rate(request, user_id, start_date, end_date):
     }
 
     return Response(data)
+
+# Time to Objective Completion
+
+
+def time_objective_completion(request, objective_id):
+    # get the objective
+    try:
+        objective = Objective.objects.get(objective_id=objective_id)
+    except Objective.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # time to completion
+    if objective.completion_date != None:
+        toc = objective.completion_date - objective.start_date
+    else:
+        toc = 0
+
+    data = {'toc': toc}
+    return Response(data)
+
+# Number of objectives assigned vs completed
+
+
+def objective_assigned_completed(request, user_id):
+    # get the user
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # retrieve all objectives assigned to the user
+    list_1 = Objective.objects.filter(
+        assign_to__id__in=user_id)
+    list_1_count = list_1.count()
+
+    # retrieve all the objectives completed from the assigned ones
+    list_2 = Objective.objects.filter(
+        assign_to__id__in=user_id,
+        status='Completed',
+
+    )
+    list_2_count = list_2.count()
+
+    # Objective Achievement Rate (OAR)
+    if list_1_count > 0:
+        oac = (list_2_count / list_1_count)
+    else:
+        oac = 0
+    data = {
+        'user': UserSerializer(user).data,
+        'completed_objectives': list_2,
+        'assigned_objectives': list_1,
+        'completed_objectives_count': list_2_count,
+        'assigned_objectives_count': list_1_count,
+        'oac': oac
+    }
+
+    return Response(data)
+
+# Ressource Utilization Efficiency (RUE)
+
+
+def ressouce_utilization_efficiency(request, user_id, start_date, end_date):
+    # get all the actions for all the objectives in a period
+    # 1  - get the user
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # 2  - retrieve all actions related to objectives in timeframe
+    actions = Action.objects.filter(
+        objective__start_date__lte=end_date,
+        objective__end_date__gte=start_date,
+        # if user_id is in the assign_to list
+        objective__assign_to__in=[user_id]
+
+    )
+    # for all action get the action.duration and sum everything
+    duration = 0
+    for action in actions:
+        duration += action.duration
+
+    objectives = Objective.objects.filter(
+        start_date__lte=end_date,
+        end_date__gte=start_date,
+        assign_to__in=[user_id]
+    )
+    estimated_hours = 0
+    for objective in objectives:
+        estimated_hours += objective.estimated_hours
+
+    # divide by the estimated hours for an objective
+    rue = (duration/estimated_hours) * 100
+
+    data = {
+        'user': UserSerializer(user).data,
+        'actions': actions,
+        'objectives': objectives,
+
+        'rue': rue
+    }

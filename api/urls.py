@@ -198,6 +198,21 @@ urlpatterns = [
     # Average Number of Actions per Objective (ANA/O)
     path('objectives/user_average_actions_objective/<int:user_id>/<str:start_date>/<str:end_date>/',
          views.average_actions_per_objective, name='user_average_actions_objective'),
+    
+    # Time to Objective Completion (TOC)
+    path('objectives/time_objective_completion/<int:objective_id>/',
+         views.time_objective_completion, name='time_objective_completion'),
+    
+    # Objective Assigned vs Compled (OAC)
+    path('objectives/objective_assigned_completed/<int:objective_id>/',
+         views.objective_assigned_completed, name='objective_assigned_completed'),
+    
+    # Ressource Utilization Efficiency (RUE)
+    path('objectives/ressouce_utilization_efficiency/<int:objective_id>/<str:start_date>/<str:end_date>/',
+         views.ressouce_utilization_efficiency, name='ressouce_utilization_efficiency'),
+    
+    
+    
 
 
 ]
