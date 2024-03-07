@@ -897,7 +897,7 @@ def employee_dashboard(request, user_id):
     )
 
     # Total Actions Approved : filter actions based on the time frame and status == "Validated"
-    total_approved_actions = Action.objects.filter(
+    total_approved_actions = ActionMainEntry.objects.filter(
         name=user,
         status='Validated',
         date__range=[start_date, end_date]
@@ -905,7 +905,7 @@ def employee_dashboard(request, user_id):
     total_approved_actions_count = total_approved_actions.count()
 
     # Total Actions Rejected : filter actions based on the time frame and status == "Rejected"
-    total_rejected_actions = Action.objects.filter(
+    total_rejected_actions = ActionMainEntry.objects.filter(
         name=user,
         status='Rejected',
         date__range=[start_date, end_date]
@@ -914,7 +914,7 @@ def employee_dashboard(request, user_id):
     total_rejected_actions_count = total_rejected_actions.count()
 
     # Total Actions Pending in review: status == "Pending"
-    total_pending_actions = Action.objects.filter(
+    total_pending_actions = ActionMainEntry.objects.filter(
         name=user,
         status='Pending',
         date__range=[start_date, end_date]
@@ -1203,7 +1203,7 @@ def average_actions_per_objective(request, user_id, start_date, end_date):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     # retrieve all actions related to objectives in timeframe
-    actions = Action.objects.filter(
+    actions = ActionMainEntry.objects.filter(
         objective__start_date__lte=end_date,
         objective__end_date__gte=start_date,
         # if user_id is in the assign_to list
@@ -1389,7 +1389,7 @@ def ressouce_utilization_efficiency(request, user_id, start_date, end_date):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     # 2  - retrieve all actions related to objectives in timeframe
-    actions = Action.objects.filter(
+    actions = ActionMainEntry.objects.filter(
         objective__start_date__lte=end_date,
         objective__end_date__gte=start_date,
         # if user_id is in the assign_to list
