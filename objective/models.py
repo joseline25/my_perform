@@ -222,7 +222,6 @@ class Objective(models.Model):
         if current_datetime < self.start_date:
             return 0
 
-        
         if current_datetime > self.end_date:
             return 100
 
