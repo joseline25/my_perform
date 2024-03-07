@@ -102,21 +102,22 @@ class ToolSerializerPost(serializers.ModelSerializer):
         return instance
 
 
-
-
 # OperationalGoal GET
 class OperationalGoalSerializer(serializers.ModelSerializer):
     assign_to = UserSerializer(many=True)
     visible_to = UserSerializer(many=True)
+
     class Meta:
         model = OperationalGoal
         fields = '__all__'
-        
+
 # OperationalGoal POST
+
+
 class OperationalGoalSerializerPost(serializers.ModelSerializer):
-    
-        model = OperationalGoal
-        fields = '__all__'
+
+    model = OperationalGoal
+    fields = '__all__'
 
 
 # Objective GET
@@ -129,14 +130,14 @@ class ObjectiveSerializer(serializers.ModelSerializer):
     visible_to = UserSerializer(many=True)
     evaluator = UserSerializer()
     operational_goal = OperationalGoalSerializer()
-    
-    # progress 
+
+    # progress
     progress = serializers.SerializerMethodField()
 
     class Meta:
         model = Objective
         fields = [
-             'objective_id',
+            'objective_id',
             'objective_name',
             'assign_to',
             'visible_to',
@@ -144,7 +145,7 @@ class ObjectiveSerializer(serializers.ModelSerializer):
             'associated_task',
             'created_at',
             'updated_at',
-            'evaluator',  
+            'evaluator',
             'repeat_date',
             'progress',
             'deadline',
@@ -167,7 +168,7 @@ class ObjectiveSerializer(serializers.ModelSerializer):
             'estimated_hours',
             'operational_goal'
         ]
-        
+
     def get_progress(self, instance):
         return instance.progress()
 
@@ -176,7 +177,7 @@ class ObjectiveSerializer(serializers.ModelSerializer):
 
 class ObjectiveSerializerPost(serializers.ModelSerializer):
     # initialize changes dictionary to keep track of every updates
-    
+
     changes = {}
 
     class Meta:
@@ -209,11 +210,9 @@ class ObjectiveSerializerPost(serializers.ModelSerializer):
         return instance
 
 
-
-
-#ObjectiveAuditLog
+# ObjectiveAuditLog
 class ObjectiveAuditLogSerializer(serializers.ModelSerializer):
-    
+
     # user = UserSerializer()
     # objective = ObjectiveSerializer()
     class Meta:
@@ -224,12 +223,14 @@ class ObjectiveAuditLogSerializer(serializers.ModelSerializer):
 
 
 class ObjectiveAuditLogSerializerPost(serializers.ModelSerializer):
-    
+
     class Meta:
         model = ObjectiveAuditLog
         fields = '__all__'
 
 # Task GET and POST
+
+
 class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:

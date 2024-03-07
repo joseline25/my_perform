@@ -230,7 +230,7 @@ class Objective(models.Model):
 
         progress_percentage = (elapsed_duration / total_duration) * 100
 
-        return progress_percentage
+        return round(progress_percentage, 1)
 
     # override the save method
     def save(self, *args, **kwargs):
