@@ -6,6 +6,14 @@ from objective.models import Objective, Tool, Skill
 class Action(models.Model):
     achievements_type = [("Work-Product", "Work-Product"), ("Deliverable",
                                                             "Deliverable"), ("Learning", "Learning"), ("Miscellaneous", "Miscellaneous")]
+    status_choices = [
+        ('Pending', 'Pending'),
+        ('Validated', 'Validated'),
+        ('Rejected', 'Rejected'),
+    ]
+    
+    
+    
     action_name = models.CharField(max_length=300)
     objective = models.ForeignKey(Objective, on_delete=models.CASCADE)
     # decimal avec 2 decimal , max = 10, blank=False, null=False
@@ -22,6 +30,8 @@ class Action(models.Model):
         max_length=100, choices=achievements_type, default="Deliverable")
     created_at = models.DateTimeField(auto_now_add=True)
     added_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(choices=status_choices,
+                              default='Pending', max_length=300)
 
     class Meta:
         ordering = ['-created_at']
@@ -45,6 +55,12 @@ class ActionMainEntry(models.Model):
         ('Miscellaneous', 'Miscellaneous'),
     ]
     
+    status_choices = [
+        ('Pending', 'Pending'),
+        ('Validated', 'Validated'),
+        ('Rejected', 'Rejected'),
+    ]
+    
     date= models.DateTimeField(auto_now=True)
     name = models.ForeignKey(User, related_name="action_main_entry_user", on_delete=models.SET_NULL, null=True)
     what_you_did_today = models.TextField()
@@ -54,7 +70,8 @@ class ActionMainEntry(models.Model):
     collaborators = models.ManyToManyField(User, related_name="action_main_entry_collaborators")
     skills = models.ManyToManyField(Skill, related_name='action_main_entry_skills', blank=True)
     tools = models.ManyToManyField(Tool, related_name='action_main_entry_tools', blank=True)
-    
+    status = models.CharField(choices=status_choices,
+                              default='Pending', max_length=300)
     class Meta:
         ordering = ['-date']
     

@@ -1,5 +1,9 @@
+from django.db.models import Sum
+from collections import Counter
+from datetime import timedelta
 from django.db import transaction
 from datetime import datetime
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import ObjectiveSerializer, ObjectiveSerializerPost, ActionSerializer, ActionSerializerPost, TeamSerializer, TeamSerializerPost, KPISerializer, KPISerializerPost, QuestionSerializer, ToolSerializer, ToolSerializerPost, SkillSerializer, SkillSerialiserPost, TaskSerializer,  ActionMainEntrySerializer, ActionMainEntryPostSerializer, UserSerialiazerPost, OperationalGoalSerializer, OperationalGoalSerializerPost, ObjectiveAuditLogSerializer, ObjectiveAuditLogSerializerPost
@@ -825,7 +829,7 @@ def completed_objectives_for_op_goal(request, op_goal_id):
     except Objective.DoesNotExist:
         return Response({"message": "Objectives not found"}, status=status.HTTP_404_NOT_FOUND)
 
-# Objective Progress
+# Objective Progress , transform this to a method of the model Objective
 
 
 @api_view(['GET'])
@@ -843,6 +847,142 @@ def objective_progress(request, objective_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except KPI.DoesNotExist:
         return Response({"message": "KPIs not found for the objective"}, status=status.HTTP_404_NOT_FOUND)
+
+
+# Dashboard
+
+# Employee
+# current date
+current_date = timezone.now()
+# current date 7 days before
+current_date_previous = current_date - timedelta(days=7)
+
+
+@api_view(['GET'])
+def employee_dashboard(request, user_id, start_date=current_date_previous, end_date=current_date):
+
+    # list of all actions in that timeframe:
+    actions = ActionMainEntry.objects.filter(
+        name=user_id,
+        date__range=[start_date, end_date]
+    )
+
+    # Total Actions Approved : filter actions based on the time frame and status == "Validated"
+
+    total_approved_actions = Action.objects.filter(
+        name=user_id,
+        status='Validated',
+        date__range=[start_date, end_date]
+    )
+
+    total_approved_actions_count = total_approved_actions.count()
+
+    # Total Actions Rejected : filter actions based on the time frame and status == "Rejected"
+
+    total_rejected_actions = Action.objects.filter(
+        name=user_id,
+        status='Rejected',
+        date__range=[start_date, end_date]
+    )
+
+    total_rejected_actions_count = total_rejected_actions.count()
+
+    # Total Actions Pending in review: status == "Pending"
+    total_pending_actions = Action.objects.filter(
+        name=user_id,
+        status='Pending',
+        date__range=[start_date, end_date]
+    )
+
+    total_pending_actions_count = total_pending_actions.count()
+
+    # Top collaborators
+    collaborators_list = [
+        collaborator for action in actions for collaborator in action.collaborators.all()]
+    # Count occurrences of each collaborator
+    collaborators_count = Counter(collaborators_list)
+    # Sort collaborators based on the number of occurrences
+    sorted_collaborators = sorted(
+        collaborators_count.items(), key=lambda x: x[1], reverse=True)
+
+    # the objectives related to the  actions in the timeframe
+    objectives_from_actions = Objective.objects.filter(
+        action_entry__in=actions)
+    # or objectives = set(action.objective for action in filtered_actions)
+    #  list of collaborators from objectives related to actions
+    collaborators_objectives_list = [
+        collaborator for objective in objectives_from_actions for collaborator in objective.assign_to.all()]
+    # count occurrences of each collaborator
+    collaborators_objectives_count = Counter(collaborators_list)
+    # sort collaborators based on the number of occurrences in the previous list
+    sorted_collaborators_objectives = sorted(
+        collaborators_objectives_count.items(), key=lambda x: x[1], reverse=True)
+
+    # Achievement Tracker
+
+    # get the rate of achievemnts for actions in the timeframe
+    #  occurrences of each achievement_value
+    achievements_count = Counter(action.achievements for action in actions)
+    # total number of actions
+    total_actions = len(actions)
+    #  all possible achievement values
+    all_achievement_values = dict(ActionMainEntry.achievements_values).keys()
+    # compute the rate of actions for each achievement_value
+    rate_of_actions = {achievement_value: achievements_count.get(
+        achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
+
+    # dates
+
+    # Missed Action Tracker
+    # alldates of actions
+    action_dates = set(action.date.date() for action in actions)
+    #  list of all dates within the specified timeframe
+    all_dates = [start_date + timedelta(days=i)
+                 for i in range((end_date - start_date).days + 1)]
+    # get dates where no actions were entered
+    missing_dates = [date for date in all_dates if date not in action_dates]
+
+    # total time enterd
+    # Sum the duration of all actions in filtered_actions
+    total_duration = actions.aggregate(total_duration=Sum('duration'))[
+        'total_duration']
+    if total_duration is None:
+        total_duration = 0
+        
+    total_duration_hours = total_duration // 60
+    total_duration_minutes = total_duration% 60
+
+    # tools used
+    #  from related objectives
+    unique_tools_set = set()
+    for objective in objectives_from_actions:
+        unique_tools_set.update(objective.tools.all())
+    unique_tools_list = list(unique_tools_set)
+
+    data = {'actions': actions,
+            'actions_count': actions.count(),
+            'total_approved_actions': total_approved_actions,
+            'total_approved_actions_count': total_approved_actions_count,
+            'total_rejected_actions': total_rejected_actions,
+            'total_rejected_actions_count': total_rejected_actions_count,
+            'total_pending_actions': total_pending_actions,
+            'total_pending_actions_count': total_pending_actions_count,
+            'actions_collaborators': sorted_collaborators,
+            'objectives_collaborators': sorted_collaborators_objectives,
+            'achievement_tracker': rate_of_actions,
+            'all_dates': all_dates,
+            'action_dates': action_dates,
+            'missing_dates': missing_dates,
+            'total_duration_hours': total_duration_hours,
+            'total_duration_minutes': total_duration_minutes,
+            'unique_tools': unique_tools_list,
+            'top_collaborators_for_objectives': sorted_collaborators,
+            'sorted_collaborators_objectives': sorted_collaborators_objectives,
+            'total_approved_actions': total_approved_actions,
+            }
+
+    # Return the rate of actions for each achievement_value
+    return Response(data)
 
 
 # API views for Performance - Profuctivity metrics
