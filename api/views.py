@@ -858,8 +858,18 @@ current_date = timezone.now()
 current_date_previous = current_date - timedelta(days=7)
 
 
-@api_view(['GET'])
-def employee_dashboard(request, user_id, start_date=current_date_previous, end_date=current_date):
+@api_view(['POST'])
+def employee_dashboard(request):
+    # get values from request data
+    user_id = request.data.get('user_id')
+    start_date_str = request.data.get('start_date')
+    end_date_str = request.data.get('end_date')
+
+    # Calculate default start date and end date if not provided
+    current_date = timezone.now()
+    current_date_previous = current_date - timedelta(days=7)
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d') if start_date_str else current_date_previous
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d') if end_date_str else current_date
 
     # list of all actions in that timeframe:
     actions = ActionMainEntry.objects.filter(
@@ -868,17 +878,14 @@ def employee_dashboard(request, user_id, start_date=current_date_previous, end_d
     )
 
     # Total Actions Approved : filter actions based on the time frame and status == "Validated"
-
     total_approved_actions = Action.objects.filter(
         name=user_id,
         status='Validated',
         date__range=[start_date, end_date]
     )
-
     total_approved_actions_count = total_approved_actions.count()
 
     # Total Actions Rejected : filter actions based on the time frame and status == "Rejected"
-
     total_rejected_actions = Action.objects.filter(
         name=user_id,
         status='Rejected',
@@ -979,10 +986,28 @@ def employee_dashboard(request, user_id, start_date=current_date_previous, end_d
             'top_collaborators_for_objectives': sorted_collaborators,
             'sorted_collaborators_objectives': sorted_collaborators_objectives,
             'total_approved_actions': total_approved_actions,
+            
+            'user': user_id,
+            'start_date': start_date,
+            'end_date': end_date,
+            
+            # optional
+            'current_date': current_date,
+            'current_date_previous': current_date_previous,
             }
 
-    # Return the rate of actions for each achievement_value
+    
     return Response(data)
+
+
+
+
+@api_view(['GET'])
+def supervisor_dashboard(request, user_id):
+    
+    pass
+
+
 
 
 # API views for Performance - Profuctivity metrics
