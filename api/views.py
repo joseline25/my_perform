@@ -862,7 +862,7 @@ current_date = timezone.now()
 current_date_previous = current_date - timedelta(days=7)
 
 
-#@api_view(['POST'])
+
 @api_view(['GET'])
 def employee_dashboard(request, user_id):
     # get values from request data
@@ -930,6 +930,9 @@ def employee_dashboard(request, user_id):
     # Sort collaborators based on the number of occurrences
     sorted_collaborators = sorted(
         collaborators_count.items(), key=lambda x: x[1], reverse=True)
+    
+    # Extract user objects from the list of tuples
+    users = [item[0] for item in sorted_collaborators]
 
     # the objectives related to the  actions in the timeframe
     objectives_from_actions = Objective.objects.filter(
@@ -944,6 +947,7 @@ def employee_dashboard(request, user_id):
     sorted_collaborators_objectives = sorted(
         collaborators_objectives_count.items(), key=lambda x: x[1], reverse=True)
 
+    users_objectives = [item[0] for item in sorted_collaborators_objectives]
     # Achievement Tracker
 
     # get the rate of achievemnts for actions in the timeframe
@@ -992,35 +996,48 @@ def employee_dashboard(request, user_id):
         unique_tools_set.update(objective.tools.all())
     unique_tools_list = list(unique_tools_set)
 
-    data = {'actions': ActionMainEntrySerializer(actions, many=True).data,
+    data = {
+            # list of actions in the time frame
+            'actions': ActionMainEntrySerializer(actions, many=True).data,
+            
             'actions_count': actions.count(),
-            'total_approved_actions': ActionMainEntrySerializer(total_approved_actions, many=True).data,
+            #'total_approved_actions': ActionMainEntrySerializer(total_approved_actions, many=True).data,
             'total_approved_actions_count': total_approved_actions_count,
-            'total_rejected_actions': ActionMainEntrySerializer(total_rejected_actions, many=True).data,
+            #'total_rejected_actions': ActionMainEntrySerializer(total_rejected_actions, many=True).data,
             'total_rejected_actions_count': total_rejected_actions_count,
-            'total_pending_actions': ActionMainEntrySerializer(total_pending_actions, many=True).data,
+            #'total_pending_actions': ActionMainEntrySerializer(total_pending_actions, many=True).data,
             'total_pending_actions_count': total_pending_actions_count,
-            'actions_collaborators': UserSerializer(sorted_collaborators, many=True).data,
-            #'objectives_collaborators': UserSerializer(sorted_collaborators_objectives, many=True).data,
+            'actions_collaborators': UserSerializer(users, many=True).data,
+            # #'objectives_collaborators': UserSerializer(sorted_collaborators_objectives, many=True).data,
+            
+            # Achievement tracker
             'achievement_tracker': rate_of_actions,
+            
+            # Dates
             'all_dates': all_dates,
             'action_dates': action_dates,
             'missing_dates': missing_dates,
+            
+            # total duration
             'total_duration_hours': total_duration_hours,
             'total_duration_minutes': total_duration_minutes,
+            
+            # list if tools used
             'unique_tools': ToolSerializer(unique_tools_list, many=True).data,
-            'top_collaborators_for_objectives': sorted_collaborators,
-            #'sorted_collaborators_objectives': UserSerializer(sorted_collaborators_objectives, many=True).data,
+            # 'top_collaborators_for_objectives': sorted_collaborators,
+            
+            # top collaborators on objectives
+            'sorted_collaborators_objectives': UserSerializer(users_objectives, many=True).data,
             'total_approved_actions': total_approved_actions,
-            'objectives_assigned':ObjectiveSerializer(objectives_from_actions, many=True).data,
+            #'objectives_assigned':ObjectiveSerializer(objectives_from_actions, many=True).data,
             'total_objectives_assigned': objectives_from_actions.count(),
             'user': UserSerializer(user).data,
             'start_date': start_date,
             'end_date': end_date,
 
-            # optional
-            'current_date': current_date,
-            'current_date_previous': current_date_previous,
+            # # optional
+            # 'current_date': current_date,
+            # 'current_date_previous': current_date_previous,
             }
 
     return Response(data)
