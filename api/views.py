@@ -16,6 +16,10 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.db.models import Count
+import io
+import base64
+
+import matplotlib.pyplot as plt
 
 
 # additionals method to compute metrics
@@ -868,8 +872,10 @@ def employee_dashboard(request):
     # Calculate default start date and end date if not provided
     current_date = timezone.now()
     current_date_previous = current_date - timedelta(days=7)
-    start_date = datetime.strptime(start_date_str, '%Y-%m-%d') if start_date_str else current_date_previous
-    end_date = datetime.strptime(end_date_str, '%Y-%m-%d') if end_date_str else current_date
+    start_date = datetime.strptime(
+        start_date_str, '%Y-%m-%d') if start_date_str else current_date_previous
+    end_date = datetime.strptime(
+        end_date_str, '%Y-%m-%d') if end_date_str else current_date
 
     # list of all actions in that timeframe:
     actions = ActionMainEntry.objects.filter(
@@ -915,7 +921,7 @@ def employee_dashboard(request):
     # the objectives related to the  actions in the timeframe
     objectives_from_actions = Objective.objects.filter(
         action_entry__in=actions)
-    # or objectives = set(action.objective for action in filtered_actions)
+    # or objectives = set(action.objective for action in actions)
     #  list of collaborators from objectives related to actions
     collaborators_objectives_list = [
         collaborator for objective in objectives_from_actions for collaborator in objective.assign_to.all()]
@@ -955,9 +961,9 @@ def employee_dashboard(request):
         'total_duration']
     if total_duration is None:
         total_duration = 0
-        
+
     total_duration_hours = total_duration // 60
-    total_duration_minutes = total_duration% 60
+    total_duration_minutes = total_duration % 60
 
     # tools used
     #  from related objectives
@@ -986,28 +992,118 @@ def employee_dashboard(request):
             'top_collaborators_for_objectives': sorted_collaborators,
             'sorted_collaborators_objectives': sorted_collaborators_objectives,
             'total_approved_actions': total_approved_actions,
-            
+
             'user': user_id,
             'start_date': start_date,
             'end_date': end_date,
-            
+
             # optional
             'current_date': current_date,
             'current_date_previous': current_date_previous,
             }
 
-    
     return Response(data)
-
-
 
 
 @api_view(['GET'])
 def supervisor_dashboard(request, user_id):
-    
-    pass
+
+    # get the user
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # list of all objectives created by the supervisor
+    objectives = Objective.objects.filter(created_by=user)
+
+    # get total number of objectives
+    total_number_objectives = objectives.count()
+    # total number of supervisees : all the people assigned to those objectives
+    # objectives_assignees = set(objective.assign_to.all() for objective in objectives)
+    assigned_users_set = set()
+    for objective in objectives:
+        assigned_users_set.update(objective.assign_to.all())
+
+    assigned_users = list(assigned_users_set)
+
+    # assigned objectives to the supervisor
+    objectives_assigned = Objective.objects.filter(assign_to=user)
+
+    # get all actions related to the objectives created by the supervisor
+    all_actions = []
+
+    # Iterate through each objective to get related actions
+    for objective in objectives:
+        #  all actions related to the current objective
+        actions = ActionMainEntry.objects.filter(objective=objective)
+        # Add the actions to the list
+        all_actions.extend(actions)
+
+    # action control
+
+    # count the occurrences of each status
+    status_counts = Counter(action.status for action in all_actions)
+    total_actions = len(all_actions)
+    status_rates = {status: count / total_actions for status,
+                    count in status_counts.items()}
+    # add missing status with a rate of 0
+    for status, _ in ActionMainEntry.status_choices:
+        if status not in status_rates:
+            status_rates[status] = 0
+
+    # Achievement Tracker
+
+    # get the rate of achievemnts for actions in the timeframe
+    #  occurrences of each achievement_value
+    achievements_count = Counter(action.achievements for action in all_actions)
+    # total number of actions
+    total_actions = len(actions)
+    #  all possible achievement values
+    all_achievement_values = dict(ActionMainEntry.achievements_values).keys()
+    # compute the rate of actions for each achievement_value
+    rate_of_actions = {achievement_value: achievements_count.get(
+        achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
+
+    # plot the achievemnt rate
+    x_values = list(rate_of_actions.keys())
+    y_values = list(rate_of_actions.values())
+
+    # plot the curve
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_values, y_values, marker='o', linestyle='-')
+    plt.xlabel('Achievement Values')
+    plt.ylabel('Rate of Achievements')
+    plt.title(' Achievements Tracker')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+
+    # save the plot to a BytesIO buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # convert the plot to an  encoded string(base64)
+    plot_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+    # Close the plot to free up resources
+    plt.close()
+
+    data = {
+        'user': user_id,
+        'objectives': objectives,
+        'total_number_objectives': total_number_objectives,
+        'number_supervisees': assigned_users,
+        'objectives_assigned': objectives_assigned,
+        'activities_overview': all_actions,
+        'action_control': status_rates,
+        # I did not take into account last week or this week
+        'achievement_tracker': rate_of_actions,
+        'achievement_tracker_plot': plot_base64,
 
 
+    }
 
 
 # API views for Performance - Profuctivity metrics

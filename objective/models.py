@@ -213,6 +213,24 @@ class Objective(models.Model):
         objective_name += f"({time_remaining_str} remaining)"
 
         return objective_name
+    
+    # objective progress
+    def progress(self):
+
+        current_datetime = timezone.now()
+        total_duration = self.end_date - self.start_date
+        if current_datetime < self.start_date:
+            return 0
+
+        
+        if current_datetime > self.end_date:
+            return 100
+
+        elapsed_duration = current_datetime - self.start_date
+
+        progress_percentage = (elapsed_duration / total_duration) * 100
+
+        return progress_percentage
 
     # override the save method
     def save(self, *args, **kwargs):

@@ -129,10 +129,47 @@ class ObjectiveSerializer(serializers.ModelSerializer):
     visible_to = UserSerializer(many=True)
     evaluator = UserSerializer()
     operational_goal = OperationalGoalSerializer()
+    
+    # progress 
+    progress = serializers.SerializerMethodField()
 
     class Meta:
         model = Objective
-        fields = '__all__'
+        fields = [
+             'objective_id',
+            'objective_name',
+            'assign_to',
+            'visible_to',
+            'created_by',
+            'associated_task',
+            'created_at',
+            'updated_at',
+            'evaluator',  
+            'repeat_date',
+            'progress',
+            'deadline',
+            'action_phrase',
+            'number',
+            'units',
+            'start_date',
+            'end_date',
+            'priority',
+            'complexity',
+            'objective_type',
+            'skills',
+            'tools',
+            'dog',
+            'is_draft',
+            'is_published',
+            'repeat',
+            'status',
+            'completion_date',
+            'estimated_hours',
+            'operational_goal'
+        ]
+        
+    def get_progress(self, instance):
+        return instance.progress()
 
 # Objective POST
 
