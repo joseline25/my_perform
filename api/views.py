@@ -862,7 +862,6 @@ current_date = timezone.now()
 current_date_previous = current_date - timedelta(days=7)
 
 
-
 @api_view(['GET'])
 def employee_dashboard(request, user_id):
     # get values from request data
@@ -871,9 +870,8 @@ def employee_dashboard(request, user_id):
     # end_date_str = request.data.get('end_date')
     current_date = timezone.now()
     current_date_previous = current_date - timedelta(days=7)
-    start_date= current_date_previous
+    start_date = current_date_previous
     end_date = current_date
-
 
     # Calculate default start date and end date if not provided
     # current_date = timezone.now()
@@ -883,13 +881,12 @@ def employee_dashboard(request, user_id):
     # end_date = datetime.strptime(
     #     end_date_str, '%Y-%m-%d') if end_date_str else current_date
 
-
     # get the user
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     # list of all actions in that timeframe:
     actions = ActionMainEntry.objects.filter(
         name=user,
@@ -930,7 +927,7 @@ def employee_dashboard(request, user_id):
     # Sort collaborators based on the number of occurrences
     sorted_collaborators = sorted(
         collaborators_count.items(), key=lambda x: x[1], reverse=True)
-    
+
     # Extract user objects from the list of tuples
     users = [item[0] for item in sorted_collaborators]
 
@@ -967,7 +964,8 @@ def employee_dashboard(request, user_id):
             achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
     else:
         # Handle the case where there are no actions
-        rate_of_actions = {achievement_value: 0 for achievement_value in all_achievement_values}
+        rate_of_actions = {
+            achievement_value: 0 for achievement_value in all_achievement_values}
     # dates
 
     # Missed Action Tracker
@@ -997,48 +995,48 @@ def employee_dashboard(request, user_id):
     unique_tools_list = list(unique_tools_set)
 
     data = {
-            # list of actions in the time frame
-            'actions': ActionMainEntrySerializer(actions, many=True).data,
-            
-            'actions_count': actions.count(),
-            #'total_approved_actions': ActionMainEntrySerializer(total_approved_actions, many=True).data,
-            'total_approved_actions_count': total_approved_actions_count,
-            #'total_rejected_actions': ActionMainEntrySerializer(total_rejected_actions, many=True).data,
-            'total_rejected_actions_count': total_rejected_actions_count,
-            #'total_pending_actions': ActionMainEntrySerializer(total_pending_actions, many=True).data,
-            'total_pending_actions_count': total_pending_actions_count,
-            'actions_collaborators': UserSerializer(users, many=True).data,
-            # #'objectives_collaborators': UserSerializer(sorted_collaborators_objectives, many=True).data,
-            
-            # Achievement tracker
-            'achievement_tracker': rate_of_actions,
-            
-            # Dates
-            'all_dates': all_dates,
-            'action_dates': action_dates,
-            'missing_dates': missing_dates,
-            
-            # total duration
-            'total_duration_hours': total_duration_hours,
-            'total_duration_minutes': total_duration_minutes,
-            
-            # list if tools used
-            'unique_tools': ToolSerializer(unique_tools_list, many=True).data,
-            # 'top_collaborators_for_objectives': sorted_collaborators,
-            
-            # top collaborators on objectives
-            'sorted_collaborators_objectives': UserSerializer(users_objectives, many=True).data,
-            'total_approved_actions': total_approved_actions,
-            #'objectives_assigned':ObjectiveSerializer(objectives_from_actions, many=True).data,
-            'total_objectives_assigned': objectives_from_actions.count(),
-            'user': UserSerializer(user).data,
-            'start_date': start_date,
-            'end_date': end_date,
+        # list of actions in the time frame
+        'actions': ActionMainEntrySerializer(actions, many=True).data,
 
-            # # optional
-            # 'current_date': current_date,
-            # 'current_date_previous': current_date_previous,
-            }
+        'actions_count': actions.count(),
+        # 'total_approved_actions': ActionMainEntrySerializer(total_approved_actions, many=True).data,
+        'total_approved_actions_count': total_approved_actions_count,
+        # 'total_rejected_actions': ActionMainEntrySerializer(total_rejected_actions, many=True).data,
+        'total_rejected_actions_count': total_rejected_actions_count,
+        # 'total_pending_actions': ActionMainEntrySerializer(total_pending_actions, many=True).data,
+        'total_pending_actions_count': total_pending_actions_count,
+        'actions_collaborators': UserSerializer(users, many=True).data,
+        # #'objectives_collaborators': UserSerializer(sorted_collaborators_objectives, many=True).data,
+
+        # Achievement tracker
+        'achievement_tracker': rate_of_actions,
+
+        # Dates
+        'all_dates': all_dates,
+        'action_dates': action_dates,
+        'missing_dates': missing_dates,
+
+        # total duration
+        'total_duration_hours': total_duration_hours,
+        'total_duration_minutes': total_duration_minutes,
+
+        # list if tools used
+        'unique_tools': ToolSerializer(unique_tools_list, many=True).data,
+        # 'top_collaborators_for_objectives': sorted_collaborators,
+
+        # top collaborators on objectives
+        'sorted_collaborators_objectives': UserSerializer(users_objectives, many=True).data,
+        'total_approved_actions': total_approved_actions,
+        # 'objectives_assigned':ObjectiveSerializer(objectives_from_actions, many=True).data,
+        'total_objectives_assigned': objectives_from_actions.count(),
+        'user': UserSerializer(user).data,
+        'start_date': start_date,
+        'end_date': end_date,
+
+        # # optional
+        # 'current_date': current_date,
+        # 'current_date_previous': current_date_previous,
+    }
 
     return Response(data)
 
@@ -1103,45 +1101,48 @@ def supervisor_dashboard(request, user_id):
     rate_of_actions = {achievement_value: achievements_count.get(
         achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
 
-    # plot the achievemnt rate
-    x_values = list(rate_of_actions.keys())
-    y_values = list(rate_of_actions.values())
+    # # plot the achievemnt rate
+    # x_values = list(rate_of_actions.keys())
+    # y_values = list(rate_of_actions.values())
 
-    # plot the curve
-    plt.figure(figsize=(10, 6))
-    plt.plot(x_values, y_values, marker='o', linestyle='-')
-    plt.xlabel('Achievement Values')
-    plt.ylabel('Rate of Achievements')
-    plt.title(' Achievements Tracker')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.tight_layout()
+    # # plot the curve
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(x_values, y_values, marker='o', linestyle='-')
+    # plt.xlabel('Achievement Values')
+    # plt.ylabel('Rate of Achievements')
+    # plt.title(' Achievements Tracker')
+    # plt.xticks(rotation=45)
+    # plt.grid(True)
+    # plt.tight_layout()
 
-    # save the plot to a BytesIO buffer
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
+    # # save the plot to a BytesIO buffer
+    # buffer = io.BytesIO()
+    # plt.savefig(buffer, format='png')
+    # buffer.seek(0)
 
-    # convert the plot to an  encoded string(base64)
-    plot_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    # # convert the plot to an  encoded string(base64)
+    # plot_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-    # Close the plot to free up resources
-    plt.close()
+    # # Close the plot to free up resources
+    # plt.close()
+    # plot_file_path = "path/to/plot.png"
+    # plt.savefig(plot_file_path, format='png')
 
     data = {
-        'user': user_id,
-        'objectives': objectives,
+        'user': UserSerializer(user).data,
+        'objectives': ObjectiveSerializer(objectives, many=True).data ,
         'total_number_objectives': total_number_objectives,
-        'number_supervisees': assigned_users,
-        'objectives_assigned': objectives_assigned,
-        'activities_overview': all_actions,
+        'number_supervisees': UserSerializer(assigned_users, many=True).data ,
+        'objectives_assigned': ObjectiveSerializer(objectives_assigned, many=True).data,
+        'activities_overview': ActionMainEntrySerializer(all_actions, many=True).data,
         'action_control': status_rates,
         # I did not take into account last week or this week
         'achievement_tracker': rate_of_actions,
-        'achievement_tracker_plot': plot_base64,
+        #'achievement_tracker_plot_url': plot_file_path,
 
 
     }
+    return Response(data)
 
 
 # API views for Performance - Profuctivity metrics
