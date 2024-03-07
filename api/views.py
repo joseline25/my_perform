@@ -1001,7 +1001,7 @@ def employee_dashboard(request, user_id):
             'total_pending_actions': ActionMainEntrySerializer(total_pending_actions, many=True).data,
             'total_pending_actions_count': total_pending_actions_count,
             'actions_collaborators': UserSerializer(sorted_collaborators, many=True).data,
-            'objectives_collaborators': ObjectiveSerializer(sorted_collaborators_objectives, many=True).data,
+            'objectives_collaborators': UserSerializer(sorted_collaborators_objectives, many=True).data,
             'achievement_tracker': rate_of_actions,
             'all_dates': all_dates,
             'action_dates': action_dates,
