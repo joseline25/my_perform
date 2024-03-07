@@ -871,8 +871,8 @@ def employee_dashboard(request, user_id):
     # end_date_str = request.data.get('end_date')
     current_date = timezone.now()
     current_date_previous = current_date - timedelta(days=7)
-    start_date= current_date
-    end_date = current_date_previous
+    start_date= current_date_previous
+    end_date = current_date
 
 
     # Calculate default start date and end date if not provided
