@@ -1010,7 +1010,7 @@ def employee_dashboard(request, user_id):
             'total_duration_minutes': total_duration_minutes,
             'unique_tools': ToolSerializer(unique_tools_list, many=True).data,
             'top_collaborators_for_objectives': sorted_collaborators,
-            'sorted_collaborators_objectives': sorted_collaborators_objectives,
+            'sorted_collaborators_objectives': UserSerializer(sorted_collaborators_objectives, many=True).data,
             'total_approved_actions': total_approved_actions,
             'objectives_assigned':ObjectiveSerializer(objectives_from_actions, many=True).data,
             'total_objectives_assigned': objectives_from_actions.count(),
