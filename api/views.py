@@ -862,30 +862,43 @@ current_date = timezone.now()
 current_date_previous = current_date - timedelta(days=7)
 
 
-@api_view(['POST'])
-def employee_dashboard(request):
+#@api_view(['POST'])
+@api_view(['GET'])
+def employee_dashboard(request, user_id):
     # get values from request data
-    user_id = request.data.get('user_id')
-    start_date_str = request.data.get('start_date')
-    end_date_str = request.data.get('end_date')
-
-    # Calculate default start date and end date if not provided
+    # user_id = request.data.get('user_id')
+    # start_date_str = request.data.get('start_date')
+    # end_date_str = request.data.get('end_date')
     current_date = timezone.now()
     current_date_previous = current_date - timedelta(days=7)
-    start_date = datetime.strptime(
-        start_date_str, '%Y-%m-%d') if start_date_str else current_date_previous
-    end_date = datetime.strptime(
-        end_date_str, '%Y-%m-%d') if end_date_str else current_date
+    start_date= current_date
+    end_date = current_date_previous
 
+
+    # Calculate default start date and end date if not provided
+    # current_date = timezone.now()
+    # current_date_previous = current_date - timedelta(days=7)
+    # start_date = datetime.strptime(
+    #     start_date_str, '%Y-%m-%d') if start_date_str else current_date_previous
+    # end_date = datetime.strptime(
+    #     end_date_str, '%Y-%m-%d') if end_date_str else current_date
+
+
+    # get the user
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
     # list of all actions in that timeframe:
     actions = ActionMainEntry.objects.filter(
-        name=user_id,
+        name=user,
         date__range=[start_date, end_date]
     )
 
     # Total Actions Approved : filter actions based on the time frame and status == "Validated"
     total_approved_actions = Action.objects.filter(
-        name=user_id,
+        name=user,
         status='Validated',
         date__range=[start_date, end_date]
     )
@@ -893,7 +906,7 @@ def employee_dashboard(request):
 
     # Total Actions Rejected : filter actions based on the time frame and status == "Rejected"
     total_rejected_actions = Action.objects.filter(
-        name=user_id,
+        name=user,
         status='Rejected',
         date__range=[start_date, end_date]
     )
@@ -902,7 +915,7 @@ def employee_dashboard(request):
 
     # Total Actions Pending in review: status == "Pending"
     total_pending_actions = Action.objects.filter(
-        name=user_id,
+        name=user,
         status='Pending',
         date__range=[start_date, end_date]
     )
@@ -992,8 +1005,8 @@ def employee_dashboard(request):
             'top_collaborators_for_objectives': sorted_collaborators,
             'sorted_collaborators_objectives': sorted_collaborators_objectives,
             'total_approved_actions': total_approved_actions,
-
-            'user': user_id,
+            'total_objectives_assigned':objectives_from_actions,
+            'user': user,
             'start_date': start_date,
             'end_date': end_date,
 

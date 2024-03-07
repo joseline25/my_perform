@@ -188,9 +188,10 @@ urlpatterns = [
          views.completed_objectives_for_op_goal, name='completed_objectives_for_op_goal'),
 
      
-     # Employee dashboard
-     path('employee_dashboard/', views.employee_dashboard, name='employee_dashboard'),
-
+    # Employee dashboard
+    path('employee_dashboard/<int:user_id>/', views.employee_dashboard, name='employee_dashboard'),
+    # Supervisor  dashboard
+    path('supervisor_dashboard/<int:user_id>/', views.supervisor_dashboard, name='supervisor_dashboard'),
 
     # Performance metrics
 
