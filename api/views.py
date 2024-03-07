@@ -954,9 +954,16 @@ def employee_dashboard(request, user_id):
     #  all possible achievement values
     all_achievement_values = dict(ActionMainEntry.achievements_values).keys()
     # compute the rate of actions for each achievement_value
-    rate_of_actions = {achievement_value: achievements_count.get(
-        achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
+    # rate_of_actions = {achievement_value: achievements_count.get(
+    #     achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
 
+    rate_of_actions = {}
+    if total_actions != 0:
+        rate_of_actions = {achievement_value: achievements_count.get(
+            achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
+    else:
+        # Handle the case where there are no actions
+        rate_of_actions = {achievement_value: 0 for achievement_value in all_achievement_values}
     # dates
 
     # Missed Action Tracker
