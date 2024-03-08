@@ -61,7 +61,7 @@ class ActionMainEntry(models.Model):
         ('Rejected', 'Rejected'),
     ]
     
-    date= models.DateTimeField(auto_now=True)
+    date= models.DateTimeField(auto_now=True, db_index=True)
     name = models.ForeignKey(User, related_name="action_main_entry_user", on_delete=models.SET_NULL, null=True)
     what_you_did_today = models.TextField()
     objective = models.ForeignKey(Objective, related_name='action_entry', on_delete=models.CASCADE)

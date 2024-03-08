@@ -899,6 +899,7 @@ def employee_dashboard(request, user_id):
         status='Validated',
         date__range=[start_date, end_date]
     )
+    # total_approved_actions = actions.filter(status='Validated')
     total_approved_actions_count = total_approved_actions.count()
 
     # Total Actions Rejected : filter actions based on the time frame and status == "Rejected"
@@ -907,7 +908,7 @@ def employee_dashboard(request, user_id):
         status='Rejected',
         date__range=[start_date, end_date]
     )
-
+    # total_rejected_actions = actions.filter(status='Rejected')
     total_rejected_actions_count = total_rejected_actions.count()
 
     # Total Actions Pending in review: status == "Pending"
@@ -916,7 +917,7 @@ def employee_dashboard(request, user_id):
         status='Pending',
         date__range=[start_date, end_date]
     )
-
+    # total_pendind_actions = actions.filter(status='Pending')
     total_pending_actions_count = total_pending_actions.count()
 
     # Top collaborators

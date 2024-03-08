@@ -20,6 +20,7 @@ from rest_framework import permissions
 from django.urls import re_path
 from django.contrib import admin
 from django.urls import path, include
+import debug_toolbar
 
 
 
@@ -46,5 +47,7 @@ urlpatterns = [
     path('', include('objective.urls')),
     path('action/', include('action.urls')),
     path('api/', include('api.urls')),
+    #comment this in production
+    path('__debug__/', include(debug_toolbar.urls)),
 
 ]
