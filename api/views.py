@@ -883,15 +883,18 @@ def employee_dashboard(request, user_id):
 
     # get the user
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.only('username', 'first_name', 'last_name').get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     # list of all actions in that timeframe:
+    # actions = ActionMainEntry.objects.filter(
+    #     name=user,
+    #     date__range=[start_date, end_date]
+    # )
     actions = ActionMainEntry.objects.filter(
-        name=user,
-        date__range=[start_date, end_date]
-    )
+    name=user,
+    date__range=[start_date, end_date]).select_related('name').prefetch_related('collaborators')
 
     # Total Actions Approved : filter actions based on the time frame and status == "Validated"
     total_approved_actions = ActionMainEntry.objects.filter(
@@ -923,6 +926,7 @@ def employee_dashboard(request, user_id):
     # Top collaborators
     collaborators_list = [
         collaborator for action in actions for collaborator in action.collaborators.all()]
+
     # Count occurrences of each collaborator
     collaborators_count = Counter(collaborators_list)
     # Sort collaborators based on the number of occurrences
@@ -962,7 +966,7 @@ def employee_dashboard(request, user_id):
     rate_of_actions = {}
     if total_actions != 0:
         rate_of_actions = {achievement_value: achievements_count.get(
-            achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
+            achievement_value, 0) / total_actions *100 for achievement_value in all_achievement_values}
     else:
         # Handle the case where there are no actions
         rate_of_actions = {

@@ -120,7 +120,7 @@ class Objective(models.Model):
         ('Completed', 'Completed'),
     ]
 
-    objective_id = models.AutoField(primary_key=True)
+    objective_id = models.AutoField(primary_key=True, db_index=True)
     objective_name = models.CharField(max_length=300, blank=True, null=True)
     assign_to = models.ManyToManyField(
         to=User, unique=False, related_name="objectives_assigned_to", blank=True)
@@ -139,8 +139,8 @@ class Objective(models.Model):
     action_phrase = models.CharField(max_length=300, null=False, blank=True)
     number = models.IntegerField(null=False)
     units = models.CharField(max_length=300)
-    start_date = models.DateTimeField(null=False)
-    end_date = models.DateTimeField(null=False)
+    start_date = models.DateTimeField(null=False, db_index=True)
+    end_date = models.DateTimeField(null=False, db_index=True)
     priority = models.CharField(choices=priorities, max_length=300)
     complexity = models.CharField(choices=complexities, max_length=300)
     objective_type = models.CharField(choices=objective_types, max_length=300)
@@ -287,7 +287,7 @@ end_date = datetime(2024, 1, 31)    # Example end date
 
 
 class ObjectiveSkill(models.Model):
-    objective_skill_id = models.AutoField(primary_key=True)
+    # objective_skill_id = models.AutoField(primary_key=True)
     skill_id = models.ForeignKey(Skill, on_delete=models.CASCADE)
     objective_id = models.ForeignKey(Objective, on_delete=models.CASCADE)
 
@@ -296,7 +296,7 @@ class ObjectiveSkill(models.Model):
 
 
 class ObjectiveTool(models.Model):
-    objective_tool_id = models.AutoField(primary_key=True)
+    # objective_tool_id = models.AutoField(primary_key=True)
     tool_id = models.ForeignKey(Tool, on_delete=models.CASCADE)
     objective_id = models.ForeignKey(Objective, on_delete=models.CASCADE)
 
