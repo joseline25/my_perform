@@ -358,6 +358,17 @@ def create_kpi(request):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
+def create_objective_kpi(request, objective_id):
+    objective = get_object_or_404(Objective, objective_id=objective_id)
+    serializer = KPISerializerPost(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save(objective=objective)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.data)
+
+
 {"name": "kpi_1",
  "description": "the first kpis to test the KPI form",
  "number": 3,
@@ -1051,7 +1062,7 @@ def supervisor_dashboard(request, user_id):
 
     # get the user
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.only('username', 'first_name', 'last_name').get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -1104,7 +1115,7 @@ def supervisor_dashboard(request, user_id):
     all_achievement_values = dict(ActionMainEntry.achievements_values).keys()
     # compute the rate of actions for each achievement_value
     rate_of_actions = {achievement_value: achievements_count.get(
-        achievement_value, 0) / total_actions for achievement_value in all_achievement_values}
+        achievement_value, 0) / total_actions * 100 for achievement_value in all_achievement_values}
 
     # # plot the achievemnt rate
     # x_values = list(rate_of_actions.keys())
