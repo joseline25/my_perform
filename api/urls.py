@@ -27,6 +27,9 @@ urlpatterns = [
 
      # get all the kpis of an objective and create one for this objective
      path('objectives/<int:objective_id>/kpis/', views.kpi_list_create, name='kpi_list_create'),
+     
+     # create the kpis of an objective
+     path('objectives/<int:objective_id>/create_objective_kpi', views.create_objective_kpi, name='create_objective_kpi'),
      # get all actions for an objective
      path('objectives/<int:objective_id>/actions/', views.action_objective, name='objective_actions_detail_api'),
      # list of questions for an objective
