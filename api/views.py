@@ -894,44 +894,44 @@ def employee_dashboard(request, user_id):
 
     # get the user
     try:
-        user = User.objects.only('username', 'first_name', 'last_name').get(id=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     # list of all actions in that timeframe:
-    # actions = ActionMainEntry.objects.filter(
-    #     name=user,
-    #     date__range=[start_date, end_date]
-    # )
     actions = ActionMainEntry.objects.filter(
-    name=user,
-    date__range=[start_date, end_date]).select_related('name').prefetch_related('collaborators')
-
-    # Total Actions Approved : filter actions based on the time frame and status == "Validated"
-    total_approved_actions = ActionMainEntry.objects.filter(
         name=user,
-        status='Validated',
         date__range=[start_date, end_date]
     )
-    # total_approved_actions = actions.filter(status='Validated')
+    # actions = ActionMainEntry.objects.filter(
+    # name=user,
+    # date__range=[start_date, end_date]).select_related('name').prefetch_related('collaborators')
+
+    # Total Actions Approved : filter actions based on the time frame and status == "Validated"
+    # total_approved_actions = ActionMainEntry.objects.filter(
+    #     name=user,
+    #     status='Validated',
+    #     date__range=[start_date, end_date]
+    # )
+    total_approved_actions = actions.filter(status='Validated')
     total_approved_actions_count = total_approved_actions.count()
 
     # Total Actions Rejected : filter actions based on the time frame and status == "Rejected"
-    total_rejected_actions = ActionMainEntry.objects.filter(
-        name=user,
-        status='Rejected',
-        date__range=[start_date, end_date]
-    )
-    # total_rejected_actions = actions.filter(status='Rejected')
+    # total_rejected_actions = ActionMainEntry.objects.filter(
+    #     name=user,
+    #     status='Rejected',
+    #     date__range=[start_date, end_date]
+    # )
+    total_rejected_actions = actions.filter(status='Rejected')
     total_rejected_actions_count = total_rejected_actions.count()
 
     # Total Actions Pending in review: status == "Pending"
-    total_pending_actions = ActionMainEntry.objects.filter(
-        name=user,
-        status='Pending',
-        date__range=[start_date, end_date]
-    )
-    # total_pendind_actions = actions.filter(status='Pending')
+    # total_pending_actions = ActionMainEntry.objects.filter(
+    #     name=user,
+    #     status='Pending',
+    #     date__range=[start_date, end_date]
+    # )
+    total_pending_actions = actions.filter(status='Pending')
     total_pending_actions_count = total_pending_actions.count()
 
     # Top collaborators
