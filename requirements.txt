@@ -13,6 +13,7 @@ django-debug-toolbar==4.3.0
 django-filter==23.5
 django-rest-swagger==2.2.0
 django-tenant-schemas==1.12.0
+django-tenants==3.6.1
 djangorestframework==3.14.0
 drf-yasg==1.21.7
 fonttools==4.49.0

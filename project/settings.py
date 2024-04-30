@@ -32,6 +32,8 @@ class Dev(Configuration):
 
 
     # Application definition
+    
+    
 
     INSTALLED_APPS = [
         'django.contrib.admin',
@@ -59,13 +61,13 @@ class Dev(Configuration):
         # debug toolbar #comment this in production
         'debug_toolbar',
         
+        # django tenant
+        #'tenant_schemas',
         
-        
-    
     ]
 
     MIDDLEWARE = [
-        #'tenant_schemas.middleware.TenantMiddleware',
+        #'django_tenants.middleware.main.TenantMainMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -95,10 +97,12 @@ class Dev(Configuration):
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
-                    'django.template.context_processors.debug',
                     'django.template.context_processors.request',
+                    'django.template.context_processors.debug',
+                    
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
+                    
                 ],
             },
         },
@@ -116,7 +120,25 @@ class Dev(Configuration):
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
+    
+#     DATABASES = {
+#     'default': {
+#         'ENGINE': 'django_tenants.postgresql_backend',
+#         'NAME': 'perform_postgresql',
+#         'USER': 'postgres',
+#         'PASSWORD': 'joseline',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432', 
+       
+#     },
+#     'tenants': {
+#         'ENGINE': 'tenant_schemas.postgresql_backend',
+#     }
+#         }
+    
+#     DATABASE_ROUTERS = (
+#     'django_tenants.routers.TenantSyncRouter',
+# )
 
     # DATABASES = {
     #     'default': {
